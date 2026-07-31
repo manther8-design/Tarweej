@@ -27,7 +27,7 @@ async function bootstrap(): Promise<void> {
   });
 
   const origins = config.getOrThrow<string[]>('app.corsOrigins');
-  app.enableCors({ origins, credentials: true });
+  app.enableCors({ origin: origins, credentials: true });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Tarweej Platform API')

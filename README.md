@@ -1,4 +1,4 @@
-# Tarweej Platform — TRW-001 Foundation
+# Tarweej Platform — TRW-001 Foundation v1.0.1
 
 Production foundation for **ترويج | Tarweej**, a multi-product marketplace platform.
 
@@ -86,3 +86,34 @@ Open a pull request into `develop`, then promote accepted releases to `main`.
 - Replace all development passwords outside local environments.
 - Enable GitHub branch protection and secret scanning.
 - Use managed secrets in staging and production.
+
+
+## Applying v1.0.1 to the Existing Repository
+
+Extract this package beside your local Git repository, then run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\apply-update.ps1 `
+  -RepositoryPath "C:\path\to\Tarweej"
+```
+
+Alternatively, copy the package contents over the repository manually while preserving
+the repository's `.git` folder and local `.env`.
+
+Then validate and commit:
+
+```powershell
+corepack enable
+corepack prepare pnpm@11.18.0 --activate
+pnpm install
+pnpm db:generate
+pnpm lint
+pnpm test
+pnpm build
+git status
+git add .
+git commit -m "fix(foundation): harden TRW-001 baseline"
+git push
+```
+
+See `docs/TRW-001-ACCEPTANCE.md` for the complete acceptance checklist.
