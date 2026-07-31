@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+.nx/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.idea/
+.vscode/
+apps/mobile/.dart_tool/
+apps/mobile/build/
+apps/mobile/.flutter-plugins*
+apps/mobile/android/local.properties
