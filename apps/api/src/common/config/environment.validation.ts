@@ -1,5 +1,14 @@
 import { plainToInstance, Transform } from 'class-transformer';
-import { IsIn, IsInt, IsNotEmpty, IsString, Max, Min, validateSync } from 'class-validator';
+import {
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  validateSync,
+} from 'class-validator';
 
 class EnvironmentVariables {
   @IsIn(['development', 'test', 'staging', 'production'])
@@ -24,6 +33,26 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   REDIS_URL!: string;
+
+  @IsOptional()
+  @IsString()
+  JWT_ACCESS_SECRET?: string;
+
+  @IsOptional()
+  @IsString()
+  JWT_REFRESH_SECRET?: string;
+
+  @IsOptional()
+  @IsString()
+  GOOGLE_AUTH_ENABLED?: string;
+
+  @IsOptional()
+  @IsString()
+  GOOGLE_CLIENT_ID?: string;
+
+  @IsOptional()
+  @IsString()
+  SMS_PROVIDER?: string;
 }
 
 export function validateEnvironment(config: Record<string, unknown>): EnvironmentVariables {

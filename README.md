@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Phase 1 Foundation (TRW-002)
+# ترويج | Tarweej — Identity (TRW-003) on Foundation (TRW-002)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -51,6 +51,11 @@ pnpm dev
 | http://localhost:3000/api/v1/health/live | Liveness |
 | http://localhost:3000/api/v1/health/ready | Readiness (DB) |
 | http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
+| http://localhost:3000/api/v1/identity/auth/register | Email registration |
+| http://localhost:3000/api/v1/identity/auth/login | Email login |
+| http://localhost:3000/api/v1/identity/auth/refresh | Refresh rotation |
+| http://localhost:3000/api/v1/identity/me | Current user (Bearer) |
+| http://localhost:3000/api/v1/identity/otp/request | Phone OTP request (mock SMS) |
 
 ### Admin
 
@@ -89,9 +94,10 @@ pnpm build
 
 - UUID primary keys use DB `gen_random_uuid()` defaults.
 - Object storage locally is MinIO (S3-compatible); production uses the same adapter later.
-- Full Identity (OTP / Google / sessions E2E) is **out of scope** for this phase — modules are scaffolded only.
+- Identity domain (email/password, OTP mock SMS, Google adapter stub, sessions, RBAC) is implemented in TRW-003.
 - Never commit `.env` or real secrets.
 
 ## Delivery
 
-See project store delivery note `docs/delivery/TRW-002-foundation.md` (agent Context) for verification commands and known issues.
+- Foundation: project store `docs/delivery/TRW-002-foundation.md`
+- Identity: project store `docs/delivery/TRW-003-identity.md`

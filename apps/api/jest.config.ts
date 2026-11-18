@@ -1,3 +1,8 @@
+import { config as loadEnv } from 'dotenv';
+import { resolve } from 'node:path';
+
+loadEnv({ path: resolve(process.cwd(), '.env') });
+
 export default {
   displayName: 'api',
   preset: '../../jest.preset.js',
