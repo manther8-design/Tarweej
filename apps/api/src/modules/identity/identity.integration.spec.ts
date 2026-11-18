@@ -42,6 +42,19 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
     prisma = new PrismaClient();
     await prisma.$connect();
     sms = moduleRef.get(MockSmsAdapter);
+
+    // Identity tests require RBAC role rows (normally from `pnpm db:seed`).
+    for (const role of [
+      { code: 'super_admin', name: 'Super Admin' },
+      { code: 'moderator', name: 'Moderator' },
+      { code: 'user', name: 'User' },
+    ]) {
+      await prisma.role.upsert({
+        where: { code: role.code },
+        update: { name: role.name },
+        create: role,
+      });
+    }
   });
 
   afterAll(async () => {
