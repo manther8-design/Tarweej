@@ -1,9 +1,9 @@
-import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 
 @ApiTags('health')
-@Controller({ path: 'health', version: VERSION_NEUTRAL })
+@Controller('health')
 export class HealthController {
   constructor(private readonly prisma: PrismaService) {}
 

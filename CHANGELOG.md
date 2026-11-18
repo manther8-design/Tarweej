@@ -1,22 +1,14 @@
 # Changelog
 
-All notable changes to Tarweej are documented here.
+## 0.2.0 — TRW-002 Foundation
 
-## [0.1.1] - 2026-07-31
+- Expand Prisma schema: Identity, Reference, roles, feature flags, business settings
+- Initial migration + dev seed (languages/countries/currencies/roles)
+- NestJS `/api/v1` health + Swagger; Identity/Reference/Configuration module scaffolds
+- Next.js admin login placeholder; optional `apps/web` package
+- Shared libs stubs; MinIO in docker-compose; Flutter Clean Architecture + AR/EN RTL
+- CI: API install/migrate/lint/test/build + Flutter analyze/test
 
-### Fixed
+## 0.1.1 — TRW-001 baseline harden
 
-- Corrected the NestJS CORS option from `origins` to `origin`.
-
-### Added
-
-- API unit-test configuration for Nx and Jest.
-- Tests for platform information, liveness, and database readiness.
-- Sprint acceptance checklist.
-- Windows update script for applying this release to an existing repository.
-
-## [0.1.0] - 2026-07-30
-
-### Added
-
-- Initial Tarweej monorepo foundation.
+- Initial Nest/Flutter/Prisma monorepo stub on `main`

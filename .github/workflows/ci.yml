@@ -15,7 +15,25 @@ concurrency:
 jobs:
   backend:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: tarweej
+          POSTGRES_PASSWORD: tarweej_dev_password
+          POSTGRES_DB: tarweej
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U tarweej -d tarweej"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://tarweej:tarweej_dev_password@localhost:5432/tarweej?schema=public
+      REDIS_URL: redis://localhost:6379
+      NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,13 +50,15 @@ jobs:
 
       - run: pnpm install --frozen-lockfile=false
       - run: pnpm db:generate
+      - run: pnpm db:deploy
       - run: pnpm format:check
       - run: pnpm lint
+      - run: pnpm test
       - run: pnpm build
 
   mobile:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: apps/mobile
@@ -49,5 +69,6 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
+      - run: flutter gen-l10n
       - run: flutter analyze
       - run: flutter test

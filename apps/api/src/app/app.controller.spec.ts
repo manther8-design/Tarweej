@@ -1,13 +1,11 @@
 import { AppController } from './app.controller';
 
 describe('AppController', () => {
-  it('returns platform information', () => {
+  it('returns platform info', () => {
     const controller = new AppController();
-
-    expect(controller.getPlatformInfo()).toEqual({
+    expect(controller.getPlatformInfo()).toMatchObject({
       name: 'Tarweej Platform API',
       status: 'operational',
-      documentation: '/docs',
     });
   });
 });

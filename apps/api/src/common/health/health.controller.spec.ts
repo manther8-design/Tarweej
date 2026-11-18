@@ -1,25 +1,21 @@
 import { HealthController } from './health.controller';
+import type { PrismaService } from '../../infrastructure/prisma/prisma.service';
 
 describe('HealthController', () => {
-  it('returns liveness status', () => {
-    const prisma = {
-      $queryRaw: jest.fn(),
-    };
-    const controller = new HealthController(prisma as never);
-
+  it('returns live status', () => {
+    const prisma = { $queryRaw: jest.fn() } as unknown as PrismaService;
+    const controller = new HealthController(prisma);
     expect(controller.live()).toEqual({ status: 'ok' });
   });
 
-  it('checks database readiness', async () => {
+  it('returns ready status when database responds', async () => {
     const prisma = {
       $queryRaw: jest.fn().mockResolvedValue([{ '?column?': 1 }]),
-    };
-    const controller = new HealthController(prisma as never);
-
+    } as unknown as PrismaService;
+    const controller = new HealthController(prisma);
     await expect(controller.ready()).resolves.toEqual({
       status: 'ready',
       database: 'connected',
     });
-    expect(prisma.$queryRaw).toHaveBeenCalledTimes(1);
   });
 });

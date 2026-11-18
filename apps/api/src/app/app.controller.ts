@@ -1,16 +1,17 @@
-import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('platform')
-@Controller({ version: VERSION_NEUTRAL })
+@Controller()
 export class AppController {
   @Get()
   @ApiOperation({ summary: 'Return basic platform information' })
   getPlatformInfo(): Record<string, string> {
     return {
       name: 'Tarweej Platform API',
+      product: 'ترويج',
       status: 'operational',
-      documentation: '/docs',
+      documentation: '/api/v1/docs',
     };
   }
 }

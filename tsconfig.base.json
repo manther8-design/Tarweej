@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -15,8 +14,12 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@tarweej/api/*": ["apps/api/src/*"]
+      "@tarweej/api/*": ["apps/api/src/*"],
+      "@tarweej/contracts": ["libs/contracts/src/index.ts"],
+      "@tarweej/config": ["libs/config/src/index.ts"],
+      "@tarweej/logging": ["libs/logging/src/index.ts"],
+      "@tarweej/database": ["libs/database/src/index.ts"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "apps/admin", "apps/mobile", "apps/web"]
 }
