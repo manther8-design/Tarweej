@@ -1,4 +1,4 @@
-// Tarweej schema (Identity + Reference + Config/Admin RBAC).
+// Tarweej schema (Identity + Reference + Config/Admin RBAC + Catalog).
 // UUID PKs use DB gen_random_uuid() defaults (TRW-002 user default).
 
 generator client {
@@ -404,4 +404,95 @@ model AuditEntry {
   @@index([entityType, entityId])
   @@index([createdAt])
   @@map("audit_entries")
+}
+
+// ---------------------------------------------------------------------------
+// Catalog — categories & dynamic attributes (TRW-006)
+// Translations for category / attribute / option display names use
+// translation_strings (entity_type: category | attribute_definition | attribute_option).
+// ---------------------------------------------------------------------------
+
+/// Hierarchical category tree (adjacency list). Soft-delete via deleted_at.
+model Category {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  parentId    String?   @map("parent_id") @db.Uuid
+  slug        String    @unique @db.VarChar(120)
+  name        String    @db.VarChar(160)
+  /// Vertical seam (marketplace, services, jobs, motors, real_estate, …).
+  listingType String    @default("marketplace") @map("listing_type") @db.VarChar(40)
+  sortOrder   Int       @default(0) @map("sort_order")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  parent     Category?           @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children   Category[]          @relation("CategoryTree")
+  attributes CategoryAttribute[]
+
+  @@index([parentId])
+  @@index([listingType, isActive])
+  @@index([sortOrder])
+  @@index([deletedAt])
+  @@map("categories")
+}
+
+/// Reusable attribute definition (data type + validation).
+model AttributeDefinition {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code           String   @unique @db.VarChar(80)
+  name           String   @db.VarChar(160)
+  /// text | number | int | decimal | single_select | multi_select | bool | date | numeric_range | unit
+  dataType       String   @map("data_type") @db.VarChar(40)
+  unit           String?  @db.VarChar(40)
+  isRequired     Boolean  @default(false) @map("is_required")
+  validationJson Json?    @map("validation_json") @db.JsonB
+  sortOrder      Int      @default(0) @map("sort_order")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  categoryLinks CategoryAttribute[]
+  options       AttributeOption[]
+
+  @@index([dataType])
+  @@index([isActive])
+  @@map("attribute_definitions")
+}
+
+/// M2M association: which attributes apply to a category (SoT).
+model CategoryAttribute {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  categoryId            String   @map("category_id") @db.Uuid
+  attributeDefinitionId String   @map("attribute_definition_id") @db.Uuid
+  /// When set, overrides AttributeDefinition.isRequired for this category.
+  isRequiredOverride    Boolean? @map("is_required_override")
+  sortOrder             Int      @default(0) @map("sort_order")
+  isActive              Boolean  @default(true) @map("is_active")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  category            Category            @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  attributeDefinition AttributeDefinition @relation(fields: [attributeDefinitionId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, attributeDefinitionId])
+  @@index([attributeDefinitionId])
+  @@index([categoryId, sortOrder])
+  @@map("category_attributes")
+}
+
+/// Select-type options for an attribute definition.
+model AttributeOption {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  attributeDefinitionId String   @map("attribute_definition_id") @db.Uuid
+  value                 String   @db.VarChar(120)
+  label                 String   @db.VarChar(160)
+  sortOrder             Int      @default(0) @map("sort_order")
+  isActive              Boolean  @default(true) @map("is_active")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  attributeDefinition AttributeDefinition @relation(fields: [attributeDefinitionId], references: [id], onDelete: Cascade)
+
+  @@unique([attributeDefinitionId, value])
+  @@index([attributeDefinitionId, sortOrder])
+  @@map("attribute_options")
 }

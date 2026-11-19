@@ -8,6 +8,7 @@ import { clearSession, hasAdminAccess, loadSession, type AdminSession } from '..
 
 const nav = [
   { href: '/', label: 'Overview' },
+  { href: '/categories', label: 'Categories' },
   { href: '/settings', label: 'Settings' },
   { href: '/feature-flags', label: 'Feature flags' },
   { href: '/roles', label: 'Roles' },
@@ -73,7 +74,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <nav style={{ display: 'grid', gap: 6 }}>
           {nav.map((item) => {
-            const active = pathname === item.href;
+            const active =
+              pathname === item.href || (item.href !== '/' && pathname.startsWith(`${item.href}/`));
             return (
               <Link
                 key={item.href}

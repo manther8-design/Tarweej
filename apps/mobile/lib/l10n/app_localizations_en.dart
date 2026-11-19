@@ -19,7 +19,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeBody =>
-      'Reference data phase — pick your country from the live API, then continue.';
+      'Browse live categories from the API, pick your country, then continue.';
+
+  @override
+  String get homeCategoriesHeading => 'Categories';
+
+  @override
+  String get browseCategoriesAction => 'Browse categories';
+
+  @override
+  String get categoriesTitle => 'Categories';
+
+  @override
+  String get categoriesSubtitle =>
+      'Hierarchy loaded from the Tarweej catalog API.';
+
+  @override
+  String get categoriesRetry => 'Retry';
+
+  @override
+  String get categoriesEmpty => 'No categories available yet.';
+
+  @override
+  String get categoryDetailTitle => 'Category';
+
+  @override
+  String get categorySlugLabel => 'Slug';
+
+  @override
+  String get categoryListingTypeLabel => 'Listing type';
+
+  @override
+  String get categoryAttributesHeading => 'Attributes';
+
+  @override
+  String get categoryAttributesEmpty => 'No attributes for this category.';
 
   @override
   String get countrySelectTitle => 'Choose your country';

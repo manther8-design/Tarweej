@@ -19,7 +19,41 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeBody =>
-      'مرحلة البيانات المرجعية — اختر بلدك من الواجهة البرمجية ثم تابع.';
+      'تصفح الفئات الحية من الواجهة البرمجية، اختر بلدك، ثم تابع.';
+
+  @override
+  String get homeCategoriesHeading => 'الفئات';
+
+  @override
+  String get browseCategoriesAction => 'تصفح الفئات';
+
+  @override
+  String get categoriesTitle => 'الفئات';
+
+  @override
+  String get categoriesSubtitle =>
+      'تُحمَّل الشجرة الهرمية من واجهة كتالوج ترويج.';
+
+  @override
+  String get categoriesRetry => 'إعادة المحاولة';
+
+  @override
+  String get categoriesEmpty => 'لا توجد فئات بعد.';
+
+  @override
+  String get categoryDetailTitle => 'الفئة';
+
+  @override
+  String get categorySlugLabel => 'المعرّف';
+
+  @override
+  String get categoryListingTypeLabel => 'نوع الإعلان';
+
+  @override
+  String get categoryAttributesHeading => 'الخصائص';
+
+  @override
+  String get categoryAttributesEmpty => 'لا توجد خصائص لهذه الفئة.';
 
   @override
   String get countrySelectTitle => 'اختر بلدك';

@@ -420,6 +420,16 @@ async function main(): Promise<void> {
       name: 'Read audit log',
       description: 'View audit entries for admin mutations',
     },
+    {
+      code: 'catalog.categories.read',
+      name: 'Read catalog categories',
+      description: 'View categories and attribute definitions in admin',
+    },
+    {
+      code: 'catalog.categories.write',
+      name: 'Write catalog categories',
+      description: 'Create or update categories, attributes, and options',
+    },
   ] as const;
 
   const permissionByCode: Record<string, { id: string }> = {};
@@ -463,6 +473,7 @@ async function main(): Promise<void> {
     'config.flags.read',
     'rbac.roles.read',
     'audit.read',
+    'catalog.categories.read',
   ]);
 
   await prisma.featureFlag.upsert({
@@ -573,9 +584,236 @@ async function main(): Promise<void> {
     },
   });
 
+  // ---------------------------------------------------------------------------
+  // Catalog sample tree: Marketplace → Electronics → Phones (+ attributes)
+  // ---------------------------------------------------------------------------
+
+  const upsertCategory = async (input: {
+    slug: string;
+    name: string;
+    parentId?: string | null;
+    listingType?: string;
+    sortOrder?: number;
+    ar: string;
+    en: string;
+  }) => {
+    const row = await prisma.category.upsert({
+      where: { slug: input.slug },
+      update: {
+        name: input.name,
+        parentId: input.parentId ?? null,
+        listingType: input.listingType ?? 'marketplace',
+        sortOrder: input.sortOrder ?? 0,
+        isActive: true,
+        deletedAt: null,
+      },
+      create: {
+        slug: input.slug,
+        name: input.name,
+        parentId: input.parentId ?? null,
+        listingType: input.listingType ?? 'marketplace',
+        sortOrder: input.sortOrder ?? 0,
+        isActive: true,
+      },
+    });
+    await upsertTranslation('category', row.id, 'ar', input.ar);
+    await upsertTranslation('category', row.id, 'en', input.en);
+    return row;
+  };
+
+  const marketplace = await upsertCategory({
+    slug: 'marketplace',
+    name: 'Marketplace',
+    sortOrder: 0,
+    ar: 'السوق',
+    en: 'Marketplace',
+  });
+  const electronics = await upsertCategory({
+    slug: 'electronics',
+    name: 'Electronics',
+    parentId: marketplace.id,
+    sortOrder: 10,
+    ar: 'إلكترونيات',
+    en: 'Electronics',
+  });
+  const phones = await upsertCategory({
+    slug: 'phones',
+    name: 'Phones',
+    parentId: electronics.id,
+    sortOrder: 10,
+    ar: 'هواتف',
+    en: 'Phones',
+  });
+  await upsertCategory({
+    slug: 'laptops',
+    name: 'Laptops',
+    parentId: electronics.id,
+    sortOrder: 20,
+    ar: 'حواسيب محمولة',
+    en: 'Laptops',
+  });
+  await upsertCategory({
+    slug: 'services',
+    name: 'Services',
+    listingType: 'services',
+    sortOrder: 20,
+    ar: 'خدمات',
+    en: 'Services',
+  });
+
+  const brand = await prisma.attributeDefinition.upsert({
+    where: { code: 'brand' },
+    update: {
+      name: 'Brand',
+      dataType: 'single_select',
+      isRequired: true,
+      sortOrder: 10,
+      isActive: true,
+    },
+    create: {
+      code: 'brand',
+      name: 'Brand',
+      dataType: 'single_select',
+      isRequired: true,
+      sortOrder: 10,
+      isActive: true,
+    },
+  });
+  await upsertTranslation('attribute_definition', brand.id, 'ar', 'العلامة التجارية');
+  await upsertTranslation('attribute_definition', brand.id, 'en', 'Brand');
+
+  const storageGb = await prisma.attributeDefinition.upsert({
+    where: { code: 'storage_gb' },
+    update: {
+      name: 'Storage',
+      dataType: 'int',
+      unit: 'GB',
+      isRequired: true,
+      validationJson: { min: 8, max: 2048 },
+      sortOrder: 20,
+      isActive: true,
+    },
+    create: {
+      code: 'storage_gb',
+      name: 'Storage',
+      dataType: 'int',
+      unit: 'GB',
+      isRequired: true,
+      validationJson: { min: 8, max: 2048 },
+      sortOrder: 20,
+      isActive: true,
+    },
+  });
+  await upsertTranslation('attribute_definition', storageGb.id, 'ar', 'التخزين');
+  await upsertTranslation('attribute_definition', storageGb.id, 'en', 'Storage');
+
+  const condition = await prisma.attributeDefinition.upsert({
+    where: { code: 'condition' },
+    update: {
+      name: 'Condition',
+      dataType: 'single_select',
+      isRequired: true,
+      sortOrder: 30,
+      isActive: true,
+    },
+    create: {
+      code: 'condition',
+      name: 'Condition',
+      dataType: 'single_select',
+      isRequired: true,
+      sortOrder: 30,
+      isActive: true,
+    },
+  });
+  await upsertTranslation('attribute_definition', condition.id, 'ar', 'الحالة');
+  await upsertTranslation('attribute_definition', condition.id, 'en', 'Condition');
+
+  const warranty = await prisma.attributeDefinition.upsert({
+    where: { code: 'has_warranty' },
+    update: {
+      name: 'Has warranty',
+      dataType: 'bool',
+      isRequired: false,
+      sortOrder: 40,
+      isActive: true,
+    },
+    create: {
+      code: 'has_warranty',
+      name: 'Has warranty',
+      dataType: 'bool',
+      isRequired: false,
+      sortOrder: 40,
+      isActive: true,
+    },
+  });
+  await upsertTranslation('attribute_definition', warranty.id, 'ar', 'يشمل ضمان');
+  await upsertTranslation('attribute_definition', warranty.id, 'en', 'Has warranty');
+
+  const upsertOption = async (
+    attributeDefinitionId: string,
+    value: string,
+    label: string,
+    sortOrder: number,
+    ar: string,
+    en: string,
+  ) => {
+    const existing = await prisma.attributeOption.findUnique({
+      where: {
+        attributeDefinitionId_value: { attributeDefinitionId, value },
+      },
+    });
+    const option = existing
+      ? await prisma.attributeOption.update({
+          where: { id: existing.id },
+          data: { label, sortOrder, isActive: true },
+        })
+      : await prisma.attributeOption.create({
+          data: { attributeDefinitionId, value, label, sortOrder, isActive: true },
+        });
+    await upsertTranslation('attribute_option', option.id, 'ar', ar, 'label');
+    await upsertTranslation('attribute_option', option.id, 'en', en, 'label');
+    return option;
+  };
+
+  await upsertOption(brand.id, 'apple', 'Apple', 10, 'أبل', 'Apple');
+  await upsertOption(brand.id, 'samsung', 'Samsung', 20, 'سامسونج', 'Samsung');
+  await upsertOption(brand.id, 'xiaomi', 'Xiaomi', 30, 'شاومي', 'Xiaomi');
+  await upsertOption(condition.id, 'new', 'New', 10, 'جديد', 'New');
+  await upsertOption(condition.id, 'used', 'Used', 20, 'مستعمل', 'Used');
+
+  const linkAttr = async (
+    categoryId: string,
+    attributeDefinitionId: string,
+    sortOrder: number,
+    isRequiredOverride?: boolean | null,
+  ) => {
+    await prisma.categoryAttribute.upsert({
+      where: {
+        categoryId_attributeDefinitionId: { categoryId, attributeDefinitionId },
+      },
+      update: {
+        sortOrder,
+        isRequiredOverride: isRequiredOverride ?? null,
+        isActive: true,
+      },
+      create: {
+        categoryId,
+        attributeDefinitionId,
+        sortOrder,
+        isRequiredOverride: isRequiredOverride ?? null,
+        isActive: true,
+      },
+    });
+  };
+
+  await linkAttr(phones.id, brand.id, 10);
+  await linkAttr(phones.id, storageGb.id, 20);
+  await linkAttr(phones.id, condition.id, 30);
+  await linkAttr(phones.id, warranty.id, 40, false);
+
   // eslint-disable-next-line no-console
   console.log(
-    'Seed complete: SA reference + roles/permissions + config flags/settings + admin@tarweej.local',
+    'Seed complete: SA reference + roles/permissions + config + catalog tree + admin@tarweej.local',
   );
 }
 
