@@ -6,10 +6,10 @@ export default function AdminHomePage() {
   return (
     <AdminShell>
       <section style={{ maxWidth: 720 }}>
-        <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.8rem' }}>Configuration foundation</h2>
+        <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.8rem' }}>Admin foundation</h2>
         <p style={{ margin: 0, color: 'var(--muted)', lineHeight: 1.55 }}>
-          Manage business settings, feature flags, and role permissions. Full moderation dashboard
-          arrives in a later phase — this surface covers Phase 4 admin RBAC and config.
+          Manage catalog categories, business settings, feature flags, and role permissions.
+          Listings moderation arrives in a later phase.
         </p>
         <ul
           style={{
@@ -21,6 +21,7 @@ export default function AdminHomePage() {
           }}
         >
           {[
+            ['Categories', 'Hierarchy and dynamic attributes CRUD (audited).'],
             ['Settings', 'Read and update typed business settings (audited).'],
             ['Feature flags', 'Toggle client-facing capability flags.'],
             ['Roles', 'Inspect seeded roles and their permission grants.'],

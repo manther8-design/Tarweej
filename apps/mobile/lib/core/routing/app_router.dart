@@ -5,6 +5,8 @@ import 'package:tarweej_mobile/features/auth/application/auth_controller.dart';
 import 'package:tarweej_mobile/features/auth/presentation/login_page.dart';
 import 'package:tarweej_mobile/features/auth/presentation/otp_page.dart';
 import 'package:tarweej_mobile/features/auth/presentation/register_page.dart';
+import 'package:tarweej_mobile/features/catalog/presentation/categories_page.dart';
+import 'package:tarweej_mobile/features/catalog/presentation/category_detail_page.dart';
 import 'package:tarweej_mobile/features/home/presentation/home_page.dart';
 import 'package:tarweej_mobile/features/profile/presentation/profile_page.dart';
 import 'package:tarweej_mobile/features/reference/application/reference_controller.dart';
@@ -85,6 +87,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/home',
         name: 'home',
         builder: (BuildContext context, GoRouterState state) => const HomePage(),
+      ),
+      GoRoute(
+        path: '/categories',
+        name: 'categories',
+        builder: (BuildContext context, GoRouterState state) => const CategoriesPage(),
+      ),
+      GoRoute(
+        path: '/categories/:id',
+        name: 'category-detail',
+        builder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CategoryDetailPage(categoryId: id);
+        },
       ),
       GoRoute(
         path: '/profile',

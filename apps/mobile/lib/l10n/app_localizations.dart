@@ -119,8 +119,74 @@ abstract class AppLocalizations {
   /// No description provided for @homeBody.
   ///
   /// In en, this message translates to:
-  /// **'Reference data phase — pick your country from the live API, then continue.'**
+  /// **'Browse live categories from the API, pick your country, then continue.'**
   String get homeBody;
+
+  /// No description provided for @homeCategoriesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get homeCategoriesHeading;
+
+  /// No description provided for @browseCategoriesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse categories'**
+  String get browseCategoriesAction;
+
+  /// No description provided for @categoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoriesTitle;
+
+  /// No description provided for @categoriesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hierarchy loaded from the Tarweej catalog API.'**
+  String get categoriesSubtitle;
+
+  /// No description provided for @categoriesRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get categoriesRetry;
+
+  /// No description provided for @categoriesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories available yet.'**
+  String get categoriesEmpty;
+
+  /// No description provided for @categoryDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get categoryDetailTitle;
+
+  /// No description provided for @categorySlugLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Slug'**
+  String get categorySlugLabel;
+
+  /// No description provided for @categoryListingTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing type'**
+  String get categoryListingTypeLabel;
+
+  /// No description provided for @categoryAttributesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Attributes'**
+  String get categoryAttributesHeading;
+
+  /// No description provided for @categoryAttributesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No attributes for this category.'**
+  String get categoryAttributesEmpty;
 
   /// No description provided for @countrySelectTitle.
   ///

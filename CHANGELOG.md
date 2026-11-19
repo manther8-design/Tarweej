@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 — TRW-006 Categories & Dynamic Attributes
+
+- Prisma: hierarchical `categories`, `attribute_definitions`, `category_attributes`, `attribute_options`; soft-delete + `is_active` + `sort_order`
+- NestJS catalog APIs: public `GET /api/v1/categories` tree + category attributes; admin CRUD under `/api/v1/admin/categories` with RBAC + audit
+- Seed: Marketplace → Electronics → Phones (+ brand/storage/condition/warranty attributes)
+- Flutter: home + categories browse wired to live catalog API (no hardcoded categories)
+- Admin Next.js: categories list/create/edit + attribute attach/detach
+- Integration tests for hierarchy, attributes, permissions, cycle guard, audit
+
 ## 0.5.0 — TRW-005 Config & Admin RBAC
 
 - Prisma: permissions, role_permissions, audit_entries; settings/flags metadata (`description`, `is_secret`)

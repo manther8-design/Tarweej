@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Config & Admin RBAC (TRW-005)
+# ترويج | Tarweej — Categories & Dynamic Attributes (TRW-006)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -8,12 +8,12 @@ Repository: https://github.com/manther8-design/Tarweej
 
 | Path | Purpose |
 |------|---------|
-| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Swagger) |
-| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL) |
-| `apps/admin` | Next.js admin: API login + settings / flags / roles |
+| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Catalog, Swagger) |
+| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL, live categories) |
+| `apps/admin` | Next.js admin: API login + categories / settings / flags / roles |
 | `apps/web` | Optional public web placeholder package |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
-| `prisma/` | Identity + Reference + permissions/audit/settings schema, migrations, seed |
+| `prisma/` | Identity + Reference + Config + Catalog schema, migrations, seed |
 | `docker-compose.yml` | PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
 
 ## Prerequisites
@@ -58,6 +58,9 @@ pnpm dev
 | http://localhost:3000/api/v1/admin/audit/entries | Audit trail |
 | http://localhost:3000/api/v1/reference/countries | Active countries (+ associations) |
 | http://localhost:3000/api/v1/admin/reference/… | Admin reference CRUD (Bearer + `super_admin`) |
+| http://localhost:3000/api/v1/categories | Active category hierarchy (+ `?lang=`) |
+| http://localhost:3000/api/v1/categories/:id | Category detail with dynamic attributes |
+| http://localhost:3000/api/v1/admin/categories | Admin category/attribute CRUD (RBAC + audit) |
 | http://localhost:3000/api/v1/identity/auth/login | Email login |
 
 ### Admin
