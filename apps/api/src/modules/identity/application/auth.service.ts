@@ -116,7 +116,15 @@ export class AuthService {
       },
       include: {
         user: {
-          include: { roleAssignments: { include: { role: true } } },
+          include: {
+            roleAssignments: {
+              include: {
+                role: {
+                  include: { permissions: { include: { permission: true } } },
+                },
+              },
+            },
+          },
         },
       },
     });
@@ -139,6 +147,7 @@ export class AuthService {
     });
 
     const roles = session.user.roleAssignments.map((a) => a.role.code);
+    const permissions = this.collectPermissions(session.user.roleAssignments);
     const tokens = await this.tokens.buildTokenPair({
       userId: session.user.id,
       sessionId: session.id,
@@ -149,7 +158,7 @@ export class AuthService {
     return {
       sessionId: session.id,
       tokens,
-      user: this.toPublicUser(session.user, roles),
+      user: this.toPublicUser(session.user, roles, permissions),
     };
   }
 
@@ -253,11 +262,27 @@ export class AuthService {
       countryId: string | null;
       emailVerifiedAt: Date | null;
       phoneVerifiedAt: Date | null;
-      roleAssignments: Array<{ role: { code: string } }>;
+      roleAssignments: Array<{
+        role: {
+          code: string;
+          permissions?: Array<{ permission: { code: string } }>;
+        };
+      }>;
     },
     meta: { deviceLabel?: string; userAgent?: string; ipAddress?: string },
   ): Promise<AuthResult> {
     const roles = user.roleAssignments.map((a) => a.role.code);
+    let permissions = this.collectPermissions(user.roleAssignments);
+
+    // Register/login paths may not eager-load role permissions; resolve from DB.
+    if (permissions.length === 0 && roles.length > 0) {
+      const rows = await this.prisma.rolePermission.findMany({
+        where: { role: { code: { in: roles } } },
+        include: { permission: true },
+      });
+      permissions = [...new Set(rows.map((r) => r.permission.code))];
+    }
+
     const refresh = this.tokens.mintRefreshToken();
 
     const session = await this.prisma.userSession.create({
@@ -282,8 +307,20 @@ export class AuthService {
     return {
       sessionId: session.id,
       tokens,
-      user: this.toPublicUser(user, roles),
+      user: this.toPublicUser(user, roles, permissions),
     };
+  }
+
+  private collectPermissions(
+    assignments: Array<{
+      role: { permissions?: Array<{ permission: { code: string } }> };
+    }>,
+  ): string[] {
+    return [
+      ...new Set(
+        assignments.flatMap((a) => (a.role.permissions ?? []).map((rp) => rp.permission.code)),
+      ),
+    ];
   }
 
   private toPublicUser(
@@ -300,6 +337,7 @@ export class AuthService {
       phoneVerifiedAt: Date | null;
     },
     roles: string[],
+    permissions: string[],
   ) {
     return {
       id: user.id,
@@ -313,6 +351,7 @@ export class AuthService {
       emailVerifiedAt: user.emailVerifiedAt,
       phoneVerifiedAt: user.phoneVerifiedAt,
       roles,
+      permissions,
     };
   }
 }

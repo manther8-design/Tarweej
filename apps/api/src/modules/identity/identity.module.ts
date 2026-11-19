@@ -6,6 +6,7 @@ import { identityConfig } from '../../common/config/identity.config';
 import { PrismaModule } from '../../infrastructure/prisma/prisma.module';
 import { IdentityController } from './adapters/http/identity.controller';
 import { JwtAuthGuard } from './adapters/http/guards/jwt-auth.guard';
+import { PermissionsGuard } from './adapters/http/guards/permissions.guard';
 import { RolesGuard } from './adapters/http/guards/roles.guard';
 import { JwtStrategy } from './adapters/http/strategies/jwt.strategy';
 import { GoogleAuthAdapter } from './adapters/oauth/google-auth.adapter';
@@ -41,11 +42,12 @@ import { SMS_PROVIDER } from './domain/ports/sms-provider.port';
     JwtStrategy,
     JwtAuthGuard,
     RolesGuard,
+    PermissionsGuard,
     MockSmsAdapter,
     GoogleAuthAdapter,
     { provide: SMS_PROVIDER, useExisting: MockSmsAdapter },
     { provide: GOOGLE_AUTH_PROVIDER, useExisting: GoogleAuthAdapter },
   ],
-  exports: [AuthService, ProfileService, JwtModule, JwtAuthGuard, RolesGuard],
+  exports: [AuthService, ProfileService, JwtModule, JwtAuthGuard, RolesGuard, PermissionsGuard],
 })
 export class IdentityModule {}

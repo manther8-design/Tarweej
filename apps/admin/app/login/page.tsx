@@ -1,18 +1,43 @@
 'use client';
 
-import { useState, type CSSProperties, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, type CSSProperties, type FormEvent } from 'react';
+import { ApiError, login } from '../../lib/api';
+import { hasAdminAccess, loadSession, saveSession } from '../../lib/session';
 
-/**
- * Login placeholder only — Identity E2E (OTP/Google/sessions) is Phase 2.
- */
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const router = useRouter();
+  const [email, setEmail] = useState('admin@tarweej.local');
+  const [password, setPassword] = useState('Admin123!');
   const [message, setMessage] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  function onSubmit(event: FormEvent<HTMLFormElement>): void {
+  useEffect(() => {
+    const session = loadSession();
+    if (session && hasAdminAccess(session.user)) {
+      router.replace('/');
+    }
+  }, [router]);
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    setMessage('Auth is not wired yet. This is a Phase 1 UI placeholder for the admin shell.');
+    setBusy(true);
+    setMessage(null);
+    try {
+      const result = await login(email.trim(), password);
+      if (!hasAdminAccess(result.user)) {
+        setMessage('This account has no admin permissions.');
+        return;
+      }
+      saveSession({ user: result.user, tokens: result.tokens });
+      router.replace('/');
+    } catch (error) {
+      const text =
+        error instanceof ApiError ? error.message : 'Unable to sign in. Check API availability.';
+      setMessage(text);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -25,7 +50,7 @@ export default function LoginPage() {
       }}
     >
       <form
-        onSubmit={onSubmit}
+        onSubmit={(e) => void onSubmit(e)}
         style={{
           width: '100%',
           maxWidth: 420,
@@ -38,8 +63,13 @@ export default function LoginPage() {
         }}
       >
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.6rem' }}>Admin login</h1>
-          <p style={{ margin: '0.4rem 0 0', color: 'var(--muted)' }}>ترويج · placeholder only</p>
+          <p style={{ margin: 0, color: 'var(--muted)', letterSpacing: '0.08em', fontSize: 12 }}>
+            ترويج · ADMIN
+          </p>
+          <h1 style={{ margin: '0.35rem 0 0', fontSize: '1.7rem' }}>Admin login</h1>
+          <p style={{ margin: '0.4rem 0 0', color: 'var(--muted)' }}>
+            Sign in against the Tarweej API with an elevated role.
+          </p>
         </div>
 
         <label style={{ display: 'grid', gap: 6 }}>
@@ -68,6 +98,7 @@ export default function LoginPage() {
 
         <button
           type="submit"
+          disabled={busy}
           style={{
             marginTop: 4,
             background: 'var(--accent)',
@@ -76,15 +107,14 @@ export default function LoginPage() {
             borderRadius: 8,
             padding: '0.75rem 1rem',
             fontWeight: 600,
-            cursor: 'pointer',
+            cursor: busy ? 'wait' : 'pointer',
+            opacity: busy ? 0.75 : 1,
           }}
         >
-          Sign in
+          {busy ? 'Signing in…' : 'Sign in'}
         </button>
 
-        {message ? (
-          <p style={{ margin: 0, color: 'var(--muted)', fontSize: 14 }}>{message}</p>
-        ) : null}
+        {message ? <p style={{ margin: 0, color: '#f0b4b4', fontSize: 14 }}>{message}</p> : null}
       </form>
     </main>
   );

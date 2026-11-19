@@ -1,6 +1,5 @@
-// Tarweej Phase 1 foundation schema
+// Tarweej schema (Identity + Reference + Config/Admin RBAC).
 // UUID PKs use DB gen_random_uuid() defaults (TRW-002 user default).
-// Scope: Identity + Reference + Roles / FeatureFlags / BusinessSettings.
 
 generator client {
   provider = "prisma-client-js"
@@ -35,6 +34,7 @@ model User {
   sessions        UserSession[]
   oauthAccounts   UserOauthAccount[]
   roleAssignments UserRoleAssignment[]
+  auditEntries    AuditEntry[]
 
   @@index([countryId])
   @@index([status])
@@ -93,13 +93,40 @@ model UserOauthAccount {
 }
 
 model Role {
-  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code String @unique @db.VarChar(64)
-  name String @db.VarChar(120)
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String  @unique @db.VarChar(64)
+  name        String  @db.VarChar(120)
+  description String? @db.VarChar(255)
 
   assignments UserRoleAssignment[]
+  permissions RolePermission[]
 
   @@map("roles")
+}
+
+model Permission {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String  @unique @db.VarChar(120)
+  name        String  @db.VarChar(160)
+  description String? @db.VarChar(255)
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  roleId       String   @map("role_id") @db.Uuid
+  permissionId String   @map("permission_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
 }
 
 model UserRoleAssignment {
@@ -332,24 +359,49 @@ model TranslationString {
 }
 
 // ---------------------------------------------------------------------------
-// Configuration / admin scaffolding
+// Configuration / admin (TRW-005)
 // ---------------------------------------------------------------------------
 
 model FeatureFlag {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  key       String   @unique @db.VarChar(120)
-  isEnabled Boolean  @default(false) @map("is_enabled")
-  rulesJson Json?    @map("rules_json") @db.JsonB
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key         String   @unique @db.VarChar(120)
+  description String?  @db.VarChar(255)
+  isEnabled   Boolean  @default(false) @map("is_enabled")
+  rulesJson   Json?    @map("rules_json") @db.JsonB
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("feature_flags")
 }
 
 model BusinessSetting {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  key       String   @unique @db.VarChar(120)
-  valueJson Json     @map("value_json") @db.JsonB
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key         String   @unique @db.VarChar(120)
+  description String?  @db.VarChar(255)
+  valueJson   Json     @map("value_json") @db.JsonB
+  /// When true, value is never returned on public client endpoints.
+  isSecret    Boolean  @default(false) @map("is_secret")
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
+  @@index([isSecret])
   @@map("business_settings")
+}
+
+/// Append-only audit trail for sensitive admin mutations (ADR-005).
+model AuditEntry {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  action     String   @db.VarChar(80)
+  entityType String   @map("entity_type") @db.VarChar(80)
+  entityId   String?  @map("entity_id") @db.Uuid
+  beforeJson Json?    @map("before_json") @db.JsonB
+  afterJson  Json?    @map("after_json") @db.JsonB
+  metadata   Json?    @db.JsonB
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_entries")
 }

@@ -8,7 +8,15 @@ export class ProfileService {
   async getMe(userId: string) {
     const user = await this.prisma.user.findFirst({
       where: { id: userId, deletedAt: null },
-      include: { roleAssignments: { include: { role: true } } },
+      include: {
+        roleAssignments: {
+          include: {
+            role: {
+              include: { permissions: { include: { permission: true } } },
+            },
+          },
+        },
+      },
     });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -38,7 +46,15 @@ export class ProfileService {
         preferredLanguageCode: input.preferredLanguageCode,
         countryId: input.countryId === undefined ? undefined : input.countryId,
       },
-      include: { roleAssignments: { include: { role: true } } },
+      include: {
+        roleAssignments: {
+          include: {
+            role: {
+              include: { permissions: { include: { permission: true } } },
+            },
+          },
+        },
+      },
     });
 
     return this.map(user);
@@ -57,8 +73,19 @@ export class ProfileService {
     phoneVerifiedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
-    roleAssignments: Array<{ role: { code: string; name: string } }>;
+    roleAssignments: Array<{
+      role: {
+        code: string;
+        name: string;
+        permissions: Array<{ permission: { code: string } }>;
+      };
+    }>;
   }) {
+    const permissions = [
+      ...new Set(
+        user.roleAssignments.flatMap((a) => a.role.permissions.map((rp) => rp.permission.code)),
+      ),
+    ];
     return {
       id: user.id,
       email: user.email,
@@ -73,6 +100,7 @@ export class ProfileService {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       roles: user.roleAssignments.map((a) => a.role.code),
+      permissions,
     };
   }
 }

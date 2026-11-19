@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Reference Data (TRW-004)
+# ترويج | Tarweej — Config & Admin RBAC (TRW-005)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -8,12 +8,12 @@ Repository: https://github.com/manther8-design/Tarweej
 
 | Path | Purpose |
 |------|---------|
-| `apps/api` | NestJS modular monolith shell (`/api/v1`, health, Swagger, config, logging) |
+| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Swagger) |
 | `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL) |
-| `apps/admin` | Next.js admin shell (login placeholder only) |
+| `apps/admin` | Next.js admin: API login + settings / flags / roles |
 | `apps/web` | Optional public web placeholder package |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
-| `prisma/` | Identity + Reference + roles/settings schema, migration, seed |
+| `prisma/` | Identity + Reference + permissions/audit/settings schema, migrations, seed |
 | `docker-compose.yml` | PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
 
 ## Prerequisites
@@ -37,7 +37,7 @@ pnpm infra:up
 # Database
 pnpm db:generate
 pnpm db:deploy
-pnpm db:seed   # SA-focused reference + roles (dev only)
+pnpm db:seed   # SA reference + roles/permissions + admin@tarweej.local (dev only)
 
 # API
 pnpm dev
@@ -51,21 +51,21 @@ pnpm dev
 | http://localhost:3000/api/v1/health/live | Liveness |
 | http://localhost:3000/api/v1/health/ready | Readiness (DB) |
 | http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
+| http://localhost:3000/api/v1/configuration/settings | Public non-secret settings |
+| http://localhost:3000/api/v1/configuration/feature-flags | Public feature flags |
+| http://localhost:3000/api/v1/admin/configuration/… | Admin settings/flags (permission-guarded) |
+| http://localhost:3000/api/v1/admin/rbac/… | Roles, permissions, assign/revoke |
+| http://localhost:3000/api/v1/admin/audit/entries | Audit trail |
 | http://localhost:3000/api/v1/reference/countries | Active countries (+ associations) |
-| http://localhost:3000/api/v1/reference/regions?countryId=… | Active regions |
-| http://localhost:3000/api/v1/reference/cities?countryId=… | Active cities |
-| http://localhost:3000/api/v1/reference/languages | Active languages |
-| http://localhost:3000/api/v1/reference/currencies | Active currencies |
-| http://localhost:3000/api/v1/admin/reference/… | Admin CRUD (Bearer + `super_admin`) |
-| http://localhost:3000/api/v1/identity/auth/register | Email registration |
+| http://localhost:3000/api/v1/admin/reference/… | Admin reference CRUD (Bearer + `super_admin`) |
 | http://localhost:3000/api/v1/identity/auth/login | Email login |
-| http://localhost:3000/api/v1/identity/me | Current user (Bearer) |
 
 ### Admin
 
 ```bash
 pnpm --filter @tarweej/admin dev
-# http://localhost:3001  ·  /login placeholder
+# http://localhost:3001
+# Dev login after seed: admin@tarweej.local / Admin123!
 ```
 
 ### Flutter

@@ -12,6 +12,7 @@ export interface AuthenticatedUser {
   emailVerifiedAt: Date | null;
   phoneVerifiedAt: Date | null;
   roles: string[];
+  permissions: string[];
   sessionId: string;
 }
 
@@ -28,3 +29,5 @@ export interface AuthResult {
   tokens: TokenPair;
   sessionId: string;
 }
+
+export type PublicUser = Omit<AuthenticatedUser, 'sessionId'>;
