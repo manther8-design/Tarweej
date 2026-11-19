@@ -1,8 +1,18 @@
 /**
  * Dev-only seed: SA-focused reference data + roles/settings.
- * Do not run against production without review.
+ * Refuses NODE_ENV=production unless ALLOW_PROD_SEED=true (break-glass).
  */
 import { PrismaClient } from '@prisma/client';
+
+if (
+  process.env.NODE_ENV === 'production' &&
+  (process.env.ALLOW_PROD_SEED ?? '').toLowerCase() !== 'true'
+) {
+  console.error(
+    'Refusing to seed: NODE_ENV=production. Dev seed credentials must not land in prod. Set ALLOW_PROD_SEED=true only for reviewed break-glass.',
+  );
+  process.exit(1);
+}
 
 const prisma = new PrismaClient();
 

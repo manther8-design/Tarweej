@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.13.0 — TRW-013 Production Readiness
+
+- Health readiness now requires PostgreSQL **and** Redis (HTTP 503 when either is down)
+- Structured JSON logs in production + `x-correlation-id` / `x-request-id` middleware
+- HTTP request logging interceptor; Prometheus text metrics at `/api/v1/metrics`
+- Auth HTTP rate limits (Redis) on register/login/refresh/google/otp; OTP limits unchanged
+- Production env validation rejects placeholder JWT secrets and `SMS_PROVIDER=mock`
+- Seed refuses `NODE_ENV=production` unless `ALLOW_PROD_SEED=true`
+- Swagger disabled by default in production (`ENABLE_SWAGGER=true` to override)
+- `infrastructure/monitoring` + `infrastructure/deployment` scaffolding (Compose, Prometheus, deploy.sh)
+- Ops docs: backup/restore, retention/export, deploy runbook, security hardening
+- Backup/restore scripts; CI secret-scan gate; Dockerfile healthcheck + prisma schema in image
+
 ## 0.12.0 — TRW-012 Admin Dashboard
 
 - Admin ops overview KPIs: users, listings by status, payments, open reports, featured active

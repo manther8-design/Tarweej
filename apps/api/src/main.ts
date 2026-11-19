@@ -35,17 +35,20 @@ async function bootstrap(): Promise<void> {
   const origins = config.getOrThrow<string[]>('app.corsOrigins');
   app.enableCors({ origin: origins, credentials: true });
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Tarweej Platform API')
-    .setDescription('Public API contract for the Tarweej marketplace platform (`/api/v1`).')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  // OpenAPI UI for the versioned API surface
-  SwaggerModule.setup(`${apiPrefix}/v${apiVersion}/docs`, app, document, {
-    useGlobalPrefix: false,
-  });
+  const enableSwagger = config.get<boolean>('app.enableSwagger') ?? true;
+  if (enableSwagger) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('Tarweej Platform API')
+      .setDescription('Public API contract for the Tarweej marketplace platform (`/api/v1`).')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    // OpenAPI UI for the versioned API surface
+    SwaggerModule.setup(`${apiPrefix}/v${apiVersion}/docs`, app, document, {
+      useGlobalPrefix: false,
+    });
+  }
 
   const port = config.getOrThrow<number>('app.port');
   await app.listen(port, '0.0.0.0');
@@ -53,7 +56,11 @@ async function bootstrap(): Promise<void> {
   const bootstrapLogger = new Logger('Bootstrap');
   bootstrapLogger.log(`Tarweej API listening on http://localhost:${port}`);
   bootstrapLogger.log(`API base: http://localhost:${port}/${apiPrefix}/v${apiVersion}`);
-  bootstrapLogger.log(`Swagger: http://localhost:${port}/${apiPrefix}/v${apiVersion}/docs`);
+  if (enableSwagger) {
+    bootstrapLogger.log(`Swagger: http://localhost:${port}/${apiPrefix}/v${apiVersion}/docs`);
+  } else {
+    bootstrapLogger.log('Swagger disabled (production default; set ENABLE_SWAGGER=true to enable)');
+  }
 }
 
 void bootstrap();

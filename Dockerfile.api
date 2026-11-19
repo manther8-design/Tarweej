@@ -13,10 +13,19 @@ RUN pnpm db:generate && pnpm nx build api
 FROM node:22-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
-RUN addgroup --system tarweej && adduser --system --ingroup tarweej tarweej
+RUN apk add --no-cache wget \
+  && addgroup --system tarweej \
+  && adduser --system --ingroup tarweej tarweej
+
+# Runtime needs Prisma schema + CLI for migrate deploy during rollouts.
 COPY --from=build /workspace/dist/apps/api ./
 COPY --from=build /workspace/node_modules ./node_modules
 COPY --from=build /workspace/package.json ./package.json
+COPY --from=build /workspace/prisma ./prisma
+
 USER tarweej
 EXPOSE 3000
-CMD ["node", "main.js"]
+HEALTHCHECK --interval=15s --timeout=5s --start-period=40s --retries=5 \
+  CMD wget -qO- http://127.0.0.1:3000/api/v1/health/ready >/dev/null || exit 1
+# Nx @nx/js:tsc emits under dist/apps/api/src/main.js
+CMD ["node", "src/main.js"]

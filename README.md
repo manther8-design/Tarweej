@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Notifications & Moderation (TRW-011)
+# ترويج | Tarweej — Production Readiness (TRW-013)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -8,13 +8,16 @@ Repository: https://github.com/manther8-design/Tarweej
 
 | Path | Purpose |
 |------|---------|
-| `apps/api` | NestJS modular monolith (`/api/v1`, Identity → Engagement + Commercial + Notifications, Swagger) |
-| `apps/mobile` | Flutter shell (Riverpod, GoRouter, AR/EN + RTL, listings, search, favorites, chat, notifications, promote/pay) |
-| `apps/admin` | Next.js admin: categories, listings moderation, **reports queue**, featured pricing, payment routes, settings, flags, roles |
+| `apps/api` | NestJS modular monolith (`/api/v1`, Identity → Admin ops, Swagger in non-prod) |
+| `apps/mobile` | Flutter shell (Riverpod, GoRouter, AR/EN + RTL) |
+| `apps/admin` | Next.js admin ops surfaces |
 | `apps/web` | Optional public web placeholder package |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
-| `prisma/` | Full schema through notifications + reports, migrations, seed |
-| `docker-compose.yml` | PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
+| `prisma/` | Schema, migrations, **dev-only** seed |
+| `docker-compose.yml` | Local PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
+| `infrastructure/monitoring` | Prometheus scrape + log shipper hooks |
+| `infrastructure/deployment` | Prod-oriented Compose, env template, deploy helper |
+| `docs/ops/` | Deploy runbook, backup/restore, retention, hardening |
 
 ## Prerequisites
 
@@ -23,23 +26,18 @@ Repository: https://github.com/manther8-design/Tarweej
 - Docker + Docker Compose
 - Flutter stable (for mobile)
 
-## First run
+## First run (local / dev)
 
 ```bash
 cp .env.example .env
 corepack enable
 pnpm install
 
-# Infrastructure
 pnpm infra:up
-# or: docker compose up -d postgres redis minio
-
-# Database
 pnpm db:generate
 pnpm db:deploy
-pnpm db:seed   # SA reference + catalog + sample listings + admin@tarweej.local
+pnpm db:seed   # DEV ONLY — refuses NODE_ENV=production
 
-# API
 pnpm dev
 ```
 
@@ -49,31 +47,11 @@ pnpm dev
 |-----|-------------|
 | http://localhost:3000/api/v1 | Platform info |
 | http://localhost:3000/api/v1/health/live | Liveness |
-| http://localhost:3000/api/v1/health/ready | Readiness (DB) |
-| http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
-| http://localhost:3000/api/v1/notifications | In-app inbox (JWT) |
-| http://localhost:3000/api/v1/notifications/unread-count | Unread count (JWT) |
-| http://localhost:3000/api/v1/notifications/:id/read | Mark one read (JWT) |
-| http://localhost:3000/api/v1/notifications/read-all | Mark all read (JWT) |
-| http://localhost:3000/api/v1/notifications/device-tokens | Register/unregister push token (JWT) |
-| http://localhost:3000/api/v1/reports | File a listing/user report (JWT) |
-| http://localhost:3000/api/v1/admin/reports | Moderation queue (`reports.read`) |
-| http://localhost:3000/api/v1/admin/reports/:id/classify\|act\|close | Moderate (audited, `reports.moderate`) |
-| http://localhost:3000/api/v1/search/listings | Search listings (text, filters, sort, pagination) |
-| http://localhost:3000/api/v1/favorites | Favorites add/list/remove (JWT) |
-| http://localhost:3000/api/v1/conversations | Listing-scoped chat + messages + read receipts (JWT) |
-| http://localhost:3000/api/v1/promotions/plans | Featured pricing plans |
-| http://localhost:3000/api/v1/promotions/purchase | Purchase featured (JWT; owner only) |
-| http://localhost:3000/api/v1/payments | Payment history (JWT) |
-| http://localhost:3000/api/v1/webhooks/payments/:provider | Signed payment webhooks |
-| http://localhost:3000/api/v1/admin/commercial | Pricing rules + payment routes + expiry job |
-| http://localhost:3000/api/v1/listings | Public active listings (paginated) |
-| http://localhost:3000/api/v1/my/listings | Owner create/list/update/submit/media |
-| http://localhost:3000/api/v1/admin/listings/pending | Listing moderation queue |
-| http://localhost:3000/api/v1/categories | Active category hierarchy (+ `?lang=`) |
-| http://localhost:3000/api/v1/identity/auth/login | Email login |
+| http://localhost:3000/api/v1/health/ready | Readiness (**DB + Redis**; 503 if either down) |
+| http://localhost:3000/api/v1/metrics | Prometheus text metrics |
+| http://localhost:3000/api/v1/docs | Swagger (disabled in production by default) |
 
-Object storage defaults to `OBJECT_STORAGE_DRIVER=local` (filesystem under `.data/object-storage`). Set `s3` to use MinIO/AWS via the S3-compatible adapter. Media binaries are never stored in Postgres.
+Object storage defaults to `OBJECT_STORAGE_DRIVER=local`. Set `s3` for MinIO/AWS.
 
 ### Admin
 
@@ -81,24 +59,31 @@ Object storage defaults to `OBJECT_STORAGE_DRIVER=local` (filesystem under `.dat
 pnpm --filter @tarweej/admin dev
 # http://localhost:3001
 # Dev login after seed: admin@tarweej.local / Admin123!
-# Sample seller: seller@tarweej.local / Seller123!
-# Reports queue: /reports
 ```
 
-### Flutter
+## Production (single-region)
+
+See:
+
+- [`docs/ops/deploy-runbook.md`](docs/ops/deploy-runbook.md)
+- [`docs/ops/backup-restore.md`](docs/ops/backup-restore.md)
+- [`docs/ops/data-retention.md`](docs/ops/data-retention.md)
+- [`docs/ops/security-hardening.md`](docs/ops/security-hardening.md)
+- [`infrastructure/deployment/`](infrastructure/deployment/)
 
 ```bash
-cd apps/mobile
-flutter pub get
-flutter gen-l10n
-flutter run
-# Home → Notifications inbox; listing detail → Report listing
+# After filling secrets (never commit):
+cp infrastructure/deployment/env.production.example .env.production
+ENV_FILE=.env.production ./infrastructure/deployment/deploy.sh
 ```
+
+Do **not** seed production. Do **not** reuse `.env.example` JWT / DB passwords.
 
 ## Tests
 
 ```bash
-pnpm test          # API unit + integration (needs DATABASE_URL / seed)
+pnpm ops:secret-scan
+pnpm test
 pnpm build
 ```
 
