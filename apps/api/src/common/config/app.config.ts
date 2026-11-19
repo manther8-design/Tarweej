@@ -9,4 +9,11 @@ export const appConfig = registerAs('app', () => ({
     .split(',')
     .map((origin) => origin.trim()),
   logLevel: process.env.LOG_LEVEL ?? 'info',
+  /** `json` (default in production) | `pretty` (default in non-prod) */
+  logFormat: process.env.LOG_FORMAT ?? '',
+  enableSwagger:
+    (process.env.ENABLE_SWAGGER ?? '').toLowerCase() === 'true' ||
+    (process.env.NODE_ENV ?? 'development') !== 'production',
+  authRateLimitWindowSeconds: Number(process.env.AUTH_RATE_LIMIT_WINDOW_SECONDS ?? 60),
+  authRateLimitMax: Number(process.env.AUTH_RATE_LIMIT_MAX ?? 30),
 }));

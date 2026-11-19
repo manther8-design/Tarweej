@@ -67,4 +67,16 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   getClient(): Redis | null {
     return this.isReady() ? this.client : null;
   }
+
+  /** Throws when Redis is unavailable or ping fails (used by readiness). */
+  async ping(): Promise<void> {
+    const client = this.getClient();
+    if (!client) {
+      throw new Error('Redis not connected');
+    }
+    const result = await client.ping();
+    if (result !== 'PONG') {
+      throw new Error(`Unexpected Redis ping response: ${String(result)}`);
+    }
+  }
 }

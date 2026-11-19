@@ -1,0 +1,16 @@
+# Example Prometheus scrape config for single-region Tarweej API.
+# Point `targets` at the API service DNS / IP in your environment.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: tarweej-api
+    metrics_path: /api/v1/metrics
+    static_configs:
+      # Local monitoring compose uses host.docker.internal; prod: replace with api:3000 / service DNS
+      - targets: ['host.docker.internal:3000']
+        labels:
+          service: tarweej-api
+          region: primary

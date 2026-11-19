@@ -1,0 +1,18 @@
+# Example Vector config: ship API JSON stdout to a central sink.
+# Replace the sink with your logging backend (CloudWatch, Loki, Elasticsearch, etc.).
+
+[sources.tarweej_api_stdout]
+type = "stdin"
+
+[transforms.parse_json]
+type = "remap"
+inputs = ["tarweej_api_stdout"]
+source = '''
+  . = parse_json!(.message)
+  .service = "tarweej-api"
+'''
+
+[sinks.console_debug]
+type = "console"
+inputs = ["parse_json"]
+encoding.codec = "json"

@@ -1,6 +1,6 @@
 {
   "name": "tarweej",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "description": "Tarweej multi-product marketplace platform monorepo",
   "license": "UNLICENSED",
@@ -24,6 +24,8 @@
     "db:studio": "prisma studio",
     "infra:up": "docker compose up -d postgres redis minio",
     "infra:down": "docker compose down",
+    "backup:postgres": "bash scripts/backup-postgres.sh",
+    "ops:secret-scan": "bash scripts/ci-secret-scan.sh",
     "prepare": "husky"
   },
   "prisma": {

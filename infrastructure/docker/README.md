@@ -1,4 +1,10 @@
-# Infrastructure — Docker
+# Infrastructure — Docker (local)
+
+For production-oriented Compose, monitoring scrape configs, and deploy helpers see:
+
+- [`../deployment/`](../deployment/)
+- [`../monitoring/`](../monitoring/)
+- [`../../docs/ops/`](../../docs/ops/)
 
 Root `docker-compose.yml` defines local dependencies:
 

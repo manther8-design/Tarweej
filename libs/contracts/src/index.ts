@@ -13,6 +13,13 @@ export interface HealthLiveResponse {
 export interface HealthReadyResponse {
   status: 'ready';
   database: 'connected';
+  redis: 'connected';
+}
+
+export interface HealthNotReadyResponse {
+  status: 'not_ready';
+  database: 'connected' | 'disconnected';
+  redis: 'connected' | 'disconnected';
 }
 
 export interface PlatformInfoResponse {

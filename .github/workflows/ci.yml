@@ -62,6 +62,8 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile=false
+      - name: Secret scan (prod paths + credential patterns)
+        run: bash scripts/ci-secret-scan.sh
       - run: pnpm db:generate
       - run: pnpm db:deploy
       - run: pnpm db:seed
