@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.0 — TRW-009 Favorites & Chat
+
+- Prisma: `favorites` (unique user+listing), `conversations` (listing-scoped buyer/seller), `messages` with `read_at`
+- NestJS engagement module: `GET/POST/DELETE /api/v1/favorites`, `GET/POST /api/v1/conversations` (+ messages + read)
+- Deny favoriting own listing; favorites list marks expired/deleted/unavailable gracefully
+- Chat authorization: only participants can read/send; HTTP-first with `ChatRealtimePort` + WebSocket path stub `/api/v1/ws/chat`
+- Flutter: favorites list, chat list/thread, listing detail favorite + contact seller (AR/EN)
+- Integration tests for favorites + conversations
+
 ## 0.8.0 — TRW-008 Search
 
 - NestJS search domain: `GET /api/v1/search/listings` with text (title/description FTS + trigram), category/city/country/price/featured filters, dynamic attribute filters (`attrs` JSON), sort, pagination

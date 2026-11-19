@@ -121,5 +121,32 @@
         "type": "int"
       }
     }
+  },
+  "openFavorites": "Favorites",
+  "openChat": "Messages",
+  "favoritesTitle": "Favorites",
+  "favoritesEmpty": "You have no favorite listings yet.",
+  "favoritesRetry": "Retry",
+  "favoritesAddAction": "Add to favorites",
+  "favoritesRemoveAction": "Remove favorite",
+  "favoritesAvailable": "Available",
+  "favoritesExpired": "Expired",
+  "favoritesDeleted": "Deleted",
+  "favoritesUnavailable": "Unavailable",
+  "chatTitle": "Messages",
+  "chatThreadTitle": "Conversation",
+  "chatEmpty": "No conversations yet.",
+  "chatRetry": "Retry",
+  "chatNoMessagesYet": "No messages yet.",
+  "chatMessageHint": "Type a message",
+  "chatSendAction": "Send",
+  "chatContactSeller": "Contact seller",
+  "chatUnreadCount": "{count} unread",
+  "@chatUnreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

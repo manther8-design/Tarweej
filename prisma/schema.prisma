@@ -1,4 +1,4 @@
-// Tarweej schema (Identity + Reference + Config/Admin RBAC + Catalog + Listings).
+// Tarweej schema (Identity + Reference + Config/Admin RBAC + Catalog + Listings + Engagement).
 // UUID PKs use DB gen_random_uuid() defaults (TRW-002 user default).
 
 generator client {
@@ -38,6 +38,10 @@ model User {
   listings        Listing[]
   listingStatusChanges ListingStatusHistory[]
   listingViews    ListingView[]
+  favorites       Favorite[]
+  conversationsAsBuyer  Conversation[] @relation("ConversationBuyer")
+  conversationsAsSeller Conversation[] @relation("ConversationSeller")
+  messages        Message[]
 
   @@index([countryId])
   @@index([status])
@@ -540,6 +544,8 @@ model Listing {
   attributeValues  ListingAttributeValue[]
   statusHistory    ListingStatusHistory[]
   views            ListingView[]
+  favorites        Favorite[]
+  conversations    Conversation[]
 
   @@index([ownerId, status])
   @@index([status, countryId, publishedAt(sort: Desc)])
@@ -624,4 +630,63 @@ model ListingView {
   @@index([listingId, createdAt])
   @@index([viewerId])
   @@map("listing_views")
+}
+
+// ---------------------------------------------------------------------------
+// Engagement — Favorites & Chat (TRW-009)
+// Conversations are listing-scoped (buyer + seller). Messages carry read receipts.
+// Realtime delivery is ported (HTTP now; WebSocket gateway stub ready).
+// ---------------------------------------------------------------------------
+
+model Favorite {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  listingId String   @map("listing_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([listingId])
+  @@map("favorites")
+}
+
+model Conversation {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  listingId     String    @map("listing_id") @db.Uuid
+  buyerId       String    @map("buyer_id") @db.Uuid
+  sellerId      String    @map("seller_id") @db.Uuid
+  lastMessageAt DateTime? @map("last_message_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  listing  Listing   @relation(fields: [listingId], references: [id], onDelete: Restrict)
+  buyer    User      @relation("ConversationBuyer", fields: [buyerId], references: [id], onDelete: Restrict)
+  seller   User      @relation("ConversationSeller", fields: [sellerId], references: [id], onDelete: Restrict)
+  messages Message[]
+
+  @@unique([listingId, buyerId, sellerId])
+  @@index([buyerId, lastMessageAt(sort: Desc)])
+  @@index([sellerId, lastMessageAt(sort: Desc)])
+  @@index([listingId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
+  senderId       String    @map("sender_id") @db.Uuid
+  body           String    @db.VarChar(4000)
+  readAt         DateTime? @map("read_at") @db.Timestamptz(6)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Restrict)
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@index([conversationId, readAt])
+  @@map("messages")
 }

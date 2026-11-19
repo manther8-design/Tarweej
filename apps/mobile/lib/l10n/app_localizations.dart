@@ -769,6 +769,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} results'**
   String searchResultsCount(int count);
+
+  /// No description provided for @openFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get openFavorites;
+
+  /// No description provided for @openChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get openChat;
+
+  /// No description provided for @favoritesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesTitle;
+
+  /// No description provided for @favoritesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no favorite listings yet.'**
+  String get favoritesEmpty;
+
+  /// No description provided for @favoritesRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get favoritesRetry;
+
+  /// No description provided for @favoritesAddAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get favoritesAddAction;
+
+  /// No description provided for @favoritesRemoveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove favorite'**
+  String get favoritesRemoveAction;
+
+  /// No description provided for @favoritesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get favoritesAvailable;
+
+  /// No description provided for @favoritesExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get favoritesExpired;
+
+  /// No description provided for @favoritesDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get favoritesDeleted;
+
+  /// No description provided for @favoritesUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get favoritesUnavailable;
+
+  /// No description provided for @chatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get chatTitle;
+
+  /// No description provided for @chatThreadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation'**
+  String get chatThreadTitle;
+
+  /// No description provided for @chatEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations yet.'**
+  String get chatEmpty;
+
+  /// No description provided for @chatRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get chatRetry;
+
+  /// No description provided for @chatNoMessagesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet.'**
+  String get chatNoMessagesYet;
+
+  /// No description provided for @chatMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message'**
+  String get chatMessageHint;
+
+  /// No description provided for @chatSendAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get chatSendAction;
+
+  /// No description provided for @chatContactSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact seller'**
+  String get chatContactSeller;
+
+  /// No description provided for @chatUnreadCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} unread'**
+  String chatUnreadCount(int count);
 }
 
 class _AppLocalizationsDelegate

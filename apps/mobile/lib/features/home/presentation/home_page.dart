@@ -110,6 +110,16 @@ class HomePage extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             FilledButton.tonal(
+              onPressed: () => context.goNamed('favorites'),
+              child: Text(l10n.openFavorites),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
+              onPressed: () => context.goNamed('chat'),
+              child: Text(l10n.openChat),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
               onPressed: () => context.goNamed('profile'),
               child: Text(l10n.openProfile),
             ),
