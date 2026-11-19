@@ -10,6 +10,7 @@ const nav = [
   { href: '/', label: 'Overview' },
   { href: '/categories', label: 'Categories' },
   { href: '/listings', label: 'Listings' },
+  { href: '/reports', label: 'Reports' },
   { href: '/promotions', label: 'Promotions' },
   { href: '/settings', label: 'Settings' },
   { href: '/feature-flags', label: 'Feature flags' },

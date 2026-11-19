@@ -120,6 +120,11 @@ class HomePage extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             FilledButton.tonal(
+              onPressed: () => context.goNamed('notifications'),
+              child: Text(l10n.openNotifications),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
               onPressed: () => context.goNamed('profile'),
               child: Text(l10n.openProfile),
             ),

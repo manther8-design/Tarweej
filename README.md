@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Payments & Featured Ads (TRW-010)
+# ترويج | Tarweej — Notifications & Moderation (TRW-011)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -8,12 +8,12 @@ Repository: https://github.com/manther8-design/Tarweej
 
 | Path | Purpose |
 |------|---------|
-| `apps/api` | NestJS modular monolith (`/api/v1`, Identity → Engagement + Commercial/Payments, Swagger) |
-| `apps/mobile` | Flutter shell (Riverpod, GoRouter, AR/EN + RTL, listings, search, favorites, chat, promote/pay) |
-| `apps/admin` | Next.js admin: categories, listings moderation, featured pricing, payment routes, settings, flags, roles |
+| `apps/api` | NestJS modular monolith (`/api/v1`, Identity → Engagement + Commercial + Notifications, Swagger) |
+| `apps/mobile` | Flutter shell (Riverpod, GoRouter, AR/EN + RTL, listings, search, favorites, chat, notifications, promote/pay) |
+| `apps/admin` | Next.js admin: categories, listings moderation, **reports queue**, featured pricing, payment routes, settings, flags, roles |
 | `apps/web` | Optional public web placeholder package |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
-| `prisma/` | Full schema through commercial payments/featured promotions, migrations, seed |
+| `prisma/` | Full schema through notifications + reports, migrations, seed |
 | `docker-compose.yml` | PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
 
 ## Prerequisites
@@ -51,6 +51,14 @@ pnpm dev
 | http://localhost:3000/api/v1/health/live | Liveness |
 | http://localhost:3000/api/v1/health/ready | Readiness (DB) |
 | http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
+| http://localhost:3000/api/v1/notifications | In-app inbox (JWT) |
+| http://localhost:3000/api/v1/notifications/unread-count | Unread count (JWT) |
+| http://localhost:3000/api/v1/notifications/:id/read | Mark one read (JWT) |
+| http://localhost:3000/api/v1/notifications/read-all | Mark all read (JWT) |
+| http://localhost:3000/api/v1/notifications/device-tokens | Register/unregister push token (JWT) |
+| http://localhost:3000/api/v1/reports | File a listing/user report (JWT) |
+| http://localhost:3000/api/v1/admin/reports | Moderation queue (`reports.read`) |
+| http://localhost:3000/api/v1/admin/reports/:id/classify\|act\|close | Moderate (audited, `reports.moderate`) |
 | http://localhost:3000/api/v1/search/listings | Search listings (text, filters, sort, pagination) |
 | http://localhost:3000/api/v1/favorites | Favorites add/list/remove (JWT) |
 | http://localhost:3000/api/v1/conversations | Listing-scoped chat + messages + read receipts (JWT) |
@@ -60,11 +68,8 @@ pnpm dev
 | http://localhost:3000/api/v1/webhooks/payments/:provider | Signed payment webhooks |
 | http://localhost:3000/api/v1/admin/commercial | Pricing rules + payment routes + expiry job |
 | http://localhost:3000/api/v1/listings | Public active listings (paginated) |
-| http://localhost:3000/api/v1/listings/:id | Public active listing detail |
-| http://localhost:3000/api/v1/listings/:id/views | Increment view counter |
 | http://localhost:3000/api/v1/my/listings | Owner create/list/update/submit/media |
-| http://localhost:3000/api/v1/admin/listings/pending | Moderation queue (`listings.moderate`) |
-| http://localhost:3000/api/v1/admin/listings/:id/approve\|reject | Moderate (audited) |
+| http://localhost:3000/api/v1/admin/listings/pending | Listing moderation queue |
 | http://localhost:3000/api/v1/categories | Active category hierarchy (+ `?lang=`) |
 | http://localhost:3000/api/v1/identity/auth/login | Email login |
 
@@ -77,6 +82,7 @@ pnpm --filter @tarweej/admin dev
 # http://localhost:3001
 # Dev login after seed: admin@tarweej.local / Admin123!
 # Sample seller: seller@tarweej.local / Seller123!
+# Reports queue: /reports
 ```
 
 ### Flutter
@@ -85,37 +91,17 @@ pnpm --filter @tarweej/admin dev
 cd apps/mobile
 flutter pub get
 flutter gen-l10n
-flutter analyze
 flutter run
+# Home → Notifications inbox; listing detail → Report listing
 ```
 
-Native Android/iOS host folders are not committed in Phase 1. Generate once if needed:
+## Tests
 
 ```bash
-cd apps/mobile
-flutter create --platforms=android,ios,web .
-```
-
-## Quality
-
-```bash
-pnpm format:check
-pnpm lint
-pnpm test
+pnpm test          # API unit + integration (needs DATABASE_URL / seed)
 pnpm build
 ```
 
-## Notes
+## License
 
-- UUID primary keys use DB `gen_random_uuid()` defaults.
-- Listing status machine: Draft → Pending Review → Active/Rejected (+ Pause/Expire/Archive/Delete).
-- Object storage: local adapter (default) or S3/MinIO; CDN URLs are stubs until a CDN is wired.
-- Never commit `.env` or real secrets.
-
-## Delivery
-
-- Foundation: project store `docs/delivery/TRW-002-foundation.md`
-- Identity: project store `docs/delivery/TRW-003-identity.md`
-- Listings: project store `docs/delivery/TRW-007-listings.md`
-- Search: project store `docs/delivery/TRW-008-search.md`
-- Favorites & Chat: project store `docs/delivery/TRW-009-favorites-chat.md`
+UNLICENSED — private project.

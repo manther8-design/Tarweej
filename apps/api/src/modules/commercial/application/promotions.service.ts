@@ -12,6 +12,7 @@ import {
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { AuditService } from '../../configuration/application/audit.service';
+import { NotificationsService } from '../../notifications/application/notifications.service';
 import { PaymentsService } from './payments.service';
 import { PaymentRoutingService } from './payment-routing.service';
 
@@ -26,6 +27,7 @@ export class PromotionsService implements OnModuleInit, OnModuleDestroy {
     private readonly payments: PaymentsService,
     private readonly routing: PaymentRoutingService,
     private readonly audit: AuditService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   onModuleInit(): void {
@@ -264,6 +266,23 @@ export class PromotionsService implements OnModuleInit, OnModuleDestroy {
         entityId: promo.id,
         after: { endsAt: promo.endsAt },
       });
+
+      const listing = await this.prisma.listing.findUnique({
+        where: { id: promo.listingId },
+        select: { ownerId: true, title: true },
+      });
+      if (listing) {
+        await this.notifications.notify({
+          userId: listing.ownerId,
+          templateCode: 'featured.expired',
+          payload: {
+            promotionId: promo.id,
+            listingId: promo.listingId,
+            listingTitle: listing.title,
+            endsAt: promo.endsAt?.toISOString() ?? null,
+          },
+        });
+      }
     }
 
     return { expiredCount: due.length };

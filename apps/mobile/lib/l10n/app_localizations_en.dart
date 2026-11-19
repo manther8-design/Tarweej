@@ -362,6 +362,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openChat => 'Messages';
 
   @override
+  String get openNotifications => 'Notifications';
+
+  @override
   String get favoritesTitle => 'Favorites';
 
   @override
@@ -474,4 +477,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentBackToListingAction => 'Back to listing';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet.';
+
+  @override
+  String get notificationsRetry => 'Retry';
+
+  @override
+  String get notificationsMarkRead => 'Mark read';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all read';
+
+  @override
+  String get reportListingAction => 'Report listing';
+
+  @override
+  String get reportListingTitle => 'Report listing';
+
+  @override
+  String get reportReasonSpam => 'Spam';
+
+  @override
+  String get reportReasonFraud => 'Fraud';
+
+  @override
+  String get reportReasonInappropriate => 'Inappropriate';
+
+  @override
+  String get reportReasonCounterfeit => 'Counterfeit';
+
+  @override
+  String get reportReasonHarassment => 'Harassment';
+
+  @override
+  String get reportReasonOther => 'Other';
+
+  @override
+  String get reportNotesHint => 'Optional details';
+
+  @override
+  String get reportSubmitAction => 'Submit report';
+
+  @override
+  String get reportSuccessMessage => 'Report submitted. Thank you.';
 }

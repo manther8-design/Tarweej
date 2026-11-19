@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from '../../infrastructure/prisma/prisma.module';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { IdentityModule } from '../identity/identity.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { AdminCommercialController } from './adapters/http/admin-commercial.controller';
 import { PaymentsController } from './adapters/http/payments.controller';
 import { PromotionsController } from './adapters/http/promotions.controller';
@@ -21,7 +22,7 @@ import { PAYMENT_GATEWAY_REGISTRY } from './domain/commercial.types';
  * Admin: `/api/v1/admin/commercial`
  */
 @Module({
-  imports: [PrismaModule, IdentityModule, ConfigurationModule],
+  imports: [PrismaModule, IdentityModule, ConfigurationModule, NotificationsModule],
   controllers: [
     PromotionsController,
     PaymentsController,

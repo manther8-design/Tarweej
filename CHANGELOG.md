@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.11.0 — TRW-011 Notifications & Moderation
+
+- Prisma: `notifications`, `device_tokens`, `reports` (listing and/or user targets; audited resolutions)
+- NestJS notifications module: inbox list/unread/mark-read/mark-all + device token register; FCM push port stub
+- Domain hooks: listing approve/reject, payment success/fail, featured expiry, new chat message
+- Reports: `POST /api/v1/reports`; admin queue classify / act (hide listing) / close with reason + audit
+- RBAC: `reports.read`, `reports.moderate` granted to moderator + super_admin
+- Flutter: notifications inbox; report action on listing detail (AR/EN)
+- Admin: reports moderation queue page
+- Integration tests for notifications + reports workflow
+
 ## 0.10.0 — TRW-010 Payments & Featured Ads
 
 - Prisma: `featured_pricing_rules`, `featured_promotions`, `payments`, `payment_attempts`, `webhook_events`, `payment_provider_routes`

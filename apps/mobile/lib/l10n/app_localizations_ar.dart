@@ -359,6 +359,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get openChat => 'الرسائل';
 
   @override
+  String get openNotifications => 'الإشعارات';
+
+  @override
   String get favoritesTitle => 'المفضلة';
 
   @override
@@ -470,4 +473,52 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get paymentBackToListingAction => 'العودة إلى الإعلان';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationsEmpty => 'لا توجد إشعارات بعد.';
+
+  @override
+  String get notificationsRetry => 'إعادة المحاولة';
+
+  @override
+  String get notificationsMarkRead => 'تم التعيين كمقروء';
+
+  @override
+  String get notificationsMarkAllRead => 'تم الكل كمقروء';
+
+  @override
+  String get reportListingAction => 'الإبلاغ عن الإعلان';
+
+  @override
+  String get reportListingTitle => 'الإبلاغ عن إعلان';
+
+  @override
+  String get reportReasonSpam => 'رسائل مزعجة';
+
+  @override
+  String get reportReasonFraud => 'احتيال';
+
+  @override
+  String get reportReasonInappropriate => 'محتوى غير لائق';
+
+  @override
+  String get reportReasonCounterfeit => 'مزيف';
+
+  @override
+  String get reportReasonHarassment => 'تحرش';
+
+  @override
+  String get reportReasonOther => 'أخرى';
+
+  @override
+  String get reportNotesHint => 'تفاصيل اختيارية';
+
+  @override
+  String get reportSubmitAction => 'إرسال البلاغ';
+
+  @override
+  String get reportSuccessMessage => 'تم إرسال البلاغ. شكراً لك.';
 }
