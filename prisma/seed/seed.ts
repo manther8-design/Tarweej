@@ -362,34 +362,220 @@ async function main(): Promise<void> {
   });
 
   const roles = [
-    { code: 'super_admin', name: 'Super Admin' },
-    { code: 'moderator', name: 'Moderator' },
-    { code: 'user', name: 'User' },
+    {
+      code: 'super_admin',
+      name: 'Super Admin',
+      description: 'Full platform configuration and RBAC',
+    },
+    {
+      code: 'moderator',
+      name: 'Moderator',
+      description: 'Moderation and read access to config',
+    },
+    { code: 'user', name: 'User', description: 'Standard authenticated user' },
   ];
 
+  const roleByCode: Record<string, { id: string }> = {};
   for (const role of roles) {
-    await prisma.role.upsert({
+    roleByCode[role.code] = await prisma.role.upsert({
       where: { code: role.code },
-      update: { name: role.name },
+      update: { name: role.name, description: role.description },
       create: role,
     });
   }
 
+  const permissions = [
+    {
+      code: 'config.settings.read',
+      name: 'Read business settings',
+      description: 'List and view business settings (including secrets in admin)',
+    },
+    {
+      code: 'config.settings.write',
+      name: 'Write business settings',
+      description: 'Create or update business settings',
+    },
+    {
+      code: 'config.flags.read',
+      name: 'Read feature flags',
+      description: 'List and view feature flags',
+    },
+    {
+      code: 'config.flags.write',
+      name: 'Write feature flags',
+      description: 'Create or update feature flags',
+    },
+    {
+      code: 'rbac.roles.read',
+      name: 'Read roles & permissions',
+      description: 'View roles, permissions, and assignments',
+    },
+    {
+      code: 'rbac.assign',
+      name: 'Assign roles',
+      description: 'Assign or revoke roles for users',
+    },
+    {
+      code: 'audit.read',
+      name: 'Read audit log',
+      description: 'View audit entries for admin mutations',
+    },
+  ] as const;
+
+  const permissionByCode: Record<string, { id: string }> = {};
+  for (const permission of permissions) {
+    permissionByCode[permission.code] = await prisma.permission.upsert({
+      where: { code: permission.code },
+      update: {
+        name: permission.name,
+        description: permission.description,
+      },
+      create: permission,
+    });
+  }
+
+  const grant = async (roleCode: string, permissionCodes: readonly string[]) => {
+    const role = roleByCode[roleCode];
+    if (!role) {
+      throw new Error(`Missing role ${roleCode}`);
+    }
+    for (const code of permissionCodes) {
+      const permission = permissionByCode[code];
+      if (!permission) {
+        throw new Error(`Missing permission ${code}`);
+      }
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: { roleId: role.id, permissionId: permission.id },
+        },
+        update: {},
+        create: { roleId: role.id, permissionId: permission.id },
+      });
+    }
+  };
+
+  await grant(
+    'super_admin',
+    permissions.map((p) => p.code),
+  );
+  await grant('moderator', [
+    'config.settings.read',
+    'config.flags.read',
+    'rbac.roles.read',
+    'audit.read',
+  ]);
+
   await prisma.featureFlag.upsert({
     where: { key: 'identity.google_sign_in' },
-    update: {},
-    create: { key: 'identity.google_sign_in', isEnabled: false },
+    update: {
+      description: 'Enable Google sign-in adapter for clients',
+    },
+    create: {
+      key: 'identity.google_sign_in',
+      isEnabled: false,
+      description: 'Enable Google sign-in adapter for clients',
+    },
+  });
+
+  await prisma.featureFlag.upsert({
+    where: { key: 'listings.featured_enabled' },
+    update: { description: 'Show featured listings placement' },
+    create: {
+      key: 'listings.featured_enabled',
+      isEnabled: true,
+      description: 'Show featured listings placement',
+    },
   });
 
   await prisma.businessSetting.upsert({
     where: { key: 'listings.featured_home_count' },
-    update: { valueJson: { count: 7 } },
-    create: { key: 'listings.featured_home_count', valueJson: { count: 7 } },
+    update: {
+      valueJson: { count: 7 },
+      description: 'Number of featured ads on home',
+      isSecret: false,
+    },
+    create: {
+      key: 'listings.featured_home_count',
+      valueJson: { count: 7 },
+      description: 'Number of featured ads on home',
+      isSecret: false,
+    },
+  });
+
+  await prisma.businessSetting.upsert({
+    where: { key: 'identity.require_email_verification' },
+    update: {
+      valueJson: { required: false },
+      description: 'Require verified email before listing',
+      isSecret: false,
+    },
+    create: {
+      key: 'identity.require_email_verification',
+      valueJson: { required: false },
+      description: 'Require verified email before listing',
+      isSecret: false,
+    },
+  });
+
+  await prisma.businessSetting.upsert({
+    where: { key: 'payments.webhook_signing_hint' },
+    update: {
+      valueJson: { hint: 'dev-only-placeholder' },
+      description: 'Internal webhook signing hint (secret)',
+      isSecret: true,
+    },
+    create: {
+      key: 'payments.webhook_signing_hint',
+      valueJson: { hint: 'dev-only-placeholder' },
+      description: 'Internal webhook signing hint (secret)',
+      isSecret: true,
+    },
+  });
+
+  // Dev-only bootstrap admin (password must be changed outside local/dev).
+  const bcrypt = await import('bcryptjs');
+  const adminEmail = 'admin@tarweej.local';
+  const adminPasswordHash = await bcrypt.hash('Admin123!', 12);
+  const adminUser = await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: {
+      passwordHash: adminPasswordHash,
+      status: 'active',
+      deletedAt: null,
+      accountType: 'super_admin',
+      displayName: 'Tarweej Admin',
+    },
+    create: {
+      email: adminEmail,
+      passwordHash: adminPasswordHash,
+      displayName: 'Tarweej Admin',
+      accountType: 'super_admin',
+      status: 'active',
+      preferredLanguageCode: 'ar',
+      emailVerifiedAt: new Date(),
+    },
+  });
+  const superAdminRole = roleByCode['super_admin'];
+  if (!superAdminRole) {
+    throw new Error('super_admin role missing after upsert');
+  }
+  await prisma.userRoleAssignment.upsert({
+    where: {
+      userId_roleId: {
+        userId: adminUser.id,
+        roleId: superAdminRole.id,
+      },
+    },
+    update: {},
+    create: {
+      userId: adminUser.id,
+      roleId: superAdminRole.id,
+    },
   });
 
   // eslint-disable-next-line no-console
   console.log(
-    'Seed complete: SA-focused reference (locales/dialing/regions/cities/translations) + roles',
+    'Seed complete: SA reference + roles/permissions + config flags/settings + admin@tarweej.local',
   );
 }
 

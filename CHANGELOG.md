@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 — TRW-005 Config & Admin RBAC
+
+- Prisma: permissions, role_permissions, audit_entries; settings/flags metadata (`description`, `is_secret`)
+- NestJS configuration APIs: public non-secret settings + feature flags; admin CRUD with permission guards
+- RBAC admin APIs: roles/permissions overview, assign/revoke roles; append-only audit for sensitive mutations
+- Seed: core permissions, role grants, sample settings/flags, local `admin@tarweej.local`
+- Next.js admin: real API login, settings / feature flags / roles overview pages
+- Integration tests for public reads, permission enforcement, audit trail
+
 ## 0.4.0 — TRW-004 Reference Data
 
 - Complete Prisma reference models: locales, dialing_codes, country associations, hierarchical regions, city flags, translation strings

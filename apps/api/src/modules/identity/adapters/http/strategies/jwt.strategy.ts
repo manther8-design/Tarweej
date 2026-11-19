@@ -33,7 +33,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       },
       include: {
         user: {
-          include: { roleAssignments: { include: { role: true } } },
+          include: {
+            roleAssignments: {
+              include: {
+                role: {
+                  include: {
+                    permissions: { include: { permission: true } },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     });
@@ -43,6 +53,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     const roles = session.user.roleAssignments.map((a) => a.role.code);
+    const permissions = [
+      ...new Set(
+        session.user.roleAssignments.flatMap((a) =>
+          a.role.permissions.map((rp) => rp.permission.code),
+        ),
+      ),
+    ];
 
     await this.prisma.userSession.update({
       where: { id: session.id },
@@ -61,6 +78,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       emailVerifiedAt: session.user.emailVerifiedAt,
       phoneVerifiedAt: session.user.phoneVerifiedAt,
       roles,
+      permissions,
       sessionId: session.id,
     };
   }

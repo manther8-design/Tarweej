@@ -169,6 +169,15 @@ export class OtpService {
     meta: { deviceLabel?: string; userAgent?: string; ipAddress?: string },
   ): Promise<AuthResult> {
     const roles = user.roleAssignments.map((a) => a.role.code);
+    const permissionRows =
+      roles.length === 0
+        ? []
+        : await this.prisma.rolePermission.findMany({
+            where: { role: { code: { in: roles } } },
+            include: { permission: true },
+          });
+    const permissions = [...new Set(permissionRows.map((r) => r.permission.code))];
+
     const refresh = this.tokens.mintRefreshToken();
     const session = await this.prisma.userSession.create({
       data: {
@@ -204,6 +213,7 @@ export class OtpService {
         emailVerifiedAt: user.emailVerifiedAt,
         phoneVerifiedAt: user.phoneVerifiedAt,
         roles,
+        permissions,
       },
     };
   }

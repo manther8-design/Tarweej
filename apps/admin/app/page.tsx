@@ -1,35 +1,43 @@
-import Link from 'next/link';
+'use client';
+
+import { AdminShell } from '../components/AdminShell';
 
 export default function AdminHomePage() {
   return (
-    <main
-      style={{
-        minHeight: '100vh',
-        display: 'grid',
-        placeItems: 'center',
-        padding: '2rem',
-      }}
-    >
-      <section style={{ maxWidth: 480, width: '100%' }}>
-        <p style={{ color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 8 }}>ADMIN</p>
-        <h1 style={{ fontSize: '2.4rem', margin: '0 0 0.5rem' }}>ترويج</h1>
-        <p style={{ color: 'var(--muted)', marginBottom: '1.5rem' }}>
-          Tarweej admin shell — login placeholder only (Phase 1).
+    <AdminShell>
+      <section style={{ maxWidth: 720 }}>
+        <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.8rem' }}>Configuration foundation</h2>
+        <p style={{ margin: 0, color: 'var(--muted)', lineHeight: 1.55 }}>
+          Manage business settings, feature flags, and role permissions. Full moderation dashboard
+          arrives in a later phase — this surface covers Phase 4 admin RBAC and config.
         </p>
-        <Link
-          href="/login"
+        <ul
           style={{
-            display: 'inline-block',
-            background: 'var(--accent)',
-            color: '#fff',
-            padding: '0.75rem 1.25rem',
-            borderRadius: 8,
-            fontWeight: 600,
+            margin: '1.5rem 0 0',
+            padding: 0,
+            listStyle: 'none',
+            display: 'grid',
+            gap: '0.75rem',
           }}
         >
-          Go to login
-        </Link>
+          {[
+            ['Settings', 'Read and update typed business settings (audited).'],
+            ['Feature flags', 'Toggle client-facing capability flags.'],
+            ['Roles', 'Inspect seeded roles and their permission grants.'],
+          ].map(([title, copy]) => (
+            <li
+              key={title}
+              style={{
+                borderTop: '1px solid var(--border)',
+                paddingTop: '0.75rem',
+              }}
+            >
+              <strong style={{ display: 'block', marginBottom: 4 }}>{title}</strong>
+              <span style={{ color: 'var(--muted)' }}>{copy}</span>
+            </li>
+          ))}
+        </ul>
       </section>
-    </main>
+    </AdminShell>
   );
 }

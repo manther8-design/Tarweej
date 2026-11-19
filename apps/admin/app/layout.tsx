@@ -4,7 +4,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Tarweej Admin',
-  description: 'ترويج admin shell — Phase 1 placeholder',
+  description: 'ترويج configuration & administration',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

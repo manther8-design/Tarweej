@@ -21,3 +21,17 @@ export interface PlatformInfoResponse {
   status: string;
   documentation: string;
 }
+
+export interface PublicSetting {
+  key: string;
+  value: unknown;
+  description: string | null;
+  updatedAt: string;
+}
+
+export interface PublicFeatureFlag {
+  key: string;
+  isEnabled: boolean;
+  description: string | null;
+  updatedAt: string;
+}
