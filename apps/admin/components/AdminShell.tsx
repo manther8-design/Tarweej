@@ -8,13 +8,17 @@ import { clearSession, hasAdminAccess, loadSession, type AdminSession } from '..
 
 const nav = [
   { href: '/', label: 'Overview' },
-  { href: '/categories', label: 'Categories' },
   { href: '/listings', label: 'Listings' },
   { href: '/reports', label: 'Reports' },
+  { href: '/users', label: 'Users' },
+  { href: '/payments', label: 'Payments' },
   { href: '/promotions', label: 'Promotions' },
+  { href: '/categories', label: 'Categories' },
+  { href: '/reference', label: 'Reference' },
   { href: '/settings', label: 'Settings' },
   { href: '/feature-flags', label: 'Feature flags' },
   { href: '/roles', label: 'Roles' },
+  { href: '/audit', label: 'Audit' },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {

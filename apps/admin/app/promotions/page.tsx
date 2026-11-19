@@ -33,9 +33,26 @@ type PaymentRoute = {
 
 type PublicCountry = { id: string; iso2: string; name?: string };
 
+type PromotionItem = {
+  id: string;
+  listingId: string;
+  status: string;
+  placement: string;
+  durationHours: number;
+  startsAt: string | null;
+  endsAt: string | null;
+  listing?: { id: string; title: string; status: string; isFeaturedCached: boolean };
+};
+
+type PromotionsPage = {
+  total: number;
+  items: PromotionItem[];
+};
+
 export default function PromotionsAdminPage() {
   const [rules, setRules] = useState<PricingRule[]>([]);
   const [routes, setRoutes] = useState<PaymentRoute[]>([]);
+  const [promotions, setPromotions] = useState<PromotionItem[]>([]);
   const [countries, setCountries] = useState<PublicCountry[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -58,7 +75,7 @@ export default function PromotionsAdminPage() {
       return;
     }
     try {
-      const [pricing, paymentRoutes, countryList] = await Promise.all([
+      const [pricing, paymentRoutes, countryList, promoPage] = await Promise.all([
         apiFetch<PricingRule[]>('/admin/commercial/pricing-rules', {
           token: session.tokens.accessToken,
         }),
@@ -66,9 +83,13 @@ export default function PromotionsAdminPage() {
           token: session.tokens.accessToken,
         }),
         apiFetch<PublicCountry[]>('/reference/countries'),
+        apiFetch<PromotionsPage>('/admin/commercial/promotions?page=1&pageSize=30', {
+          token: session.tokens.accessToken,
+        }),
       ]);
       setRules(pricing);
       setRoutes(paymentRoutes);
+      setPromotions(promoPage.items);
       setCountries(countryList);
       if (!countryId && countryList[0]) {
         setCountryId(countryList[0].id);
@@ -184,6 +205,28 @@ export default function PromotionsAdminPage() {
           <button type="button" style={btnStyle} onClick={() => void onExpireDue()}>
             Run expiry job
           </button>
+        </div>
+
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          <h3 style={{ margin: 0 }}>Recent featured promotions</h3>
+          {promotions.length === 0 ? (
+            <p style={{ margin: 0, color: 'var(--muted)' }}>No promotions yet.</p>
+          ) : (
+            promotions.map((promo) => (
+              <article key={promo.id} style={rowStyle}>
+                <strong>
+                  {promo.listing?.title || promo.listingId} · {promo.status}
+                </strong>
+                <p style={{ margin: '0.35rem 0 0', color: 'var(--muted)', fontSize: 14 }}>
+                  {promo.placement} · {promo.durationHours}h
+                  {promo.startsAt
+                    ? ` · ${new Date(promo.startsAt).toISOString().slice(0, 16)}`
+                    : ''}
+                  {promo.endsAt ? ` → ${new Date(promo.endsAt).toISOString().slice(0, 16)}` : ''}
+                </p>
+              </article>
+            ))
+          )}
         </div>
 
         <div style={{ display: 'grid', gap: '0.75rem' }}>

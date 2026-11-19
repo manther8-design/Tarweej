@@ -421,6 +421,11 @@ async function main(): Promise<void> {
       description: 'View audit entries for admin mutations',
     },
     {
+      code: 'dashboard.read',
+      name: 'Read admin dashboard',
+      description: 'View ops KPI overview aggregations',
+    },
+    {
       code: 'catalog.categories.read',
       name: 'Read catalog categories',
       description: 'View categories and attribute definitions in admin',
@@ -444,6 +449,11 @@ async function main(): Promise<void> {
       code: 'listings.moderate',
       name: 'Moderate listings',
       description: 'Approve or reject listings pending review',
+    },
+    {
+      code: 'payments.read',
+      name: 'Read payments (admin)',
+      description: 'List payment records for ops surfaces',
     },
     {
       code: 'payments.pricing.read',
@@ -518,9 +528,11 @@ async function main(): Promise<void> {
     'config.flags.read',
     'rbac.roles.read',
     'audit.read',
+    'dashboard.read',
     'catalog.categories.read',
     'listings.read',
     'listings.moderate',
+    'payments.read',
     'payments.pricing.read',
     'payments.routes.read',
     'reports.read',

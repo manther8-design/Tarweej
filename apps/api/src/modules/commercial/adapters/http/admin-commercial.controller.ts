@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../../identity/adapters/http/decorators/current-user.decorator';
 import { RequirePermissions } from '../../../identity/adapters/http/decorators/permissions.decorator';
@@ -6,9 +6,15 @@ import { JwtAuthGuard } from '../../../identity/adapters/http/guards/jwt-auth.gu
 import { PermissionsGuard } from '../../../identity/adapters/http/guards/permissions.guard';
 import type { AuthenticatedUser } from '../../../identity/domain/identity.types';
 import { PaymentRoutingService } from '../../application/payment-routing.service';
+import { PaymentsService } from '../../application/payments.service';
 import { PricingService } from '../../application/pricing.service';
 import { PromotionsService } from '../../application/promotions.service';
-import { UpsertPaymentRouteDto, UpsertPricingRuleDto } from './dto/commercial.dto';
+import {
+  AdminListPaymentsQueryDto,
+  AdminListPromotionsQueryDto,
+  UpsertPaymentRouteDto,
+  UpsertPricingRuleDto,
+} from './dto/commercial.dto';
 
 @ApiTags('admin-commercial')
 @ApiBearerAuth()
@@ -19,7 +25,22 @@ export class AdminCommercialController {
     private readonly pricing: PricingService,
     private readonly routing: PaymentRoutingService,
     private readonly promotions: PromotionsService,
+    private readonly payments: PaymentsService,
   ) {}
+
+  @Get('payments')
+  @RequirePermissions('payments.read')
+  @ApiOperation({ summary: 'Admin list payments (no hard-delete; ops trail)' })
+  listPayments(@Query() query: AdminListPaymentsQueryDto) {
+    return this.payments.listAdmin(query);
+  }
+
+  @Get('promotions')
+  @RequirePermissions('payments.pricing.read')
+  @ApiOperation({ summary: 'Admin list featured promotions' })
+  listPromotions(@Query() query: AdminListPromotionsQueryDto) {
+    return this.promotions.listAdmin(query);
+  }
 
   @Get('pricing-rules')
   @RequirePermissions('payments.pricing.read')

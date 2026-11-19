@@ -30,20 +30,36 @@ export class AuditService {
     });
   }
 
-  async list(input: { entityType?: string; actorId?: string; limit?: number }) {
+  async list(input: {
+    entityType?: string;
+    actorId?: string;
+    action?: string;
+    limit?: number;
+    offset?: number;
+  }) {
     const take = Math.min(Math.max(input.limit ?? 50, 1), 200);
-    return this.prisma.auditEntry.findMany({
-      where: {
-        entityType: input.entityType,
-        actorId: input.actorId,
-      },
-      orderBy: { createdAt: 'desc' },
-      take,
-      include: {
-        actor: {
-          select: { id: true, email: true, displayName: true },
+    const skip = Math.max(input.offset ?? 0, 0);
+    const where = {
+      entityType: input.entityType || undefined,
+      actorId: input.actorId || undefined,
+      action: input.action ? { contains: input.action, mode: 'insensitive' as const } : undefined,
+    };
+
+    const [total, items] = await this.prisma.$transaction([
+      this.prisma.auditEntry.count({ where }),
+      this.prisma.auditEntry.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+        include: {
+          actor: {
+            select: { id: true, email: true, displayName: true },
+          },
         },
-      },
-    });
+      }),
+    ]);
+
+    return { total, limit: take, offset: skip, items };
   }
 }

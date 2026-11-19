@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.12.0 — TRW-012 Admin Dashboard
+
+- Admin ops overview KPIs: users, listings by status, payments, open reports, featured active
+- `GET /api/v1/admin/dashboard/overview` (`dashboard.read`) with recent audit strip
+- Audit browser API pagination/filters (`action`, `offset`) + Admin `/audit` UI
+- Users list + role assign/revoke surfaces: `GET /api/v1/admin/rbac/users` + Admin `/users`
+- Payments/featured ops: `GET /api/v1/admin/commercial/payments|promotions` + Admin `/payments`
+- Reference countries admin page; shell nav unified across ops queues
+- RBAC: `dashboard.read`, `payments.read` for moderator + super_admin
+- Integration tests for dashboard KPIs, users list, payments/promotions admin lists
+
 ## 0.11.0 — TRW-011 Notifications & Moderation
 
 - Prisma: `notifications`, `device_tokens`, `reports` (listing and/or user targets; audited resolutions)

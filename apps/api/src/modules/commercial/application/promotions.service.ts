@@ -57,6 +57,44 @@ export class PromotionsService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
+  async listAdmin(input?: { page?: number; pageSize?: number; status?: string }) {
+    const page = Math.max(input?.page ?? 1, 1);
+    const pageSize = Math.min(Math.max(input?.pageSize ?? 20, 1), 100);
+    const where = {
+      ...(input?.status ? { status: input.status } : {}),
+    };
+    const [total, rows] = await this.prisma.$transaction([
+      this.prisma.featuredPromotion.count({ where }),
+      this.prisma.featuredPromotion.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          listing: {
+            select: {
+              id: true,
+              title: true,
+              status: true,
+              ownerId: true,
+              isFeaturedCached: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      page,
+      pageSize,
+      total,
+      items: rows.map((row) => ({
+        ...this.toPublicPromotion(row),
+        listing: row.listing,
+      })),
+    };
+  }
+
   async purchase(
     userId: string,
     input: {
