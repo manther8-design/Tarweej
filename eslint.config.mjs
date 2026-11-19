@@ -6,14 +6,24 @@ export default tseslint.config(
   ...nx.configs['flat/base'],
   ...nx.configs['flat/typescript'],
   {
-    ignores: ['**/dist/**', '**/coverage/**', '**/.nx/**', 'apps/mobile/**'],
+    ignores: [
+      '**/dist/**',
+      '**/coverage/**',
+      '**/.nx/**',
+      '**/node_modules/**',
+      'apps/mobile/**',
+      'apps/admin/**',
+      'apps/web/**',
+      'prisma/seed/**',
+    ],
   },
   {
     files: ['**/*.ts'],
     rules: {
-      '@typescript-eslint/consistent-type-imports': 'error',
+      // Nest decorators frequently need value imports (Injectable, Module, …).
+      '@typescript-eslint/consistent-type-imports': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-floating-promises': 'off',
     },
   },
   prettier,

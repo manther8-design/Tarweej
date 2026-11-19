@@ -1,3 +1,13 @@
+# Local infrastructure for Tarweej Phase 1
+# Ports:
+#   PostgreSQL  5432
+#   Redis       6379
+#   MinIO API   9000
+#   MinIO UI    9001
+#
+# Note: Official `minio/minio` was not pullable in some CI/agent networks.
+# We use `bitnamilegacy/minio` (S3-compatible MinIO distribution) for local object storage.
+
 services:
   postgres:
     image: postgres:17-alpine
@@ -32,6 +42,26 @@ services:
       timeout: 5s
       retries: 5
 
+  minio:
+    image: bitnamilegacy/minio:latest
+    container_name: tarweej-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: tarweej_minio
+      MINIO_ROOT_PASSWORD: tarweej_minio_dev_password
+      MINIO_DEFAULT_BUCKETS: tarweej-dev
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio_data:/bitnami/minio/data
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 15s
+      timeout: 5s
+      retries: 8
+
 volumes:
   postgres_data:
   redis_data:
+  minio_data:

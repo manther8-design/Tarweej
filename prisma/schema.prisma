@@ -1,18 +1,255 @@
+// Tarweej Phase 1 foundation schema
+// UUID PKs use DB gen_random_uuid() defaults (TRW-002 user default).
+// Scope: Identity + Reference + Roles / FeatureFlags / BusinessSettings.
+
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model PlatformMetadata {
-  id        String   @id @default(uuid()) @db.Uuid
-  key       String   @unique @db.VarChar(100)
-  value     String   @db.Text
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String?   @unique @db.VarChar(320)
+  phoneE164             String?   @unique @map("phone_e164") @db.VarChar(20)
+  passwordHash          String?   @map("password_hash") @db.VarChar(255)
+  accountType           String    @default("regular") @map("account_type") @db.VarChar(40)
+  status                String    @default("active") @db.VarChar(40)
+  countryId             String?   @map("country_id") @db.Uuid
+  preferredLanguageCode String?   @map("preferred_language_code") @db.VarChar(16)
+  displayName           String?   @map("display_name") @db.VarChar(160)
+  emailVerifiedAt       DateTime? @map("email_verified_at") @db.Timestamptz(6)
+  phoneVerifiedAt       DateTime? @map("phone_verified_at") @db.Timestamptz(6)
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt             DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  country         Country?             @relation(fields: [countryId], references: [id])
+  sessions        UserSession[]
+  oauthAccounts   UserOauthAccount[]
+  roleAssignments UserRoleAssignment[]
+
+  @@index([countryId])
+  @@index([status])
+  @@map("users")
+}
+
+model UserSession {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  refreshTokenHash String    @map("refresh_token_hash") @db.VarChar(255)
+  deviceLabel      String?   @map("device_label") @db.VarChar(160)
+  expiresAt        DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt        DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("user_sessions")
+}
+
+model UserOauthAccount {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  provider        String   @db.VarChar(40)
+  providerSubject String   @map("provider_subject") @db.VarChar(255)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerSubject])
+  @@index([userId])
+  @@map("user_oauth_accounts")
+}
+
+model Role {
+  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code String @unique @db.VarChar(64)
+  name String @db.VarChar(120)
+
+  assignments UserRoleAssignment[]
+
+  @@map("roles")
+}
+
+model UserRoleAssignment {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  roleId    String   @map("role_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([roleId])
+  @@map("user_role_assignments")
+}
+
+// ---------------------------------------------------------------------------
+// Reference data
+// ---------------------------------------------------------------------------
+
+model Language {
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code     String  @unique @db.VarChar(16)
+  name     String  @db.VarChar(120)
+  isRtl    Boolean @default(false) @map("is_rtl")
+  isActive Boolean @default(true) @map("is_active")
+
+  countryLanguages CountryLanguage[]
+
+  @@map("languages")
+}
+
+model Country {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  iso2        String   @unique @db.Char(2)
+  iso3        String   @unique @db.Char(3)
+  dialingCode String   @map("dialing_code") @db.VarChar(8)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  users             User[]
+  countryLanguages  CountryLanguage[]
+  countryCurrencies CountryCurrency[]
+  countryTimeZones  CountryTimeZone[]
+  regions           Region[]
+
+  @@map("countries")
+}
+
+model Currency {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code       String  @unique @db.VarChar(8)
+  name       String  @db.VarChar(120)
+  minorUnits Int     @default(2) @map("minor_units")
+  isActive   Boolean @default(true) @map("is_active")
+
+  countryCurrencies CountryCurrency[]
+
+  @@map("currencies")
+}
+
+model TimeZone {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ianaName String @unique @map("iana_name") @db.VarChar(64)
+
+  countryTimeZones CountryTimeZone[]
+
+  @@map("time_zones")
+}
+
+model CountryLanguage {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId  String  @map("country_id") @db.Uuid
+  languageId String  @map("language_id") @db.Uuid
+  isPrimary  Boolean @default(false) @map("is_primary")
+
+  country  Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([countryId, languageId])
+  @@index([languageId])
+  @@map("country_languages")
+}
+
+model CountryCurrency {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId  String  @map("country_id") @db.Uuid
+  currencyId String  @map("currency_id") @db.Uuid
+  isPrimary  Boolean @default(false) @map("is_primary")
+
+  country  Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  currency Currency @relation(fields: [currencyId], references: [id], onDelete: Cascade)
+
+  @@unique([countryId, currencyId])
+  @@index([currencyId])
+  @@map("country_currencies")
+}
+
+model CountryTimeZone {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId  String  @map("country_id") @db.Uuid
+  timeZoneId String  @map("time_zone_id") @db.Uuid
+  isPrimary  Boolean @default(false) @map("is_primary")
+
+  country  Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  timeZone TimeZone @relation(fields: [timeZoneId], references: [id], onDelete: Cascade)
+
+  @@unique([countryId, timeZoneId])
+  @@index([timeZoneId])
+  @@map("country_time_zones")
+}
+
+model Region {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId String @map("country_id") @db.Uuid
+  code      String @db.VarChar(40)
+  name      String @db.VarChar(160)
+
+  country Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  cities  City[]
+
+  @@unique([countryId, code])
+  @@map("regions")
+}
+
+model City {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  regionId  String  @map("region_id") @db.Uuid
+  name      String  @db.VarChar(160)
+  latitude  Float?
+  longitude Float?
+
+  region Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@index([regionId])
+  @@map("cities")
+}
+
+model TranslationString {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  entityType   String @map("entity_type") @db.VarChar(64)
+  entityId     String @map("entity_id") @db.Uuid
+  languageCode String @map("language_code") @db.VarChar(16)
+  fieldName    String @map("field_name") @db.VarChar(64)
+  value        String @db.Text
+
+  @@unique([entityType, entityId, languageCode, fieldName])
+  @@index([entityType, entityId])
+  @@map("translation_strings")
+}
+
+// ---------------------------------------------------------------------------
+// Configuration / admin scaffolding
+// ---------------------------------------------------------------------------
+
+model FeatureFlag {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key       String   @unique @db.VarChar(120)
+  isEnabled Boolean  @default(false) @map("is_enabled")
+  rulesJson Json?    @map("rules_json") @db.JsonB
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  @@map("platform_metadata")
+  @@map("feature_flags")
+}
+
+model BusinessSetting {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key       String   @unique @db.VarChar(120)
+  valueJson Json     @map("value_json") @db.JsonB
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("business_settings")
 }

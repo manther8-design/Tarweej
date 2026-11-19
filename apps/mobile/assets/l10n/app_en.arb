@@ -1,0 +1,10 @@
+{
+  "@@locale": "en",
+  "appTitle": "Tarweej",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "splashTagline": "Marketplace foundation",
+  "homeHeadline": "Welcome to Tarweej",
+  "homeBody": "Phase 1 mobile shell — splash and home placeholders only."
+}

@@ -1,6 +1,10 @@
-node_modules
 dist
 coverage
 .nx
+node_modules
 pnpm-lock.yaml
-apps/mobile
+apps/mobile/.dart_tool
+apps/mobile/build
+apps/mobile/lib/l10n
+apps/admin/.next
+*.md

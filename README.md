@@ -1,119 +1,97 @@
-# Tarweej Platform — TRW-001 Foundation v1.0.1
+# ترويج | Tarweej — Phase 1 Foundation (TRW-002)
 
-Production foundation for **ترويج | Tarweej**, a multi-product marketplace platform.
+Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
-Official repository: `https://github.com/manther8-design/Tarweej`
+Repository: https://github.com/manther8-design/Tarweej
 
-## Included
+## What's included
 
-- Nx + pnpm monorepo orchestration
-- NestJS 11 API with API versioning, validation, Helmet, CORS, Swagger, and health probes
-- Prisma 7 with PostgreSQL driver adapter
-- PostgreSQL and Redis through Docker Compose
-- Flutter application shell using Riverpod and GoRouter
-- ESLint, Prettier, Husky, Commitlint, and GitHub Actions
-- Environment validation and production-oriented configuration
+| Path | Purpose |
+|------|---------|
+| `apps/api` | NestJS modular monolith shell (`/api/v1`, health, Swagger, config, logging) |
+| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL) |
+| `apps/admin` | Next.js admin shell (login placeholder only) |
+| `apps/web` | Optional public web placeholder package |
+| `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
+| `prisma/` | Identity + Reference + roles/settings schema, migration, seed |
+| `docker-compose.yml` | PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
 
-## Requirements
+## Prerequisites
 
 - Node.js 22+
-- pnpm 11+
-- Docker Desktop
-- Flutter stable
-- Git
+- pnpm 11+ (`corepack enable`)
+- Docker + Docker Compose
+- Flutter stable (for mobile)
 
-## First Run
+## First run
 
 ```bash
-git clone https://github.com/manther8-design/Tarweej.git
-cd Tarweej
 cp .env.example .env
 corepack enable
 pnpm install
+
+# Infrastructure
 pnpm infra:up
+# or: docker compose up -d postgres redis minio
+
+# Database
 pnpm db:generate
-pnpm db:migrate
+pnpm db:deploy
+pnpm db:seed   # languages / countries / currencies / roles (dev only)
+
+# API
 pnpm dev
 ```
 
-Open:
+### API endpoints
 
-- API: `http://localhost:3000`
-- Swagger: `http://localhost:3000/docs`
-- Liveness: `http://localhost:3000/api/health/live`
-- Readiness: `http://localhost:3000/api/health/ready`
+| URL | Description |
+|-----|-------------|
+| http://localhost:3000/api/v1 | Platform info |
+| http://localhost:3000/api/v1/health/live | Liveness |
+| http://localhost:3000/api/v1/health/ready | Readiness (DB) |
+| http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
 
-## Flutter
+### Admin
+
+```bash
+pnpm --filter @tarweej/admin dev
+# http://localhost:3001  ·  /login placeholder
+```
+
+### Flutter
 
 ```bash
 cd apps/mobile
 flutter pub get
+flutter gen-l10n
+flutter analyze
 flutter run
 ```
 
-The native Android/iOS host folders are intentionally not committed in this first delivery. Generate them once using:
+Native Android/iOS host folders are not committed in Phase 1. Generate once if needed:
 
 ```bash
 cd apps/mobile
-flutter create --platforms=android,ios .
+flutter create --platforms=android,ios,web .
 ```
 
-Then review the generated platform identifiers before committing.
-
-## Quality Commands
+## Quality
 
 ```bash
 pnpm format:check
 pnpm lint
-pnpm build
-pnpm test
-```
-
-## Recommended Initial Git Flow
-
-```bash
-git checkout -b feature/trw-001-foundation
-git add .
-git commit -m "feat(foundation): establish Tarweej monorepo"
-git push -u origin feature/trw-001-foundation
-```
-
-Open a pull request into `develop`, then promote accepted releases to `main`.
-
-## Security Notes
-
-- Never commit `.env` or production credentials.
-- Replace all development passwords outside local environments.
-- Enable GitHub branch protection and secret scanning.
-- Use managed secrets in staging and production.
-
-
-## Applying v1.0.1 to the Existing Repository
-
-Extract this package beside your local Git repository, then run:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\apply-update.ps1 `
-  -RepositoryPath "C:\path\to\Tarweej"
-```
-
-Alternatively, copy the package contents over the repository manually while preserving
-the repository's `.git` folder and local `.env`.
-
-Then validate and commit:
-
-```powershell
-corepack enable
-corepack prepare pnpm@11.18.0 --activate
-pnpm install
-pnpm db:generate
-pnpm lint
 pnpm test
 pnpm build
-git status
-git add .
-git commit -m "fix(foundation): harden TRW-001 baseline"
-git push
 ```
 
-See `docs/TRW-001-ACCEPTANCE.md` for the complete acceptance checklist.
+## Notes
+
+- UUID primary keys use DB `gen_random_uuid()` defaults.
+- Object storage locally is MinIO (S3-compatible); production uses the same adapter later.
+- Full Identity (OTP / Google / sessions E2E) is **out of scope** for this phase — modules are scaffolded only.
+- Never commit `.env` or real secrets.
+
+## Delivery
+
+See project store delivery note `docs/delivery/TRW-002-foundation.md` (agent Context) for verification commands and known issues.

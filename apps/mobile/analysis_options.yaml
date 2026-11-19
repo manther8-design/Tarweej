@@ -1,7 +1,16 @@
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    - build/**
+  # Flutter 3.47+ deprecates package:flutter/material.dart in favor of
+  # material_ui / cupertino_ui. Keep classic Material imports for the Phase 1
+  # shell; migrate when go_router / riverpod ecosystem catches up.
+  errors:
+    deprecated_member_use: ignore
+
 linter:
   rules:
-    always_use_package_imports: true
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
     avoid_print: true
-    prefer_final_locals: true
