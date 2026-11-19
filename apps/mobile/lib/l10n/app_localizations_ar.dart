@@ -167,4 +167,102 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get guestLabel => 'زائر';
+
+  @override
+  String get myListingsTitle => 'إعلاناتي';
+
+  @override
+  String get myListingsSubtitle =>
+      'إدارة المسودات والإعلانات المنشورة عبر واجهة ترويج.';
+
+  @override
+  String get myListingsEmpty => 'لا توجد إعلانات بعد.';
+
+  @override
+  String get createListingAction => 'إنشاء إعلان';
+
+  @override
+  String get createListingTitle => 'إعلان جديد';
+
+  @override
+  String get listingDetailTitle => 'الإعلان';
+
+  @override
+  String get listingNotFound => 'الإعلان غير موجود.';
+
+  @override
+  String get listingStatusLabel => 'الحالة';
+
+  @override
+  String get listingViewsLabel => 'المشاهدات';
+
+  @override
+  String get listingRejectionLabel => 'سبب الرفض';
+
+  @override
+  String get listingMediaHeading => 'الوسائط';
+
+  @override
+  String get listingMediaEmpty => 'لا توجد وسائط.';
+
+  @override
+  String get listingAttributesHeading => 'الخصائص';
+
+  @override
+  String get listingAttributesEmpty => 'لا توجد خصائص.';
+
+  @override
+  String get listingWizardStep => 'الخطوة';
+
+  @override
+  String get listingWizardCategoryStep => 'اختر الفئة';
+
+  @override
+  String get listingWizardFieldsStep => 'التفاصيل والخصائص';
+
+  @override
+  String get listingWizardMediaStep => 'الوسائط';
+
+  @override
+  String get listingWizardReviewStep => 'مراجعة وإرسال';
+
+  @override
+  String get listingWizardPickCategoryFirst => 'اختر فئة في الخطوة السابقة.';
+
+  @override
+  String get listingWizardMissing => 'الفئة والبلد مطلوبان.';
+
+  @override
+  String get listingWizardFailed => 'تعذر إنشاء الإعلان.';
+
+  @override
+  String get listingWizardBack => 'رجوع';
+
+  @override
+  String get listingWizardNext => 'التالي';
+
+  @override
+  String get listingWizardSubmit => 'إرسال للمراجعة';
+
+  @override
+  String get listingTitleLabel => 'العنوان';
+
+  @override
+  String get listingDescriptionLabel => 'الوصف';
+
+  @override
+  String get listingPriceLabel => 'السعر';
+
+  @override
+  String get listingMediaStubHint =>
+      'منتقي الصور مؤقت — أرفق ملف وسائط تجريبيًا.';
+
+  @override
+  String get listingMediaStubAction => 'إرفاق وسائط تجريبية';
+
+  @override
+  String get listingMediaStubReady => 'الوسائط التجريبية جاهزة';
+
+  @override
+  String get openMyListings => 'إعلاناتي';
 }

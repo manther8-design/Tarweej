@@ -9,6 +9,7 @@ coverage/
 .DS_Store
 .idea/
 .vscode/
+.data/
 apps/mobile/.dart_tool/
 apps/mobile/build/
 apps/mobile/.flutter-plugins*

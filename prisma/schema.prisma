@@ -1,4 +1,4 @@
-// Tarweej schema (Identity + Reference + Config/Admin RBAC + Catalog).
+// Tarweej schema (Identity + Reference + Config/Admin RBAC + Catalog + Listings).
 // UUID PKs use DB gen_random_uuid() defaults (TRW-002 user default).
 
 generator client {
@@ -35,6 +35,9 @@ model User {
   oauthAccounts   UserOauthAccount[]
   roleAssignments UserRoleAssignment[]
   auditEntries    AuditEntry[]
+  listings        Listing[]
+  listingStatusChanges ListingStatusHistory[]
+  listingViews    ListingView[]
 
   @@index([countryId])
   @@index([status])
@@ -197,6 +200,7 @@ model Country {
   countryTimeZones    CountryTimeZone[]
   countryDialingCodes CountryDialingCode[]
   regions             Region[]
+  listings            Listing[]
 
   @@map("countries")
 }
@@ -338,7 +342,8 @@ model City {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  region Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  region   Region    @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  listings Listing[]
 
   @@index([regionId, isActive])
   @@map("cities")
@@ -429,6 +434,7 @@ model Category {
   parent     Category?           @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children   Category[]          @relation("CategoryTree")
   attributes CategoryAttribute[]
+  listings   Listing[]
 
   @@index([parentId])
   @@index([listingType, isActive])
@@ -454,6 +460,7 @@ model AttributeDefinition {
 
   categoryLinks CategoryAttribute[]
   options       AttributeOption[]
+  listingValues ListingAttributeValue[]
 
   @@index([dataType])
   @@index([isActive])
@@ -495,4 +502,119 @@ model AttributeOption {
   @@unique([attributeDefinitionId, value])
   @@index([attributeDefinitionId, sortOrder])
   @@map("attribute_options")
+}
+
+// ---------------------------------------------------------------------------
+// Listings (TRW-007)
+// Media bytes live in object storage; Postgres stores metadata + keys only.
+// ---------------------------------------------------------------------------
+
+model Listing {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerId          String    @map("owner_id") @db.Uuid
+  categoryId       String    @map("category_id") @db.Uuid
+  countryId        String    @map("country_id") @db.Uuid
+  cityId           String?   @map("city_id") @db.Uuid
+  listingType      String    @default("marketplace") @map("listing_type") @db.VarChar(40)
+  title            String    @db.VarChar(200)
+  description      String    @db.Text
+  priceAmount      Decimal?  @map("price_amount") @db.Decimal(18, 4)
+  currencyCode     String?   @map("currency_code") @db.VarChar(3)
+  status           String    @default("draft") @db.VarChar(40)
+  isFeaturedCached Boolean   @default(false) @map("is_featured_cached")
+  viewCount        Int       @default(0) @map("view_count")
+  latitude         Float?
+  longitude        Float?
+  publishedAt      DateTime? @map("published_at") @db.Timestamptz(6)
+  expiresAt        DateTime? @map("expires_at") @db.Timestamptz(6)
+  rejectionReason  String?   @map("rejection_reason") @db.VarChar(500)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  owner            User                     @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  category         Category                 @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  country          Country                  @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  city             City?                    @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  media            ListingMedia[]
+  attributeValues  ListingAttributeValue[]
+  statusHistory    ListingStatusHistory[]
+  views            ListingView[]
+
+  @@index([ownerId, status])
+  @@index([status, countryId, publishedAt(sort: Desc)])
+  @@index([categoryId, status])
+  @@index([deletedAt])
+  @@map("listings")
+}
+
+model ListingMedia {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  listingId  String   @map("listing_id") @db.Uuid
+  storageKey String   @map("storage_key") @db.VarChar(512)
+  cdnUrl     String   @map("cdn_url") @db.VarChar(1024)
+  mimeType   String   @map("mime_type") @db.VarChar(120)
+  byteSize   Int?     @map("byte_size")
+  sortOrder  Int      @default(0) @map("sort_order")
+  status     String   @default("ready") @db.VarChar(40)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, sortOrder])
+  @@index([storageKey])
+  @@map("listing_media")
+}
+
+model ListingAttributeValue {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  listingId             String    @map("listing_id") @db.Uuid
+  attributeDefinitionId String    @map("attribute_definition_id") @db.Uuid
+  valueText             String?   @map("value_text") @db.VarChar(500)
+  valueNumber           Decimal?  @map("value_number") @db.Decimal(18, 6)
+  valueBool             Boolean?  @map("value_bool")
+  valueDate             DateTime? @map("value_date") @db.Date
+  valueJson             Json?     @map("value_json") @db.JsonB
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  listing             Listing             @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  attributeDefinition AttributeDefinition @relation(fields: [attributeDefinitionId], references: [id], onDelete: Restrict)
+
+  @@unique([listingId, attributeDefinitionId])
+  @@index([attributeDefinitionId])
+  @@map("listing_attribute_values")
+}
+
+model ListingStatusHistory {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  listingId  String   @map("listing_id") @db.Uuid
+  fromStatus String?  @map("from_status") @db.VarChar(40)
+  toStatus   String   @map("to_status") @db.VarChar(40)
+  actorId    String?  @map("actor_id") @db.Uuid
+  reason     String?  @db.VarChar(500)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([listingId, createdAt])
+  @@index([actorId])
+  @@map("listing_status_histories")
+}
+
+/// Append-only view events; listings.view_count is the denormalized counter.
+model ListingView {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  listingId         String   @map("listing_id") @db.Uuid
+  viewerId          String?  @map("viewer_id") @db.Uuid
+  viewerFingerprint String?  @map("viewer_fingerprint") @db.VarChar(120)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  viewer  User?   @relation(fields: [viewerId], references: [id], onDelete: SetNull)
+
+  @@index([listingId, createdAt])
+  @@index([viewerId])
+  @@map("listing_views")
 }
