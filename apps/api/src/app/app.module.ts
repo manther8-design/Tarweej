@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { appConfig } from '../common/config/app.config';
+import { identityConfig } from '../common/config/identity.config';
 import { validateEnvironment } from '../common/config/environment.validation';
 import { HealthModule } from '../common/health/health.module';
 import { LoggingModule } from '../common/logging/logging.module';
@@ -15,7 +16,7 @@ import { AppController } from './app.controller';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [appConfig],
+      load: [appConfig, identityConfig],
       validate: validateEnvironment,
     }),
     LoggingModule,

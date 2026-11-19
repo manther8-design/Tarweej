@@ -34,6 +34,10 @@ jobs:
       DATABASE_URL: postgresql://tarweej:tarweej_dev_password@localhost:5432/tarweej?schema=public
       REDIS_URL: redis://localhost:6379
       NODE_ENV: test
+      JWT_ACCESS_SECRET: ci-access-secret
+      JWT_REFRESH_SECRET: ci-refresh-secret
+      GOOGLE_AUTH_ENABLED: 'true'
+      GOOGLE_CLIENT_ID: ci-google-client
     steps:
       - uses: actions/checkout@v4
         with:
@@ -51,6 +55,7 @@ jobs:
       - run: pnpm install --frozen-lockfile=false
       - run: pnpm db:generate
       - run: pnpm db:deploy
+      - run: pnpm db:seed
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm test

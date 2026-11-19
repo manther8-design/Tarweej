@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 — TRW-003 Identity
+
+- NestJS Identity domain: email register/login, JWT access/refresh rotation, logout revoke
+- Phone OTP with SMS provider port + mock adapter; Google auth adapter stub
+- Device sessions list/revoke; RBAC roles from DB; Swagger under `/api/v1/identity/...`
+- Prisma migration for OTP challenges + session metadata
+- Flutter auth screens, session storage, GoRouter guards, profile shell (AR/EN)
+
 ## 0.2.0 — TRW-002 Foundation
 
 - Expand Prisma schema: Identity, Reference, roles, feature flags, business settings
