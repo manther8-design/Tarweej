@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 — TRW-008 Search
+
+- NestJS search domain: `GET /api/v1/search/listings` with text (title/description FTS + trigram), category/city/country/price/featured filters, dynamic attribute filters (`attrs` JSON), sort, pagination
+- `SearchEngine` port with Postgres implementation (OpenSearch-ready); optional Redis cache for hot queries
+- Prisma/SQL indexes: FTS `search_vector`, pg_trgm on title/description, filter/sort helpers on listings + attribute values
+- Flutter: search UI with filters wired to API (AR/EN)
+- CI: Redis service for backend job; search integration tests
+
 ## 0.7.0 — TRW-007 Listings
 
 - Prisma: `listings`, `listing_media`, `listing_attribute_values`, `listing_status_histories`, `listing_views` with UUID PKs and status machine

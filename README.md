@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Listings (TRW-007)
+# ترويج | Tarweej — Search (TRW-008)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -8,8 +8,8 @@ Repository: https://github.com/manther8-design/Tarweej
 
 | Path | Purpose |
 |------|---------|
-| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Catalog, Listings, Swagger) |
-| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL, categories + listing wizard) |
+| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Catalog, Listings, Search, Swagger) |
+| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL, categories, listings, search) |
 | `apps/admin` | Next.js admin: API login + categories / listings moderation / settings / flags / roles |
 | `apps/web` | Optional public web placeholder package |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
@@ -51,6 +51,7 @@ pnpm dev
 | http://localhost:3000/api/v1/health/live | Liveness |
 | http://localhost:3000/api/v1/health/ready | Readiness (DB) |
 | http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
+| http://localhost:3000/api/v1/search/listings | Search listings (text, filters, sort, pagination) |
 | http://localhost:3000/api/v1/listings | Public active listings (paginated) |
 | http://localhost:3000/api/v1/listings/:id | Public active listing detail |
 | http://localhost:3000/api/v1/listings/:id/views | Increment view counter |

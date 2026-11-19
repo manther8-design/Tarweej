@@ -268,4 +268,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openMyListings => 'My listings';
+
+  @override
+  String get searchTitle => 'Search';
+
+  @override
+  String get openSearchAction => 'Search listings';
+
+  @override
+  String get searchQueryLabel => 'Search';
+
+  @override
+  String get searchQueryHint => 'Title or description';
+
+  @override
+  String get searchAction => 'Search';
+
+  @override
+  String get searchFiltersAction => 'Filters';
+
+  @override
+  String get searchSortLabel => 'Sort';
+
+  @override
+  String get searchSortNewest => 'Newest';
+
+  @override
+  String get searchSortOldest => 'Oldest';
+
+  @override
+  String get searchSortPriceAsc => 'Price: low to high';
+
+  @override
+  String get searchSortPriceDesc => 'Price: high to low';
+
+  @override
+  String get searchSortViews => 'Most viewed';
+
+  @override
+  String get searchSortFeatured => 'Featured first';
+
+  @override
+  String get searchCategoryLabel => 'Category';
+
+  @override
+  String get searchCityLabel => 'City';
+
+  @override
+  String get searchAnyOption => 'Any';
+
+  @override
+  String get searchMinPriceLabel => 'Min price';
+
+  @override
+  String get searchMaxPriceLabel => 'Max price';
+
+  @override
+  String get searchFeaturedOnly => 'Featured only';
+
+  @override
+  String get searchAttributesHeading => 'Attribute filters';
+
+  @override
+  String get searchApplyFilters => 'Apply filters';
+
+  @override
+  String get searchEmpty => 'No listings match your search.';
+
+  @override
+  String get searchCachedHint => 'Results served from cache';
+
+  @override
+  String get searchPriceUnavailable => 'Price on request';
+
+  @override
+  String get searchFeaturedBadge => 'Featured';
+
+  @override
+  String get searchPrevPage => 'Previous';
+
+  @override
+  String get searchNextPage => 'Next';
+
+  @override
+  String searchResultsCount(int count) {
+    return '$count results';
+  }
 }

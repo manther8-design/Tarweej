@@ -26,6 +26,11 @@ class HomePage extends ConsumerWidget {
         title: Text(l10n.appTitle),
         actions: [
           IconButton(
+            tooltip: l10n.searchTitle,
+            onPressed: () => context.goNamed('search'),
+            icon: const Icon(Icons.search),
+          ),
+          IconButton(
             tooltip: l10n.categoriesTitle,
             onPressed: () => context.goNamed('categories'),
             icon: const Icon(Icons.category_outlined),
@@ -90,6 +95,11 @@ class HomePage extends ConsumerWidget {
               ),
             const SizedBox(height: 16),
             FilledButton(
+              onPressed: () => context.goNamed('search'),
+              child: Text(l10n.openSearchAction),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
               onPressed: () => context.goNamed('categories'),
               child: Text(l10n.browseCategoriesAction),
             ),
