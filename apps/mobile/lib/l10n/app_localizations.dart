@@ -889,6 +889,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} unread'**
   String chatUnreadCount(int count);
+
+  /// No description provided for @promoteListingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote listing'**
+  String get promoteListingAction;
+
+  /// No description provided for @promoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote listing'**
+  String get promoteTitle;
+
+  /// No description provided for @promoteSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature your listing with an hourly paid promotion. Payment is confirmed by the server — not the client.'**
+  String get promoteSubtitle;
+
+  /// No description provided for @promoteNoPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'No promotion plans are available for your country yet.'**
+  String get promoteNoPlans;
+
+  /// No description provided for @promotePlanLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get promotePlanLabel;
+
+  /// No description provided for @promoteDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get promoteDurationLabel;
+
+  /// No description provided for @promoteTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {amount} {currency}'**
+  String promoteTotalLabel(String amount, String currency);
+
+  /// No description provided for @promoteContinueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to payment'**
+  String get promoteContinueAction;
+
+  /// No description provided for @paymentResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment result'**
+  String get paymentResultTitle;
+
+  /// No description provided for @paymentResultSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment successful — featured is active'**
+  String get paymentResultSuccess;
+
+  /// No description provided for @paymentResultPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting payment confirmation'**
+  String get paymentResultPending;
+
+  /// No description provided for @paymentStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get paymentStatusLabel;
+
+  /// No description provided for @paymentAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get paymentAmountLabel;
+
+  /// No description provided for @paymentProviderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get paymentProviderLabel;
+
+  /// No description provided for @promotionStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion'**
+  String get promotionStatusLabel;
+
+  /// No description provided for @promotionEndsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends at'**
+  String get promotionEndsLabel;
+
+  /// No description provided for @paymentSimulatePaidAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulate paid (sandbox)'**
+  String get paymentSimulatePaidAction;
+
+  /// No description provided for @paymentBackToListingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to listing'**
+  String get paymentBackToListingAction;
 }
 
 class _AppLocalizationsDelegate

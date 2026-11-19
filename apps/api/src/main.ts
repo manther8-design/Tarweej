@@ -7,7 +7,8 @@ import { AppModule } from './app/app.module';
 import { AppLogger } from './common/logging/app-logger.service';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  // rawBody enables HMAC verification for payment webhooks (TRW-010).
+  const app = await NestFactory.create(AppModule, { bufferLogs: true, rawBody: true });
   const config = app.get(ConfigService);
   const logger = app.get(AppLogger);
   app.useLogger(logger);

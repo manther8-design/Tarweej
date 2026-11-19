@@ -416,4 +416,62 @@ class AppLocalizationsEn extends AppLocalizations {
   String chatUnreadCount(int count) {
     return '$count unread';
   }
+
+  @override
+  String get promoteListingAction => 'Promote listing';
+
+  @override
+  String get promoteTitle => 'Promote listing';
+
+  @override
+  String get promoteSubtitle =>
+      'Feature your listing with an hourly paid promotion. Payment is confirmed by the server — not the client.';
+
+  @override
+  String get promoteNoPlans =>
+      'No promotion plans are available for your country yet.';
+
+  @override
+  String get promotePlanLabel => 'Plan';
+
+  @override
+  String get promoteDurationLabel => 'Duration';
+
+  @override
+  String promoteTotalLabel(String amount, String currency) {
+    return 'Total: $amount $currency';
+  }
+
+  @override
+  String get promoteContinueAction => 'Continue to payment';
+
+  @override
+  String get paymentResultTitle => 'Payment result';
+
+  @override
+  String get paymentResultSuccess => 'Payment successful — featured is active';
+
+  @override
+  String get paymentResultPending => 'Awaiting payment confirmation';
+
+  @override
+  String get paymentStatusLabel => 'Status';
+
+  @override
+  String get paymentAmountLabel => 'Amount';
+
+  @override
+  String get paymentProviderLabel => 'Provider';
+
+  @override
+  String get promotionStatusLabel => 'Promotion';
+
+  @override
+  String get promotionEndsLabel => 'Ends at';
+
+  @override
+  String get paymentSimulatePaidAction => 'Simulate paid (sandbox)';
+
+  @override
+  String get paymentBackToListingAction => 'Back to listing';
 }

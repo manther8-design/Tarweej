@@ -413,4 +413,61 @@ class AppLocalizationsAr extends AppLocalizations {
   String chatUnreadCount(int count) {
     return '$count غير مقروء';
   }
+
+  @override
+  String get promoteListingAction => 'ترويج الإعلان';
+
+  @override
+  String get promoteTitle => 'ترويج الإعلان';
+
+  @override
+  String get promoteSubtitle =>
+      'ميّز إعلانك بترويج مدفوع بالساعة. يتم تأكيد الدفع من الخادم وليس من التطبيق.';
+
+  @override
+  String get promoteNoPlans => 'لا توجد خطط ترويج متاحة لبلدك حالياً.';
+
+  @override
+  String get promotePlanLabel => 'الخطة';
+
+  @override
+  String get promoteDurationLabel => 'المدة';
+
+  @override
+  String promoteTotalLabel(String amount, String currency) {
+    return 'الإجمالي: $amount $currency';
+  }
+
+  @override
+  String get promoteContinueAction => 'متابعة الدفع';
+
+  @override
+  String get paymentResultTitle => 'نتيجة الدفع';
+
+  @override
+  String get paymentResultSuccess => 'تم الدفع بنجاح — الترويج نشط';
+
+  @override
+  String get paymentResultPending => 'بانتظار تأكيد الدفع';
+
+  @override
+  String get paymentStatusLabel => 'الحالة';
+
+  @override
+  String get paymentAmountLabel => 'المبلغ';
+
+  @override
+  String get paymentProviderLabel => 'المزوّد';
+
+  @override
+  String get promotionStatusLabel => 'الترويج';
+
+  @override
+  String get promotionEndsLabel => 'ينتهي في';
+
+  @override
+  String get paymentSimulatePaidAction => 'محاكاة الدفع (تجريبي)';
+
+  @override
+  String get paymentBackToListingAction => 'العودة إلى الإعلان';
 }

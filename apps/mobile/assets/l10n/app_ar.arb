@@ -145,5 +145,29 @@
         "type": "int"
       }
     }
-  }
+  },
+  "promoteListingAction": "ترويج الإعلان",
+  "promoteTitle": "ترويج الإعلان",
+  "promoteSubtitle": "ميّز إعلانك بترويج مدفوع بالساعة. يتم تأكيد الدفع من الخادم وليس من التطبيق.",
+  "promoteNoPlans": "لا توجد خطط ترويج متاحة لبلدك حالياً.",
+  "promotePlanLabel": "الخطة",
+  "promoteDurationLabel": "المدة",
+  "promoteTotalLabel": "الإجمالي: {amount} {currency}",
+  "@promoteTotalLabel": {
+    "placeholders": {
+      "amount": { "type": "String" },
+      "currency": { "type": "String" }
+    }
+  },
+  "promoteContinueAction": "متابعة الدفع",
+  "paymentResultTitle": "نتيجة الدفع",
+  "paymentResultSuccess": "تم الدفع بنجاح — الترويج نشط",
+  "paymentResultPending": "بانتظار تأكيد الدفع",
+  "paymentStatusLabel": "الحالة",
+  "paymentAmountLabel": "المبلغ",
+  "paymentProviderLabel": "المزوّد",
+  "promotionStatusLabel": "الترويج",
+  "promotionEndsLabel": "ينتهي في",
+  "paymentSimulatePaidAction": "محاكاة الدفع (تجريبي)",
+  "paymentBackToListingAction": "العودة إلى الإعلان"
 }

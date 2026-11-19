@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Favorites & Chat (TRW-009)
+# ترويج | Tarweej — Payments & Featured Ads (TRW-010)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -8,12 +8,12 @@ Repository: https://github.com/manther8-design/Tarweej
 
 | Path | Purpose |
 |------|---------|
-| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Catalog, Listings, Search, Engagement, Swagger) |
-| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL, categories, listings, search, favorites, chat) |
-| `apps/admin` | Next.js admin: API login + categories / listings moderation / settings / flags / roles |
+| `apps/api` | NestJS modular monolith (`/api/v1`, Identity → Engagement + Commercial/Payments, Swagger) |
+| `apps/mobile` | Flutter shell (Riverpod, GoRouter, AR/EN + RTL, listings, search, favorites, chat, promote/pay) |
+| `apps/admin` | Next.js admin: categories, listings moderation, featured pricing, payment routes, settings, flags, roles |
 | `apps/web` | Optional public web placeholder package |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
-| `prisma/` | Identity + Reference + Config + Catalog + Listings + Engagement schema, migrations, seed |
+| `prisma/` | Full schema through commercial payments/featured promotions, migrations, seed |
 | `docker-compose.yml` | PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
 
 ## Prerequisites
@@ -54,6 +54,11 @@ pnpm dev
 | http://localhost:3000/api/v1/search/listings | Search listings (text, filters, sort, pagination) |
 | http://localhost:3000/api/v1/favorites | Favorites add/list/remove (JWT) |
 | http://localhost:3000/api/v1/conversations | Listing-scoped chat + messages + read receipts (JWT) |
+| http://localhost:3000/api/v1/promotions/plans | Featured pricing plans |
+| http://localhost:3000/api/v1/promotions/purchase | Purchase featured (JWT; owner only) |
+| http://localhost:3000/api/v1/payments | Payment history (JWT) |
+| http://localhost:3000/api/v1/webhooks/payments/:provider | Signed payment webhooks |
+| http://localhost:3000/api/v1/admin/commercial | Pricing rules + payment routes + expiry job |
 | http://localhost:3000/api/v1/listings | Public active listings (paginated) |
 | http://localhost:3000/api/v1/listings/:id | Public active listing detail |
 | http://localhost:3000/api/v1/listings/:id/views | Increment view counter |
