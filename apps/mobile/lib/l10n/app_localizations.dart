@@ -601,6 +601,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My listings'**
   String get openMyListings;
+
+  /// No description provided for @searchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchTitle;
+
+  /// No description provided for @openSearchAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Search listings'**
+  String get openSearchAction;
+
+  /// No description provided for @searchQueryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchQueryLabel;
+
+  /// No description provided for @searchQueryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Title or description'**
+  String get searchQueryHint;
+
+  /// No description provided for @searchAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchAction;
+
+  /// No description provided for @searchFiltersAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get searchFiltersAction;
+
+  /// No description provided for @searchSortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get searchSortLabel;
+
+  /// No description provided for @searchSortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get searchSortNewest;
+
+  /// No description provided for @searchSortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get searchSortOldest;
+
+  /// No description provided for @searchSortPriceAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: low to high'**
+  String get searchSortPriceAsc;
+
+  /// No description provided for @searchSortPriceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: high to low'**
+  String get searchSortPriceDesc;
+
+  /// No description provided for @searchSortViews.
+  ///
+  /// In en, this message translates to:
+  /// **'Most viewed'**
+  String get searchSortViews;
+
+  /// No description provided for @searchSortFeatured.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured first'**
+  String get searchSortFeatured;
+
+  /// No description provided for @searchCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get searchCategoryLabel;
+
+  /// No description provided for @searchCityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get searchCityLabel;
+
+  /// No description provided for @searchAnyOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get searchAnyOption;
+
+  /// No description provided for @searchMinPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Min price'**
+  String get searchMinPriceLabel;
+
+  /// No description provided for @searchMaxPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Max price'**
+  String get searchMaxPriceLabel;
+
+  /// No description provided for @searchFeaturedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured only'**
+  String get searchFeaturedOnly;
+
+  /// No description provided for @searchAttributesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Attribute filters'**
+  String get searchAttributesHeading;
+
+  /// No description provided for @searchApplyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply filters'**
+  String get searchApplyFilters;
+
+  /// No description provided for @searchEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No listings match your search.'**
+  String get searchEmpty;
+
+  /// No description provided for @searchCachedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Results served from cache'**
+  String get searchCachedHint;
+
+  /// No description provided for @searchPriceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Price on request'**
+  String get searchPriceUnavailable;
+
+  /// No description provided for @searchFeaturedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get searchFeaturedBadge;
+
+  /// No description provided for @searchPrevPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get searchPrevPage;
+
+  /// No description provided for @searchNextPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get searchNextPage;
+
+  /// No description provided for @searchResultsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} results'**
+  String searchResultsCount(int count);
 }
 
 class _AppLocalizationsDelegate

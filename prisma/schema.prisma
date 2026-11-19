@@ -545,6 +545,10 @@ model Listing {
   @@index([status, countryId, publishedAt(sort: Desc)])
   @@index([categoryId, status])
   @@index([deletedAt])
+  @@index([cityId, status])
+  @@index([status, priceAmount])
+  @@index([status, isFeaturedCached, publishedAt(sort: Desc)])
+  @@index([status, viewCount(sort: Desc)])
   @@map("listings")
 }
 
@@ -583,6 +587,9 @@ model ListingAttributeValue {
 
   @@unique([listingId, attributeDefinitionId])
   @@index([attributeDefinitionId])
+  @@index([attributeDefinitionId, valueText])
+  @@index([attributeDefinitionId, valueNumber])
+  @@index([attributeDefinitionId, valueBool])
   @@map("listing_attribute_values")
 }
 

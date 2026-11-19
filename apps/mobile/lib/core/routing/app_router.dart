@@ -14,6 +14,7 @@ import 'package:tarweej_mobile/features/listings/presentation/my_listings_page.d
 import 'package:tarweej_mobile/features/profile/presentation/profile_page.dart';
 import 'package:tarweej_mobile/features/reference/application/reference_controller.dart';
 import 'package:tarweej_mobile/features/reference/presentation/country_select_page.dart';
+import 'package:tarweej_mobile/features/search/presentation/search_page.dart';
 import 'package:tarweej_mobile/features/splash/presentation/splash_page.dart';
 
 final _routerRefreshProvider = Provider<_RouterRefresh>((ref) {
@@ -97,6 +98,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/home',
         name: 'home',
         builder: (BuildContext context, GoRouterState state) => const HomePage(),
+      ),
+      GoRoute(
+        path: '/search',
+        name: 'search',
+        builder: (BuildContext context, GoRouterState state) => const SearchPage(),
       ),
       GoRoute(
         path: '/categories',

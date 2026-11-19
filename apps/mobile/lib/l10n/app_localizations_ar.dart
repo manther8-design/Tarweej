@@ -265,4 +265,90 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get openMyListings => 'إعلاناتي';
+
+  @override
+  String get searchTitle => 'بحث';
+
+  @override
+  String get openSearchAction => 'بحث في الإعلانات';
+
+  @override
+  String get searchQueryLabel => 'بحث';
+
+  @override
+  String get searchQueryHint => 'العنوان أو الوصف';
+
+  @override
+  String get searchAction => 'بحث';
+
+  @override
+  String get searchFiltersAction => 'فلاتر';
+
+  @override
+  String get searchSortLabel => 'ترتيب';
+
+  @override
+  String get searchSortNewest => 'الأحدث';
+
+  @override
+  String get searchSortOldest => 'الأقدم';
+
+  @override
+  String get searchSortPriceAsc => 'السعر: من الأقل';
+
+  @override
+  String get searchSortPriceDesc => 'السعر: من الأعلى';
+
+  @override
+  String get searchSortViews => 'الأكثر مشاهدة';
+
+  @override
+  String get searchSortFeatured => 'المميّز أولاً';
+
+  @override
+  String get searchCategoryLabel => 'الفئة';
+
+  @override
+  String get searchCityLabel => 'المدينة';
+
+  @override
+  String get searchAnyOption => 'الكل';
+
+  @override
+  String get searchMinPriceLabel => 'أقل سعر';
+
+  @override
+  String get searchMaxPriceLabel => 'أعلى سعر';
+
+  @override
+  String get searchFeaturedOnly => 'المميّز فقط';
+
+  @override
+  String get searchAttributesHeading => 'فلاتر الخصائص';
+
+  @override
+  String get searchApplyFilters => 'تطبيق الفلاتر';
+
+  @override
+  String get searchEmpty => 'لا توجد إعلانات مطابقة.';
+
+  @override
+  String get searchCachedHint => 'النتائج من الذاكرة المؤقتة';
+
+  @override
+  String get searchPriceUnavailable => 'السعر عند الطلب';
+
+  @override
+  String get searchFeaturedBadge => 'مميّز';
+
+  @override
+  String get searchPrevPage => 'السابق';
+
+  @override
+  String get searchNextPage => 'التالي';
+
+  @override
+  String searchResultsCount(int count) {
+    return '$count نتيجة';
+  }
 }

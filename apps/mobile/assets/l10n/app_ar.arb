@@ -83,5 +83,40 @@
   "listingMediaStubHint": "منتقي الصور مؤقت — أرفق ملف وسائط تجريبيًا.",
   "listingMediaStubAction": "إرفاق وسائط تجريبية",
   "listingMediaStubReady": "الوسائط التجريبية جاهزة",
-  "openMyListings": "إعلاناتي"
+  "openMyListings": "إعلاناتي",
+  "searchTitle": "بحث",
+  "openSearchAction": "بحث في الإعلانات",
+  "searchQueryLabel": "بحث",
+  "searchQueryHint": "العنوان أو الوصف",
+  "searchAction": "بحث",
+  "searchFiltersAction": "فلاتر",
+  "searchSortLabel": "ترتيب",
+  "searchSortNewest": "الأحدث",
+  "searchSortOldest": "الأقدم",
+  "searchSortPriceAsc": "السعر: من الأقل",
+  "searchSortPriceDesc": "السعر: من الأعلى",
+  "searchSortViews": "الأكثر مشاهدة",
+  "searchSortFeatured": "المميّز أولاً",
+  "searchCategoryLabel": "الفئة",
+  "searchCityLabel": "المدينة",
+  "searchAnyOption": "الكل",
+  "searchMinPriceLabel": "أقل سعر",
+  "searchMaxPriceLabel": "أعلى سعر",
+  "searchFeaturedOnly": "المميّز فقط",
+  "searchAttributesHeading": "فلاتر الخصائص",
+  "searchApplyFilters": "تطبيق الفلاتر",
+  "searchEmpty": "لا توجد إعلانات مطابقة.",
+  "searchCachedHint": "النتائج من الذاكرة المؤقتة",
+  "searchPriceUnavailable": "السعر عند الطلب",
+  "searchFeaturedBadge": "مميّز",
+  "searchPrevPage": "السابق",
+  "searchNextPage": "التالي",
+  "searchResultsCount": "{count} نتيجة",
+  "@searchResultsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

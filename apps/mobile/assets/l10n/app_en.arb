@@ -86,5 +86,40 @@
   "listingMediaStubHint": "Image picker is stubbed for now — attach a placeholder media file.",
   "listingMediaStubAction": "Attach media stub",
   "listingMediaStubReady": "Media stub ready",
-  "openMyListings": "My listings"
+  "openMyListings": "My listings",
+  "searchTitle": "Search",
+  "openSearchAction": "Search listings",
+  "searchQueryLabel": "Search",
+  "searchQueryHint": "Title or description",
+  "searchAction": "Search",
+  "searchFiltersAction": "Filters",
+  "searchSortLabel": "Sort",
+  "searchSortNewest": "Newest",
+  "searchSortOldest": "Oldest",
+  "searchSortPriceAsc": "Price: low to high",
+  "searchSortPriceDesc": "Price: high to low",
+  "searchSortViews": "Most viewed",
+  "searchSortFeatured": "Featured first",
+  "searchCategoryLabel": "Category",
+  "searchCityLabel": "City",
+  "searchAnyOption": "Any",
+  "searchMinPriceLabel": "Min price",
+  "searchMaxPriceLabel": "Max price",
+  "searchFeaturedOnly": "Featured only",
+  "searchAttributesHeading": "Attribute filters",
+  "searchApplyFilters": "Apply filters",
+  "searchEmpty": "No listings match your search.",
+  "searchCachedHint": "Results served from cache",
+  "searchPriceUnavailable": "Price on request",
+  "searchFeaturedBadge": "Featured",
+  "searchPrevPage": "Previous",
+  "searchNextPage": "Next",
+  "searchResultsCount": "{count} results",
+  "@searchResultsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }
