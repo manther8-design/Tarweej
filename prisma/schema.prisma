@@ -1,4 +1,5 @@
-// Tarweej schema (Identity + Reference + Config/Admin RBAC + Catalog + Listings + Engagement).
+// Tarweej schema (Identity + Reference + Config/Admin RBAC + Catalog + Listings +
+// Engagement + Commercial/Payments).
 // UUID PKs use DB gen_random_uuid() defaults (TRW-002 user default).
 
 generator client {
@@ -42,6 +43,7 @@ model User {
   conversationsAsBuyer  Conversation[] @relation("ConversationBuyer")
   conversationsAsSeller Conversation[] @relation("ConversationSeller")
   messages        Message[]
+  payments        Payment[]
 
   @@index([countryId])
   @@index([status])
@@ -203,8 +205,10 @@ model Country {
   countryCurrencies   CountryCurrency[]
   countryTimeZones    CountryTimeZone[]
   countryDialingCodes CountryDialingCode[]
-  regions             Region[]
-  listings            Listing[]
+  regions               Region[]
+  listings              Listing[]
+  featuredPricingRules  FeaturedPricingRule[]
+  paymentProviderRoutes PaymentProviderRoute[]
 
   @@map("countries")
 }
@@ -546,6 +550,7 @@ model Listing {
   views            ListingView[]
   favorites        Favorite[]
   conversations    Conversation[]
+  featuredPromotions FeaturedPromotion[]
 
   @@index([ownerId, status])
   @@index([status, countryId, publishedAt(sort: Desc)])
@@ -689,4 +694,133 @@ model Message {
   @@index([senderId])
   @@index([conversationId, readAt])
   @@map("messages")
+}
+
+// ---------------------------------------------------------------------------
+// Commercial — Featured promotions & Payments (TRW-010)
+// Financial rows are never hard-deleted (ADR-005). Featured windows are SoT;
+// listings.is_featured_cached is a denormalized read optimization.
+// ---------------------------------------------------------------------------
+
+model FeaturedPricingRule {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId            String   @map("country_id") @db.Uuid
+  currencyCode         String   @map("currency_code") @db.VarChar(3)
+  placement            String   @default("home") @db.VarChar(40)
+  pricePerHour         Decimal  @map("price_per_hour") @db.Decimal(18, 4)
+  maxSlots             Int      @default(7) @map("max_slots")
+  defaultDurationHours Int      @default(24) @map("default_duration_hours")
+  minDurationHours     Int      @default(1) @map("min_duration_hours")
+  maxDurationHours     Int      @default(168) @map("max_duration_hours")
+  rankWeight           Int      @default(100) @map("rank_weight")
+  isActive             Boolean  @default(true) @map("is_active")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  country     Country              @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  promotions  FeaturedPromotion[]
+
+  @@unique([countryId, placement, currencyCode])
+  @@index([countryId, isActive])
+  @@index([placement, isActive])
+  @@map("featured_pricing_rules")
+}
+
+model FeaturedPromotion {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  listingId     String    @map("listing_id") @db.Uuid
+  paymentId     String    @unique @map("payment_id") @db.Uuid
+  pricingRuleId String    @map("pricing_rule_id") @db.Uuid
+  placement     String    @db.VarChar(40)
+  status        String    @default("scheduled") @db.VarChar(40)
+  rankWeight    Int       @default(100) @map("rank_weight")
+  durationHours Int       @map("duration_hours")
+  startsAt      DateTime? @map("starts_at") @db.Timestamptz(6)
+  endsAt        DateTime? @map("ends_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  listing     Listing             @relation(fields: [listingId], references: [id], onDelete: Restrict)
+  payment     Payment             @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  pricingRule FeaturedPricingRule @relation(fields: [pricingRuleId], references: [id], onDelete: Restrict)
+
+  @@index([listingId, status])
+  @@index([status, endsAt])
+  @@index([status, placement, startsAt, endsAt])
+  @@index([pricingRuleId])
+  @@map("featured_promotions")
+}
+
+model Payment {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String    @map("user_id") @db.Uuid
+  purpose           String    @db.VarChar(40)
+  amount            Decimal   @db.Decimal(18, 4)
+  currencyCode      String    @map("currency_code") @db.VarChar(3)
+  status            String    @default("pending") @db.VarChar(40)
+  providerCode      String    @map("provider_code") @db.VarChar(40)
+  idempotencyKey    String    @unique @map("idempotency_key") @db.VarChar(120)
+  providerReference String?   @map("provider_reference") @db.VarChar(255)
+  countryId         String?   @map("country_id") @db.Uuid
+  failureReason     String?   @map("failure_reason") @db.VarChar(500)
+  paidAt            DateTime? @map("paid_at") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user         User               @relation(fields: [userId], references: [id], onDelete: Restrict)
+  attempts     PaymentAttempt[]
+  webhookEvents WebhookEvent[]
+  promotion    FeaturedPromotion?
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+  @@index([providerCode, providerReference])
+  @@map("payments")
+}
+
+model PaymentAttempt {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  paymentId        String   @map("payment_id") @db.Uuid
+  providerStatus   String   @map("provider_status") @db.VarChar(40)
+  rawRequestMeta   Json?    @map("raw_request_meta") @db.JsonB
+  rawResponseMeta  Json?    @map("raw_response_meta") @db.JsonB
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  @@index([paymentId, createdAt])
+  @@map("payment_attempts")
+}
+
+model WebhookEvent {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  providerCode    String    @map("provider_code") @db.VarChar(40)
+  providerEventId String    @unique @map("provider_event_id") @db.VarChar(255)
+  paymentId       String?   @map("payment_id") @db.Uuid
+  signatureValid  Boolean   @map("signature_valid")
+  payload         Json      @db.JsonB
+  processedAt     DateTime? @map("processed_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  @@index([paymentId])
+  @@index([providerCode, createdAt])
+  @@map("webhook_events")
+}
+
+model PaymentProviderRoute {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId    String   @map("country_id") @db.Uuid
+  providerCode String   @map("provider_code") @db.VarChar(40)
+  priority     Int      @default(100)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  country Country @relation(fields: [countryId], references: [id], onDelete: Restrict)
+
+  @@unique([countryId, providerCode])
+  @@index([countryId, isActive, priority])
+  @@map("payment_provider_routes")
 }

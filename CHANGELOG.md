@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.0 — TRW-010 Payments & Featured Ads
+
+- Prisma: `featured_pricing_rules`, `featured_promotions`, `payments`, `payment_attempts`, `webhook_events`, `payment_provider_routes`
+- NestJS commercial module: payment gateway port + mock adapter (HMAC webhooks, idempotency), country routing, purchase → Paid → activate featured, expiry job
+- APIs: `/api/v1/promotions`, `/api/v1/payments`, `/api/v1/webhooks/payments/:provider`, `/api/v1/admin/commercial`
+- Never trust client-only payment success; sandbox `mock-complete` synthesizes a signed webhook
+- Flutter: promote listing + payment result screens (mock provider)
+- Admin: featured pricing + payment routes page
+- Integration tests for purchase, webhook verify/idempotency, activation, expiry
+
 ## 0.9.0 — TRW-009 Favorites & Chat
 
 - Prisma: `favorites` (unique user+listing), `conversations` (listing-scoped buyer/seller), `messages` with `read_at`

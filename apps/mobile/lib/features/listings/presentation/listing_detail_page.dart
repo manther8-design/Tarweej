@@ -160,6 +160,17 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
                             const SizedBox(height: 8),
                             Text('${l10n.listingRejectionLabel}: ${detail.rejectionReason}'),
                           ],
+                          if (widget.mine && detail.status == 'active') ...[
+                            const SizedBox(height: 16),
+                            FilledButton.icon(
+                              onPressed: () => context.goNamed(
+                                'listing-promote',
+                                pathParameters: <String, String>{'id': detail.id},
+                              ),
+                              icon: const Icon(Icons.campaign_outlined),
+                              label: Text(l10n.promoteListingAction),
+                            ),
+                          ],
                           if (showEngagement) ...[
                             const SizedBox(height: 16),
                             Wrap(

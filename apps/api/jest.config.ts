@@ -7,6 +7,8 @@ export default {
   displayName: 'api',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
+  // Integration suites share one Postgres; parallel workers race on seed fixtures.
+  maxWorkers: 1,
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },

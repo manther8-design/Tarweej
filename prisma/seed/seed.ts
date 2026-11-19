@@ -445,6 +445,26 @@ async function main(): Promise<void> {
       name: 'Moderate listings',
       description: 'Approve or reject listings pending review',
     },
+    {
+      code: 'payments.pricing.read',
+      name: 'Read featured pricing',
+      description: 'View featured promotion pricing rules',
+    },
+    {
+      code: 'payments.pricing.write',
+      name: 'Write featured pricing',
+      description: 'Create or update featured promotion pricing rules',
+    },
+    {
+      code: 'payments.routes.read',
+      name: 'Read payment routes',
+      description: 'View country payment provider routes',
+    },
+    {
+      code: 'payments.routes.write',
+      name: 'Write payment routes',
+      description: 'Create or update country payment provider routes',
+    },
   ] as const;
 
   const permissionByCode: Record<string, { id: string }> = {};
@@ -491,6 +511,8 @@ async function main(): Promise<void> {
     'catalog.categories.read',
     'listings.read',
     'listings.moderate',
+    'payments.pricing.read',
+    'payments.routes.read',
   ]);
 
   await prisma.featureFlag.upsert({
@@ -572,6 +594,107 @@ async function main(): Promise<void> {
       valueJson: { hint: 'dev-only-placeholder' },
       description: 'Internal webhook signing hint (secret)',
       isSecret: true,
+    },
+  });
+
+  await prisma.businessSetting.upsert({
+    where: { key: 'listings.free_window_days' },
+    update: {
+      valueJson: { days: 365 },
+      description: 'Year-1 free normal listing window (days); featured remains paid',
+      isSecret: false,
+    },
+    create: {
+      key: 'listings.free_window_days',
+      valueJson: { days: 365 },
+      description: 'Year-1 free normal listing window (days); featured remains paid',
+      isSecret: false,
+    },
+  });
+
+  await prisma.featureFlag.upsert({
+    where: { key: 'payments.featured_checkout' },
+    update: { description: 'Enable featured promotion checkout in clients' },
+    create: {
+      key: 'payments.featured_checkout',
+      isEnabled: true,
+      description: 'Enable featured promotion checkout in clients',
+    },
+  });
+
+  // Country payment routing (ADR-011) — mock provider for local/dev.
+  for (const country of [sa, ae, us]) {
+    await prisma.paymentProviderRoute.upsert({
+      where: {
+        countryId_providerCode: { countryId: country.id, providerCode: 'mock' },
+      },
+      update: { priority: 10, isActive: true },
+      create: {
+        countryId: country.id,
+        providerCode: 'mock',
+        priority: 10,
+        isActive: true,
+      },
+    });
+  }
+
+  // Featured hourly pricing (TRW-010).
+  await prisma.featuredPricingRule.upsert({
+    where: {
+      countryId_placement_currencyCode: {
+        countryId: sa.id,
+        placement: 'home',
+        currencyCode: 'SAR',
+      },
+    },
+    update: {
+      pricePerHour: 2.5,
+      maxSlots: 7,
+      defaultDurationHours: 24,
+      minDurationHours: 1,
+      maxDurationHours: 168,
+      rankWeight: 100,
+      isActive: true,
+    },
+    create: {
+      countryId: sa.id,
+      placement: 'home',
+      currencyCode: 'SAR',
+      pricePerHour: 2.5,
+      maxSlots: 7,
+      defaultDurationHours: 24,
+      minDurationHours: 1,
+      maxDurationHours: 168,
+      rankWeight: 100,
+      isActive: true,
+    },
+  });
+
+  await prisma.featuredPricingRule.upsert({
+    where: {
+      countryId_placement_currencyCode: {
+        countryId: ae.id,
+        placement: 'home',
+        currencyCode: 'AED',
+      },
+    },
+    update: {
+      pricePerHour: 3,
+      maxSlots: 7,
+      defaultDurationHours: 24,
+      isActive: true,
+    },
+    create: {
+      countryId: ae.id,
+      placement: 'home',
+      currencyCode: 'AED',
+      pricePerHour: 3,
+      maxSlots: 7,
+      defaultDurationHours: 24,
+      minDurationHours: 1,
+      maxDurationHours: 168,
+      rankWeight: 100,
+      isActive: true,
     },
   });
 
@@ -1028,7 +1151,7 @@ async function main(): Promise<void> {
 
   // eslint-disable-next-line no-console
   console.log(
-    `Seed complete: SA reference + roles/permissions + config + catalog + sample listings${
+    `Seed complete: SA reference + roles/permissions + config + catalog + commercial payments/featured + sample listings${
       activeListingId ? ` (active=${activeListingId})` : ''
     } + admin@tarweej.local / seller@tarweej.local`,
   );

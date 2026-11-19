@@ -148,5 +148,29 @@
         "type": "int"
       }
     }
-  }
+  },
+  "promoteListingAction": "Promote listing",
+  "promoteTitle": "Promote listing",
+  "promoteSubtitle": "Feature your listing with an hourly paid promotion. Payment is confirmed by the server — not the client.",
+  "promoteNoPlans": "No promotion plans are available for your country yet.",
+  "promotePlanLabel": "Plan",
+  "promoteDurationLabel": "Duration",
+  "promoteTotalLabel": "Total: {amount} {currency}",
+  "@promoteTotalLabel": {
+    "placeholders": {
+      "amount": { "type": "String" },
+      "currency": { "type": "String" }
+    }
+  },
+  "promoteContinueAction": "Continue to payment",
+  "paymentResultTitle": "Payment result",
+  "paymentResultSuccess": "Payment successful — featured is active",
+  "paymentResultPending": "Awaiting payment confirmation",
+  "paymentStatusLabel": "Status",
+  "paymentAmountLabel": "Amount",
+  "paymentProviderLabel": "Provider",
+  "promotionStatusLabel": "Promotion",
+  "promotionEndsLabel": "Ends at",
+  "paymentSimulatePaidAction": "Simulate paid (sandbox)",
+  "paymentBackToListingAction": "Back to listing"
 }

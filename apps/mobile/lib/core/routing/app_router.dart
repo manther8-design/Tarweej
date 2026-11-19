@@ -14,6 +14,8 @@ import 'package:tarweej_mobile/features/home/presentation/home_page.dart';
 import 'package:tarweej_mobile/features/listings/presentation/create_listing_wizard_page.dart';
 import 'package:tarweej_mobile/features/listings/presentation/listing_detail_page.dart';
 import 'package:tarweej_mobile/features/listings/presentation/my_listings_page.dart';
+import 'package:tarweej_mobile/features/payments/presentation/payment_result_page.dart';
+import 'package:tarweej_mobile/features/payments/presentation/promote_listing_page.dart';
 import 'package:tarweej_mobile/features/profile/presentation/profile_page.dart';
 import 'package:tarweej_mobile/features/reference/application/reference_controller.dart';
 import 'package:tarweej_mobile/features/reference/presentation/country_select_page.dart';
@@ -61,6 +63,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             loc == '/chat' ||
             loc.startsWith('/chat/') ||
             loc == '/listings/create' ||
+            (loc.startsWith('/listings/') && loc.endsWith('/promote')) ||
+            loc.startsWith('/payments/') ||
             (loc.startsWith('/listings/') && state.uri.queryParameters['mine'] == '1');
         if (needsAuth) {
           return '/login';
@@ -158,12 +162,34 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             const CreateListingWizardPage(),
       ),
       GoRoute(
+        path: '/listings/:id/promote',
+        name: 'listing-promote',
+        builder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id'] ?? '';
+          return PromoteListingPage(listingId: id);
+        },
+      ),
+      GoRoute(
         path: '/listings/:id',
         name: 'listing-detail',
         builder: (BuildContext context, GoRouterState state) {
           final id = state.pathParameters['id'] ?? '';
           final mine = state.uri.queryParameters['mine'] == '1';
           return ListingDetailPage(listingId: id, mine: mine);
+        },
+      ),
+      GoRoute(
+        path: '/payments/:paymentId/result',
+        name: 'payment-result',
+        builder: (BuildContext context, GoRouterState state) {
+          final paymentId = state.pathParameters['paymentId'] ?? '';
+          final listingId = state.uri.queryParameters['listingId'] ?? '';
+          final sandbox = state.uri.queryParameters['sandbox'] != '0';
+          return PaymentResultPage(
+            paymentId: paymentId,
+            listingId: listingId,
+            sandbox: sandbox,
+          );
         },
       ),
     ],

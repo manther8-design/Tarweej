@@ -8,6 +8,7 @@ import { LoggingModule } from '../common/logging/logging.module';
 import { PrismaModule } from '../infrastructure/prisma/prisma.module';
 import { storageConfig } from '../common/config/storage.config';
 import { CatalogModule } from '../modules/catalog/catalog.module';
+import { CommercialModule } from '../modules/commercial/commercial.module';
 import { ConfigurationModule } from '../modules/configuration/configuration.module';
 import { EngagementModule } from '../modules/engagement/engagement.module';
 import { IdentityModule } from '../modules/identity/identity.module';
@@ -36,6 +37,7 @@ import { AppController } from './app.controller';
     ListingsModule,
     SearchModule,
     EngagementModule,
+    CommercialModule,
   ],
   controllers: [AppController],
 })

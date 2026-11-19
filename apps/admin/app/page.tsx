@@ -8,8 +8,8 @@ export default function AdminHomePage() {
       <section style={{ maxWidth: 720 }}>
         <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.8rem' }}>Admin foundation</h2>
         <p style={{ margin: 0, color: 'var(--muted)', lineHeight: 1.55 }}>
-          Manage catalog categories, listing moderation, business settings, feature flags, and role
-          permissions.
+          Manage catalog categories, listing moderation, featured pricing, payment routes, business
+          settings, feature flags, and role permissions.
         </p>
         <ul
           style={{
@@ -23,6 +23,7 @@ export default function AdminHomePage() {
           {[
             ['Categories', 'Hierarchy and dynamic attributes CRUD (audited).'],
             ['Listings', 'Pending review queue — approve/reject with audit trail.'],
+            ['Promotions', 'Featured hourly pricing rules and country payment routing.'],
             ['Settings', 'Read and update typed business settings (audited).'],
             ['Feature flags', 'Toggle client-facing capability flags.'],
             ['Roles', 'Inspect seeded roles and their permission grants.'],
