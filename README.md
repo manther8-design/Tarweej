@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Search (TRW-008)
+# ترويج | Tarweej — Favorites & Chat (TRW-009)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -8,12 +8,12 @@ Repository: https://github.com/manther8-design/Tarweej
 
 | Path | Purpose |
 |------|---------|
-| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Catalog, Listings, Search, Swagger) |
-| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL, categories, listings, search) |
+| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Catalog, Listings, Search, Engagement, Swagger) |
+| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL, categories, listings, search, favorites, chat) |
 | `apps/admin` | Next.js admin: API login + categories / listings moderation / settings / flags / roles |
 | `apps/web` | Optional public web placeholder package |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
-| `prisma/` | Identity + Reference + Config + Catalog + Listings schema, migrations, seed |
+| `prisma/` | Identity + Reference + Config + Catalog + Listings + Engagement schema, migrations, seed |
 | `docker-compose.yml` | PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
 
 ## Prerequisites
@@ -52,6 +52,8 @@ pnpm dev
 | http://localhost:3000/api/v1/health/ready | Readiness (DB) |
 | http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
 | http://localhost:3000/api/v1/search/listings | Search listings (text, filters, sort, pagination) |
+| http://localhost:3000/api/v1/favorites | Favorites add/list/remove (JWT) |
+| http://localhost:3000/api/v1/conversations | Listing-scoped chat + messages + read receipts (JWT) |
 | http://localhost:3000/api/v1/listings | Public active listings (paginated) |
 | http://localhost:3000/api/v1/listings/:id | Public active listing detail |
 | http://localhost:3000/api/v1/listings/:id/views | Increment view counter |
@@ -110,3 +112,5 @@ pnpm build
 - Foundation: project store `docs/delivery/TRW-002-foundation.md`
 - Identity: project store `docs/delivery/TRW-003-identity.md`
 - Listings: project store `docs/delivery/TRW-007-listings.md`
+- Search: project store `docs/delivery/TRW-008-search.md`
+- Favorites & Chat: project store `docs/delivery/TRW-009-favorites-chat.md`

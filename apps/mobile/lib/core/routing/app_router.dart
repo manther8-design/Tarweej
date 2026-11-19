@@ -7,6 +7,9 @@ import 'package:tarweej_mobile/features/auth/presentation/otp_page.dart';
 import 'package:tarweej_mobile/features/auth/presentation/register_page.dart';
 import 'package:tarweej_mobile/features/catalog/presentation/categories_page.dart';
 import 'package:tarweej_mobile/features/catalog/presentation/category_detail_page.dart';
+import 'package:tarweej_mobile/features/chat/presentation/chat_list_page.dart';
+import 'package:tarweej_mobile/features/chat/presentation/chat_thread_page.dart';
+import 'package:tarweej_mobile/features/favorites/presentation/favorites_page.dart';
 import 'package:tarweej_mobile/features/home/presentation/home_page.dart';
 import 'package:tarweej_mobile/features/listings/presentation/create_listing_wizard_page.dart';
 import 'package:tarweej_mobile/features/listings/presentation/listing_detail_page.dart';
@@ -54,6 +57,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         final needsAuth = loc == '/profile' ||
             loc == '/home' ||
             loc == '/my-listings' ||
+            loc == '/favorites' ||
+            loc == '/chat' ||
+            loc.startsWith('/chat/') ||
             loc == '/listings/create' ||
             (loc.startsWith('/listings/') && state.uri.queryParameters['mine'] == '1');
         if (needsAuth) {
@@ -126,6 +132,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/my-listings',
         name: 'my-listings',
         builder: (BuildContext context, GoRouterState state) => const MyListingsPage(),
+      ),
+      GoRoute(
+        path: '/favorites',
+        name: 'favorites',
+        builder: (BuildContext context, GoRouterState state) => const FavoritesPage(),
+      ),
+      GoRoute(
+        path: '/chat',
+        name: 'chat',
+        builder: (BuildContext context, GoRouterState state) => const ChatListPage(),
+      ),
+      GoRoute(
+        path: '/chat/:id',
+        name: 'chat-thread',
+        builder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id'] ?? '';
+          return ChatThreadPage(conversationId: id);
+        },
       ),
       GoRoute(
         path: '/listings/create',

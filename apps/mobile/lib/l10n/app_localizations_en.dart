@@ -354,4 +354,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String searchResultsCount(int count) {
     return '$count results';
   }
+
+  @override
+  String get openFavorites => 'Favorites';
+
+  @override
+  String get openChat => 'Messages';
+
+  @override
+  String get favoritesTitle => 'Favorites';
+
+  @override
+  String get favoritesEmpty => 'You have no favorite listings yet.';
+
+  @override
+  String get favoritesRetry => 'Retry';
+
+  @override
+  String get favoritesAddAction => 'Add to favorites';
+
+  @override
+  String get favoritesRemoveAction => 'Remove favorite';
+
+  @override
+  String get favoritesAvailable => 'Available';
+
+  @override
+  String get favoritesExpired => 'Expired';
+
+  @override
+  String get favoritesDeleted => 'Deleted';
+
+  @override
+  String get favoritesUnavailable => 'Unavailable';
+
+  @override
+  String get chatTitle => 'Messages';
+
+  @override
+  String get chatThreadTitle => 'Conversation';
+
+  @override
+  String get chatEmpty => 'No conversations yet.';
+
+  @override
+  String get chatRetry => 'Retry';
+
+  @override
+  String get chatNoMessagesYet => 'No messages yet.';
+
+  @override
+  String get chatMessageHint => 'Type a message';
+
+  @override
+  String get chatSendAction => 'Send';
+
+  @override
+  String get chatContactSeller => 'Contact seller';
+
+  @override
+  String chatUnreadCount(int count) {
+    return '$count unread';
+  }
 }

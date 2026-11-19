@@ -118,5 +118,32 @@
         "type": "int"
       }
     }
+  },
+  "openFavorites": "المفضلة",
+  "openChat": "الرسائل",
+  "favoritesTitle": "المفضلة",
+  "favoritesEmpty": "لا توجد إعلانات في المفضلة بعد.",
+  "favoritesRetry": "إعادة المحاولة",
+  "favoritesAddAction": "إضافة إلى المفضلة",
+  "favoritesRemoveAction": "إزالة من المفضلة",
+  "favoritesAvailable": "متاح",
+  "favoritesExpired": "منتهي",
+  "favoritesDeleted": "محذوف",
+  "favoritesUnavailable": "غير متاح",
+  "chatTitle": "الرسائل",
+  "chatThreadTitle": "المحادثة",
+  "chatEmpty": "لا توجد محادثات بعد.",
+  "chatRetry": "إعادة المحاولة",
+  "chatNoMessagesYet": "لا توجد رسائل بعد.",
+  "chatMessageHint": "اكتب رسالة",
+  "chatSendAction": "إرسال",
+  "chatContactSeller": "مراسلة البائع",
+  "chatUnreadCount": "{count} غير مقروء",
+  "@chatUnreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

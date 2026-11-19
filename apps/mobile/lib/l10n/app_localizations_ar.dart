@@ -351,4 +351,66 @@ class AppLocalizationsAr extends AppLocalizations {
   String searchResultsCount(int count) {
     return '$count نتيجة';
   }
+
+  @override
+  String get openFavorites => 'المفضلة';
+
+  @override
+  String get openChat => 'الرسائل';
+
+  @override
+  String get favoritesTitle => 'المفضلة';
+
+  @override
+  String get favoritesEmpty => 'لا توجد إعلانات في المفضلة بعد.';
+
+  @override
+  String get favoritesRetry => 'إعادة المحاولة';
+
+  @override
+  String get favoritesAddAction => 'إضافة إلى المفضلة';
+
+  @override
+  String get favoritesRemoveAction => 'إزالة من المفضلة';
+
+  @override
+  String get favoritesAvailable => 'متاح';
+
+  @override
+  String get favoritesExpired => 'منتهي';
+
+  @override
+  String get favoritesDeleted => 'محذوف';
+
+  @override
+  String get favoritesUnavailable => 'غير متاح';
+
+  @override
+  String get chatTitle => 'الرسائل';
+
+  @override
+  String get chatThreadTitle => 'المحادثة';
+
+  @override
+  String get chatEmpty => 'لا توجد محادثات بعد.';
+
+  @override
+  String get chatRetry => 'إعادة المحاولة';
+
+  @override
+  String get chatNoMessagesYet => 'لا توجد رسائل بعد.';
+
+  @override
+  String get chatMessageHint => 'اكتب رسالة';
+
+  @override
+  String get chatSendAction => 'إرسال';
+
+  @override
+  String get chatContactSeller => 'مراسلة البائع';
+
+  @override
+  String chatUnreadCount(int count) {
+    return '$count غير مقروء';
+  }
 }
