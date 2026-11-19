@@ -9,6 +9,7 @@ import { clearSession, hasAdminAccess, loadSession, type AdminSession } from '..
 const nav = [
   { href: '/', label: 'Overview' },
   { href: '/categories', label: 'Categories' },
+  { href: '/listings', label: 'Listings' },
   { href: '/settings', label: 'Settings' },
   { href: '/feature-flags', label: 'Feature flags' },
   { href: '/roles', label: 'Roles' },

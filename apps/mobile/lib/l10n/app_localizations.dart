@@ -409,6 +409,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Guest'**
   String get guestLabel;
+
+  /// No description provided for @myListingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My listings'**
+  String get myListingsTitle;
+
+  /// No description provided for @myListingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage drafts and published ads from the Tarweej API.'**
+  String get myListingsSubtitle;
+
+  /// No description provided for @myListingsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no listings yet.'**
+  String get myListingsEmpty;
+
+  /// No description provided for @createListingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create listing'**
+  String get createListingAction;
+
+  /// No description provided for @createListingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New listing'**
+  String get createListingTitle;
+
+  /// No description provided for @listingDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing'**
+  String get listingDetailTitle;
+
+  /// No description provided for @listingNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing not found.'**
+  String get listingNotFound;
+
+  /// No description provided for @listingStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get listingStatusLabel;
+
+  /// No description provided for @listingViewsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Views'**
+  String get listingViewsLabel;
+
+  /// No description provided for @listingRejectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection reason'**
+  String get listingRejectionLabel;
+
+  /// No description provided for @listingMediaHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get listingMediaHeading;
+
+  /// No description provided for @listingMediaEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No media attached.'**
+  String get listingMediaEmpty;
+
+  /// No description provided for @listingAttributesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Attributes'**
+  String get listingAttributesHeading;
+
+  /// No description provided for @listingAttributesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No attributes.'**
+  String get listingAttributesEmpty;
+
+  /// No description provided for @listingWizardStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Step'**
+  String get listingWizardStep;
+
+  /// No description provided for @listingWizardCategoryStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose category'**
+  String get listingWizardCategoryStep;
+
+  /// No description provided for @listingWizardFieldsStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Details & attributes'**
+  String get listingWizardFieldsStep;
+
+  /// No description provided for @listingWizardMediaStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get listingWizardMediaStep;
+
+  /// No description provided for @listingWizardReviewStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Review & submit'**
+  String get listingWizardReviewStep;
+
+  /// No description provided for @listingWizardPickCategoryFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category on the previous step.'**
+  String get listingWizardPickCategoryFirst;
+
+  /// No description provided for @listingWizardMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Category and country are required.'**
+  String get listingWizardMissing;
+
+  /// No description provided for @listingWizardFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create listing.'**
+  String get listingWizardFailed;
+
+  /// No description provided for @listingWizardBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get listingWizardBack;
+
+  /// No description provided for @listingWizardNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get listingWizardNext;
+
+  /// No description provided for @listingWizardSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for review'**
+  String get listingWizardSubmit;
+
+  /// No description provided for @listingTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get listingTitleLabel;
+
+  /// No description provided for @listingDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get listingDescriptionLabel;
+
+  /// No description provided for @listingPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get listingPriceLabel;
+
+  /// No description provided for @listingMediaStubHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Image picker is stubbed for now — attach a placeholder media file.'**
+  String get listingMediaStubHint;
+
+  /// No description provided for @listingMediaStubAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach media stub'**
+  String get listingMediaStubAction;
+
+  /// No description provided for @listingMediaStubReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Media stub ready'**
+  String get listingMediaStubReady;
+
+  /// No description provided for @openMyListings.
+  ///
+  /// In en, this message translates to:
+  /// **'My listings'**
+  String get openMyListings;
 }
 
 class _AppLocalizationsDelegate

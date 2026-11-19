@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Categories & Dynamic Attributes (TRW-006)
+# ترويج | Tarweej — Listings (TRW-007)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -8,12 +8,12 @@ Repository: https://github.com/manther8-design/Tarweej
 
 | Path | Purpose |
 |------|---------|
-| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Catalog, Swagger) |
-| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL, live categories) |
-| `apps/admin` | Next.js admin: API login + categories / settings / flags / roles |
+| `apps/api` | NestJS modular monolith (`/api/v1`, Identity, Reference, Configuration, Catalog, Listings, Swagger) |
+| `apps/mobile` | Flutter Clean Architecture shell (Riverpod, GoRouter, AR/EN + RTL, categories + listing wizard) |
+| `apps/admin` | Next.js admin: API login + categories / listings moderation / settings / flags / roles |
 | `apps/web` | Optional public web placeholder package |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
-| `prisma/` | Identity + Reference + Config + Catalog schema, migrations, seed |
+| `prisma/` | Identity + Reference + Config + Catalog + Listings schema, migrations, seed |
 | `docker-compose.yml` | PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
 
 ## Prerequisites
@@ -37,7 +37,7 @@ pnpm infra:up
 # Database
 pnpm db:generate
 pnpm db:deploy
-pnpm db:seed   # SA reference + roles/permissions + admin@tarweej.local (dev only)
+pnpm db:seed   # SA reference + catalog + sample listings + admin@tarweej.local
 
 # API
 pnpm dev
@@ -51,17 +51,16 @@ pnpm dev
 | http://localhost:3000/api/v1/health/live | Liveness |
 | http://localhost:3000/api/v1/health/ready | Readiness (DB) |
 | http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
-| http://localhost:3000/api/v1/configuration/settings | Public non-secret settings |
-| http://localhost:3000/api/v1/configuration/feature-flags | Public feature flags |
-| http://localhost:3000/api/v1/admin/configuration/… | Admin settings/flags (permission-guarded) |
-| http://localhost:3000/api/v1/admin/rbac/… | Roles, permissions, assign/revoke |
-| http://localhost:3000/api/v1/admin/audit/entries | Audit trail |
-| http://localhost:3000/api/v1/reference/countries | Active countries (+ associations) |
-| http://localhost:3000/api/v1/admin/reference/… | Admin reference CRUD (Bearer + `super_admin`) |
+| http://localhost:3000/api/v1/listings | Public active listings (paginated) |
+| http://localhost:3000/api/v1/listings/:id | Public active listing detail |
+| http://localhost:3000/api/v1/listings/:id/views | Increment view counter |
+| http://localhost:3000/api/v1/my/listings | Owner create/list/update/submit/media |
+| http://localhost:3000/api/v1/admin/listings/pending | Moderation queue (`listings.moderate`) |
+| http://localhost:3000/api/v1/admin/listings/:id/approve\|reject | Moderate (audited) |
 | http://localhost:3000/api/v1/categories | Active category hierarchy (+ `?lang=`) |
-| http://localhost:3000/api/v1/categories/:id | Category detail with dynamic attributes |
-| http://localhost:3000/api/v1/admin/categories | Admin category/attribute CRUD (RBAC + audit) |
 | http://localhost:3000/api/v1/identity/auth/login | Email login |
+
+Object storage defaults to `OBJECT_STORAGE_DRIVER=local` (filesystem under `.data/object-storage`). Set `s3` to use MinIO/AWS via the S3-compatible adapter. Media binaries are never stored in Postgres.
 
 ### Admin
 
@@ -69,6 +68,7 @@ pnpm dev
 pnpm --filter @tarweej/admin dev
 # http://localhost:3001
 # Dev login after seed: admin@tarweej.local / Admin123!
+# Sample seller: seller@tarweej.local / Seller123!
 ```
 
 ### Flutter
@@ -100,11 +100,12 @@ pnpm build
 ## Notes
 
 - UUID primary keys use DB `gen_random_uuid()` defaults.
-- Object storage locally is MinIO (S3-compatible); production uses the same adapter later.
-- Identity domain (email/password, OTP mock SMS, Google adapter stub, sessions, RBAC) is implemented in TRW-003.
+- Listing status machine: Draft → Pending Review → Active/Rejected (+ Pause/Expire/Archive/Delete).
+- Object storage: local adapter (default) or S3/MinIO; CDN URLs are stubs until a CDN is wired.
 - Never commit `.env` or real secrets.
 
 ## Delivery
 
 - Foundation: project store `docs/delivery/TRW-002-foundation.md`
 - Identity: project store `docs/delivery/TRW-003-identity.md`
+- Listings: project store `docs/delivery/TRW-007-listings.md`

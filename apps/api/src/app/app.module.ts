@@ -6,9 +6,11 @@ import { validateEnvironment } from '../common/config/environment.validation';
 import { HealthModule } from '../common/health/health.module';
 import { LoggingModule } from '../common/logging/logging.module';
 import { PrismaModule } from '../infrastructure/prisma/prisma.module';
+import { storageConfig } from '../common/config/storage.config';
 import { CatalogModule } from '../modules/catalog/catalog.module';
 import { ConfigurationModule } from '../modules/configuration/configuration.module';
 import { IdentityModule } from '../modules/identity/identity.module';
+import { ListingsModule } from '../modules/listings/listings.module';
 import { ReferenceModule } from '../modules/reference/reference.module';
 import { AppController } from './app.controller';
 
@@ -17,7 +19,7 @@ import { AppController } from './app.controller';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [appConfig, identityConfig],
+      load: [appConfig, identityConfig, storageConfig],
       validate: validateEnvironment,
     }),
     LoggingModule,
@@ -27,6 +29,7 @@ import { AppController } from './app.controller';
     ReferenceModule,
     ConfigurationModule,
     CatalogModule,
+    ListingsModule,
   ],
   controllers: [AppController],
 })

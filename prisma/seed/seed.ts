@@ -430,6 +430,21 @@ async function main(): Promise<void> {
       name: 'Write catalog categories',
       description: 'Create or update categories, attributes, and options',
     },
+    {
+      code: 'listings.read',
+      name: 'Read listings (admin)',
+      description: 'View listing details in admin surfaces',
+    },
+    {
+      code: 'listings.write',
+      name: 'Write listings (admin)',
+      description: 'Admin create/update listings on behalf of ops',
+    },
+    {
+      code: 'listings.moderate',
+      name: 'Moderate listings',
+      description: 'Approve or reject listings pending review',
+    },
   ] as const;
 
   const permissionByCode: Record<string, { id: string }> = {};
@@ -474,6 +489,8 @@ async function main(): Promise<void> {
     'rbac.roles.read',
     'audit.read',
     'catalog.categories.read',
+    'listings.read',
+    'listings.moderate',
   ]);
 
   await prisma.featureFlag.upsert({
@@ -509,6 +526,21 @@ async function main(): Promise<void> {
       key: 'listings.featured_home_count',
       valueJson: { count: 7 },
       description: 'Number of featured ads on home',
+      isSecret: false,
+    },
+  });
+
+  await prisma.businessSetting.upsert({
+    where: { key: 'listings.moderation.auto_approve' },
+    update: {
+      valueJson: { enabled: false },
+      description: 'When true, submitting a listing skips pending_review',
+      isSecret: false,
+    },
+    create: {
+      key: 'listings.moderation.auto_approve',
+      valueJson: { enabled: false },
+      description: 'When true, submitting a listing skips pending_review',
       isSecret: false,
     },
   });
@@ -811,9 +843,194 @@ async function main(): Promise<void> {
   await linkAttr(phones.id, condition.id, 30);
   await linkAttr(phones.id, warranty.id, 40, false);
 
+  // Sample seller + listings (TRW-007)
+  const sellerPassword = await import('bcryptjs').then((b) => b.hash('Seller123!', 10));
+  const seller = await prisma.user.upsert({
+    where: { email: 'seller@tarweej.local' },
+    update: {
+      passwordHash: sellerPassword,
+      displayName: 'Sample Seller',
+      status: 'active',
+      countryId: sa.id,
+    },
+    create: {
+      email: 'seller@tarweej.local',
+      passwordHash: sellerPassword,
+      displayName: 'Sample Seller',
+      accountType: 'regular',
+      status: 'active',
+      countryId: sa.id,
+    },
+  });
+  const userRole = roleByCode.user;
+  if (userRole) {
+    await prisma.userRoleAssignment.upsert({
+      where: {
+        userId_roleId: { userId: seller.id, roleId: userRole.id },
+      },
+      update: {},
+      create: { userId: seller.id, roleId: userRole.id },
+    });
+  }
+
+  const riyadhCity = await prisma.city.findFirst({
+    where: { name: 'Riyadh', region: { countryId: sa.id } },
+  });
+
+  const existingActive = await prisma.listing.findFirst({
+    where: { ownerId: seller.id, title: 'iPhone 15 Pro 256GB' },
+  });
+
+  let activeListingId = existingActive?.id;
+  if (!existingActive) {
+    const active = await prisma.listing.create({
+      data: {
+        ownerId: seller.id,
+        categoryId: phones.id,
+        countryId: sa.id,
+        cityId: riyadhCity?.id ?? null,
+        listingType: 'marketplace',
+        title: 'iPhone 15 Pro 256GB',
+        description:
+          'Seeded sample active listing for Tarweej demos. Excellent condition with box.',
+        priceAmount: 4200,
+        currencyCode: 'SAR',
+        status: 'active',
+        publishedAt: new Date(),
+        latitude: 24.7136,
+        longitude: 46.6753,
+      },
+    });
+    activeListingId = active.id;
+    await prisma.listingStatusHistory.create({
+      data: {
+        listingId: active.id,
+        fromStatus: null,
+        toStatus: 'draft',
+        actorId: seller.id,
+        reason: 'seed',
+      },
+    });
+    await prisma.listingStatusHistory.create({
+      data: {
+        listingId: active.id,
+        fromStatus: 'draft',
+        toStatus: 'pending_review',
+        actorId: seller.id,
+        reason: 'seed submit',
+      },
+    });
+    await prisma.listingStatusHistory.create({
+      data: {
+        listingId: active.id,
+        fromStatus: 'pending_review',
+        toStatus: 'active',
+        actorId: seller.id,
+        reason: 'seed approve',
+      },
+    });
+    await prisma.listingAttributeValue.createMany({
+      data: [
+        {
+          listingId: active.id,
+          attributeDefinitionId: brand.id,
+          valueText: 'apple',
+        },
+        {
+          listingId: active.id,
+          attributeDefinitionId: storageGb.id,
+          valueNumber: 256,
+        },
+        {
+          listingId: active.id,
+          attributeDefinitionId: condition.id,
+          valueText: 'used',
+        },
+        {
+          listingId: active.id,
+          attributeDefinitionId: warranty.id,
+          valueBool: true,
+        },
+      ],
+    });
+    // Metadata-only media stub (no binary in Postgres).
+    await prisma.listingMedia.create({
+      data: {
+        listingId: active.id,
+        storageKey: `listings/${active.id}/seed-cover.webp`,
+        cdnUrl: `http://localhost:3000/api/v1/media/listings/${active.id}/seed-cover.webp`,
+        mimeType: 'image/webp',
+        byteSize: 0,
+        sortOrder: 0,
+        status: 'ready',
+      },
+    });
+  }
+
+  const existingPending = await prisma.listing.findFirst({
+    where: { ownerId: seller.id, title: 'Samsung Galaxy S24 pending review' },
+  });
+  if (!existingPending) {
+    const pending = await prisma.listing.create({
+      data: {
+        ownerId: seller.id,
+        categoryId: phones.id,
+        countryId: sa.id,
+        cityId: riyadhCity?.id ?? null,
+        listingType: 'marketplace',
+        title: 'Samsung Galaxy S24 pending review',
+        description: 'Seeded sample listing waiting for moderator approval.',
+        priceAmount: 3100,
+        currencyCode: 'SAR',
+        status: 'pending_review',
+      },
+    });
+    await prisma.listingStatusHistory.create({
+      data: {
+        listingId: pending.id,
+        fromStatus: 'draft',
+        toStatus: 'pending_review',
+        actorId: seller.id,
+        reason: 'seed',
+      },
+    });
+    await prisma.listingAttributeValue.createMany({
+      data: [
+        {
+          listingId: pending.id,
+          attributeDefinitionId: brand.id,
+          valueText: 'samsung',
+        },
+        {
+          listingId: pending.id,
+          attributeDefinitionId: storageGb.id,
+          valueNumber: 128,
+        },
+        {
+          listingId: pending.id,
+          attributeDefinitionId: condition.id,
+          valueText: 'new',
+        },
+      ],
+    });
+    await prisma.listingMedia.create({
+      data: {
+        listingId: pending.id,
+        storageKey: `listings/${pending.id}/seed-cover.webp`,
+        cdnUrl: `http://localhost:3000/api/v1/media/listings/${pending.id}/seed-cover.webp`,
+        mimeType: 'image/webp',
+        byteSize: 0,
+        sortOrder: 0,
+        status: 'ready',
+      },
+    });
+  }
+
   // eslint-disable-next-line no-console
   console.log(
-    'Seed complete: SA reference + roles/permissions + config + catalog tree + admin@tarweej.local',
+    `Seed complete: SA reference + roles/permissions + config + catalog + sample listings${
+      activeListingId ? ` (active=${activeListingId})` : ''
+    } + admin@tarweej.local / seller@tarweej.local`,
   );
 }
 

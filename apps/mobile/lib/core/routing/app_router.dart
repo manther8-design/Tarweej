@@ -8,6 +8,9 @@ import 'package:tarweej_mobile/features/auth/presentation/register_page.dart';
 import 'package:tarweej_mobile/features/catalog/presentation/categories_page.dart';
 import 'package:tarweej_mobile/features/catalog/presentation/category_detail_page.dart';
 import 'package:tarweej_mobile/features/home/presentation/home_page.dart';
+import 'package:tarweej_mobile/features/listings/presentation/create_listing_wizard_page.dart';
+import 'package:tarweej_mobile/features/listings/presentation/listing_detail_page.dart';
+import 'package:tarweej_mobile/features/listings/presentation/my_listings_page.dart';
 import 'package:tarweej_mobile/features/profile/presentation/profile_page.dart';
 import 'package:tarweej_mobile/features/reference/application/reference_controller.dart';
 import 'package:tarweej_mobile/features/reference/presentation/country_select_page.dart';
@@ -46,8 +49,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return '/country';
       }
 
-      if (!auth.isAuthenticated && (loc == '/profile' || loc == '/home')) {
-        return '/login';
+      if (!auth.isAuthenticated) {
+        final needsAuth = loc == '/profile' ||
+            loc == '/home' ||
+            loc == '/my-listings' ||
+            loc == '/listings/create' ||
+            (loc.startsWith('/listings/') && state.uri.queryParameters['mine'] == '1');
+        if (needsAuth) {
+          return '/login';
+        }
       }
 
       if (auth.isAuthenticated && isAuthRoute && loc != '/splash') {
@@ -105,6 +115,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/profile',
         name: 'profile',
         builder: (BuildContext context, GoRouterState state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: '/my-listings',
+        name: 'my-listings',
+        builder: (BuildContext context, GoRouterState state) => const MyListingsPage(),
+      ),
+      GoRoute(
+        path: '/listings/create',
+        name: 'listing-create',
+        builder: (BuildContext context, GoRouterState state) =>
+            const CreateListingWizardPage(),
+      ),
+      GoRoute(
+        path: '/listings/:id',
+        name: 'listing-detail',
+        builder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id'] ?? '';
+          final mine = state.uri.queryParameters['mine'] == '1';
+          return ListingDetailPage(listingId: id, mine: mine);
+        },
       ),
     ],
   );

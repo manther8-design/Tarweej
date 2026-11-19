@@ -169,4 +169,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guestLabel => 'Guest';
+
+  @override
+  String get myListingsTitle => 'My listings';
+
+  @override
+  String get myListingsSubtitle =>
+      'Manage drafts and published ads from the Tarweej API.';
+
+  @override
+  String get myListingsEmpty => 'You have no listings yet.';
+
+  @override
+  String get createListingAction => 'Create listing';
+
+  @override
+  String get createListingTitle => 'New listing';
+
+  @override
+  String get listingDetailTitle => 'Listing';
+
+  @override
+  String get listingNotFound => 'Listing not found.';
+
+  @override
+  String get listingStatusLabel => 'Status';
+
+  @override
+  String get listingViewsLabel => 'Views';
+
+  @override
+  String get listingRejectionLabel => 'Rejection reason';
+
+  @override
+  String get listingMediaHeading => 'Media';
+
+  @override
+  String get listingMediaEmpty => 'No media attached.';
+
+  @override
+  String get listingAttributesHeading => 'Attributes';
+
+  @override
+  String get listingAttributesEmpty => 'No attributes.';
+
+  @override
+  String get listingWizardStep => 'Step';
+
+  @override
+  String get listingWizardCategoryStep => 'Choose category';
+
+  @override
+  String get listingWizardFieldsStep => 'Details & attributes';
+
+  @override
+  String get listingWizardMediaStep => 'Media';
+
+  @override
+  String get listingWizardReviewStep => 'Review & submit';
+
+  @override
+  String get listingWizardPickCategoryFirst =>
+      'Select a category on the previous step.';
+
+  @override
+  String get listingWizardMissing => 'Category and country are required.';
+
+  @override
+  String get listingWizardFailed => 'Could not create listing.';
+
+  @override
+  String get listingWizardBack => 'Back';
+
+  @override
+  String get listingWizardNext => 'Next';
+
+  @override
+  String get listingWizardSubmit => 'Submit for review';
+
+  @override
+  String get listingTitleLabel => 'Title';
+
+  @override
+  String get listingDescriptionLabel => 'Description';
+
+  @override
+  String get listingPriceLabel => 'Price';
+
+  @override
+  String get listingMediaStubHint =>
+      'Image picker is stubbed for now — attach a placeholder media file.';
+
+  @override
+  String get listingMediaStubAction => 'Attach media stub';
+
+  @override
+  String get listingMediaStubReady => 'Media stub ready';
+
+  @override
+  String get openMyListings => 'My listings';
 }

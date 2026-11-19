@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0 — TRW-007 Listings
+
+- Prisma: `listings`, `listing_media`, `listing_attribute_values`, `listing_status_histories`, `listing_views` with UUID PKs and status machine
+- NestJS listings APIs: public active list/get + view counter; owner CRUD under `/api/v1/my/listings` with attribute validation + media upload; admin moderation approve/reject (RBAC + audit)
+- Object storage port: local filesystem adapter (default) + S3/MinIO-compatible adapter; media metadata only in Postgres
+- Seed: listing permissions, sample active + pending listings, `seller@tarweej.local`
+- Flutter: create listing wizard (category → fields → media stub → review), my listings, listing detail
+- Admin Next.js: pending listings moderation queue
+- Integration tests for create/submit/media/moderation/views/RBAC
+
 ## 0.6.0 — TRW-006 Categories & Dynamic Attributes
 
 - Prisma: hierarchical `categories`, `attribute_definitions`, `category_attributes`, `attribute_options`; soft-delete + `is_active` + `sort_order`

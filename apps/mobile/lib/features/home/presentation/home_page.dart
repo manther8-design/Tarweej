@@ -95,6 +95,11 @@ class HomePage extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             FilledButton.tonal(
+              onPressed: () => context.goNamed('my-listings'),
+              child: Text(l10n.openMyListings),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
               onPressed: () => context.goNamed('profile'),
               child: Text(l10n.openProfile),
             ),
