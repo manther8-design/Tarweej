@@ -16,7 +16,6 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
   let buyerToken = '';
   let moderatorToken = '';
   let sellerId = '';
-  let buyerId = '';
   let countryId = '';
   let cityId = '';
   let phonesCategoryId = '';
@@ -138,7 +137,6 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
     sellerToken = seller.token;
     sellerId = seller.userId;
     buyerToken = buyer.token;
-    buyerId = buyer.userId;
     moderatorToken = moderator.token;
 
     const phones = await prisma.category.findUnique({ where: { slug: 'phones' } });
