@@ -7,12 +7,14 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
+import { NotificationsService } from '../../notifications/application/notifications.service';
 import { CHAT_REALTIME_PORT, type ChatRealtimePort } from '../domain/engagement.types';
 
 @Injectable()
 export class ConversationsService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
     @Inject(CHAT_REALTIME_PORT) private readonly realtime: ChatRealtimePort,
   ) {}
 
@@ -208,6 +210,19 @@ export class ConversationsService {
       },
       participants,
     );
+
+    const recipientId =
+      conversation.buyerId === userId ? conversation.sellerId : conversation.buyerId;
+    await this.notifications.notify({
+      userId: recipientId,
+      templateCode: 'message.new',
+      payload: {
+        conversationId,
+        messageId: message.id,
+        listingId: conversation.listingId,
+        preview: message.body.slice(0, 120),
+      },
+    });
 
     return this.toMessageDto(message);
   }

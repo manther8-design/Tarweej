@@ -14,6 +14,7 @@ import 'package:tarweej_mobile/features/home/presentation/home_page.dart';
 import 'package:tarweej_mobile/features/listings/presentation/create_listing_wizard_page.dart';
 import 'package:tarweej_mobile/features/listings/presentation/listing_detail_page.dart';
 import 'package:tarweej_mobile/features/listings/presentation/my_listings_page.dart';
+import 'package:tarweej_mobile/features/notifications/presentation/notifications_inbox_page.dart';
 import 'package:tarweej_mobile/features/payments/presentation/payment_result_page.dart';
 import 'package:tarweej_mobile/features/payments/presentation/promote_listing_page.dart';
 import 'package:tarweej_mobile/features/profile/presentation/profile_page.dart';
@@ -60,6 +61,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             loc == '/home' ||
             loc == '/my-listings' ||
             loc == '/favorites' ||
+            loc == '/notifications' ||
             loc == '/chat' ||
             loc.startsWith('/chat/') ||
             loc == '/listings/create' ||
@@ -141,6 +143,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/favorites',
         name: 'favorites',
         builder: (BuildContext context, GoRouterState state) => const FavoritesPage(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        name: 'notifications',
+        builder: (BuildContext context, GoRouterState state) => const NotificationsInboxPage(),
       ),
       GoRoute(
         path: '/chat',

@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tarweej_mobile/features/auth/application/auth_controller.dart';
 import 'package:tarweej_mobile/features/chat/application/chat_controller.dart';
+import 'package:tarweej_mobile/core/network/api_client.dart';
 import 'package:tarweej_mobile/features/favorites/application/favorites_controller.dart';
 import 'package:tarweej_mobile/features/favorites/data/favorites_api.dart';
 import 'package:tarweej_mobile/features/listings/application/listings_controller.dart';
+import 'package:tarweej_mobile/features/reports/data/reports_api.dart';
 import 'package:tarweej_mobile/l10n/app_localizations.dart';
 
 class ListingDetailPage extends ConsumerStatefulWidget {
@@ -26,6 +28,7 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
   bool _favorited = false;
   bool _favoriteBusy = false;
   bool _chatBusy = false;
+  bool _reportBusy = false;
   String? _actionError;
 
   @override
@@ -123,6 +126,111 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
     );
   }
 
+  Future<void> _reportListing() async {
+    final token = ref.read(authControllerProvider).tokens?.accessToken;
+    if (token == null) {
+      if (mounted) {
+        context.goNamed('login');
+      }
+      return;
+    }
+    final l10n = AppLocalizations.of(context);
+    final reasons = <MapEntry<String, String>>[
+      MapEntry('spam', l10n.reportReasonSpam),
+      MapEntry('fraud', l10n.reportReasonFraud),
+      MapEntry('inappropriate', l10n.reportReasonInappropriate),
+      MapEntry('counterfeit', l10n.reportReasonCounterfeit),
+      MapEntry('harassment', l10n.reportReasonHarassment),
+      MapEntry('other', l10n.reportReasonOther),
+    ];
+    String selected = reasons.first.key;
+    final notesController = TextEditingController();
+
+    final submitted = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(l10n.reportListingTitle),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<String>(
+                    value: selected,
+                    items: reasons
+                        .map(
+                          (entry) => DropdownMenuItem<String>(
+                            value: entry.key,
+                            child: Text(entry.value),
+                          ),
+                        )
+                        .toList(growable: false),
+                    onChanged: (value) {
+                      if (value == null) {
+                        return;
+                      }
+                      setDialogState(() => selected = value);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: notesController,
+                    maxLines: 3,
+                    decoration: InputDecoration(hintText: l10n.reportNotesHint),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  child: Text(l10n.reportSubmitAction),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (submitted != true || !mounted) {
+      notesController.dispose();
+      return;
+    }
+
+    setState(() {
+      _reportBusy = true;
+      _actionError = null;
+    });
+    try {
+      final api = ReportsApi(ref.read(dioProvider));
+      await api.reportListing(
+        accessToken: token,
+        listingId: widget.listingId,
+        reasonCode: selected,
+        notes: notesController.text,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.reportSuccessMessage)),
+        );
+      }
+    } on ReportsApiException catch (error) {
+      if (mounted) {
+        setState(() => _actionError = error.message);
+      }
+    } finally {
+      notesController.dispose();
+      if (mounted) {
+        setState(() => _reportBusy = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -190,6 +298,11 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
                                   onPressed: _chatBusy ? null : _contactSeller,
                                   icon: const Icon(Icons.chat_bubble_outline),
                                   label: Text(l10n.chatContactSeller),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: _reportBusy ? null : _reportListing,
+                                  icon: const Icon(Icons.flag_outlined),
+                                  label: Text(l10n.reportListingAction),
                                 ),
                               ],
                             ),

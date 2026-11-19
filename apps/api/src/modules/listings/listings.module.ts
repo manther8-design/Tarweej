@@ -6,6 +6,7 @@ import { PrismaModule } from '../../infrastructure/prisma/prisma.module';
 import { CatalogModule } from '../catalog/catalog.module';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { IdentityModule } from '../identity/identity.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { AdminListingsController } from './adapters/http/admin-listings.controller';
 import { ListingsController } from './adapters/http/listings.controller';
 import { MediaController } from './adapters/http/media.controller';
@@ -26,6 +27,7 @@ import { ListingsService } from './application/listings.service';
     ConfigurationModule,
     CatalogModule,
     ObjectStorageModule,
+    NotificationsModule,
   ],
   controllers: [MyListingsController, ListingsController, AdminListingsController, MediaController],
   providers: [ListingsService],

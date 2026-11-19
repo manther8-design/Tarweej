@@ -11,6 +11,7 @@ import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { contentHash } from '../../../infrastructure/object-storage/local-object-storage.adapter';
 import { AuditService } from '../../configuration/application/audit.service';
 import { CatalogService } from '../../catalog/application/catalog.service';
+import { NotificationsService } from '../../notifications/application/notifications.service';
 import {
   LISTING_STATUS_TRANSITIONS,
   OBJECT_STORAGE_PORT,
@@ -39,6 +40,7 @@ export class ListingsService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly catalog: CatalogService,
+    private readonly notifications: NotificationsService,
     @Inject(OBJECT_STORAGE_PORT) private readonly storage: ObjectStoragePort,
   ) {}
 
@@ -497,6 +499,15 @@ export class ListingsService {
       after,
       metadata: reason ? { reason } : undefined,
     });
+    await this.notifications.notify({
+      userId: listing.ownerId,
+      templateCode: 'listing.approved',
+      payload: {
+        listingId: id,
+        listingTitle: listing.title,
+        reason: reason ?? 'approved',
+      },
+    });
     return this.toDetail(
       await this.prisma.listing.findUniqueOrThrow({ where: { id }, include: listingInclude }),
     );
@@ -523,6 +534,15 @@ export class ListingsService {
       before: { status: 'pending_review' },
       after,
       metadata: { reason: reason.trim() },
+    });
+    await this.notifications.notify({
+      userId: listing.ownerId,
+      templateCode: 'listing.rejected',
+      payload: {
+        listingId: id,
+        listingTitle: listing.title,
+        reason: reason.trim(),
+      },
     });
     return this.toDetail(
       await this.prisma.listing.findUniqueOrThrow({ where: { id }, include: listingInclude }),

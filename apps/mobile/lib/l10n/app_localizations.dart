@@ -782,6 +782,12 @@ abstract class AppLocalizations {
   /// **'Messages'**
   String get openChat;
 
+  /// No description provided for @openNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get openNotifications;
+
   /// No description provided for @favoritesTitle.
   ///
   /// In en, this message translates to:
@@ -997,6 +1003,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to listing'**
   String get paymentBackToListingAction;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet.'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get notificationsRetry;
+
+  /// No description provided for @notificationsMarkRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark read'**
+  String get notificationsMarkRead;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @reportListingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report listing'**
+  String get reportListingAction;
+
+  /// No description provided for @reportListingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report listing'**
+  String get reportListingTitle;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonFraud.
+  ///
+  /// In en, this message translates to:
+  /// **'Fraud'**
+  String get reportReasonFraud;
+
+  /// No description provided for @reportReasonInappropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Inappropriate'**
+  String get reportReasonInappropriate;
+
+  /// No description provided for @reportReasonCounterfeit.
+  ///
+  /// In en, this message translates to:
+  /// **'Counterfeit'**
+  String get reportReasonCounterfeit;
+
+  /// No description provided for @reportReasonHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment'**
+  String get reportReasonHarassment;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get reportReasonOther;
+
+  /// No description provided for @reportNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional details'**
+  String get reportNotesHint;
+
+  /// No description provided for @reportSubmitAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit report'**
+  String get reportSubmitAction;
+
+  /// No description provided for @reportSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Report submitted. Thank you.'**
+  String get reportSuccessMessage;
 }
 
 class _AppLocalizationsDelegate

@@ -465,6 +465,16 @@ async function main(): Promise<void> {
       name: 'Write payment routes',
       description: 'Create or update country payment provider routes',
     },
+    {
+      code: 'reports.read',
+      name: 'Read reports queue',
+      description: 'View user-filed listing/user reports in admin',
+    },
+    {
+      code: 'reports.moderate',
+      name: 'Moderate reports',
+      description: 'Classify, act on, and close moderation reports',
+    },
   ] as const;
 
   const permissionByCode: Record<string, { id: string }> = {};
@@ -513,6 +523,8 @@ async function main(): Promise<void> {
     'listings.moderate',
     'payments.pricing.read',
     'payments.routes.read',
+    'reports.read',
+    'reports.moderate',
   ]);
 
   await prisma.featureFlag.upsert({
@@ -1151,7 +1163,7 @@ async function main(): Promise<void> {
 
   // eslint-disable-next-line no-console
   console.log(
-    `Seed complete: SA reference + roles/permissions + config + catalog + commercial payments/featured + sample listings${
+    `Seed complete: SA reference + roles/permissions + config + catalog + commercial + notifications/reports + sample listings${
       activeListingId ? ` (active=${activeListingId})` : ''
     } + admin@tarweej.local / seller@tarweej.local`,
   );

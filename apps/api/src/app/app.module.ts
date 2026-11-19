@@ -13,6 +13,7 @@ import { ConfigurationModule } from '../modules/configuration/configuration.modu
 import { EngagementModule } from '../modules/engagement/engagement.module';
 import { IdentityModule } from '../modules/identity/identity.module';
 import { ListingsModule } from '../modules/listings/listings.module';
+import { NotificationsModule } from '../modules/notifications/notifications.module';
 import { ReferenceModule } from '../modules/reference/reference.module';
 import { SearchModule } from '../modules/search/search.module';
 import { RedisModule } from '../infrastructure/redis/redis.module';
@@ -38,6 +39,7 @@ import { AppController } from './app.controller';
     SearchModule,
     EngagementModule,
     CommercialModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
 })

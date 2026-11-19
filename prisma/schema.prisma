@@ -1,5 +1,5 @@
 // Tarweej schema (Identity + Reference + Config/Admin RBAC + Catalog + Listings +
-// Engagement + Commercial/Payments).
+// Engagement + Commercial/Payments + Notifications/Reports).
 // UUID PKs use DB gen_random_uuid() defaults (TRW-002 user default).
 
 generator client {
@@ -44,6 +44,11 @@ model User {
   conversationsAsSeller Conversation[] @relation("ConversationSeller")
   messages        Message[]
   payments        Payment[]
+  notifications   Notification[]
+  deviceTokens    DeviceToken[]
+  reportsFiled    Report[] @relation("ReportReporter")
+  reportsAgainst  Report[] @relation("ReportTargetUser")
+  reportsResolved Report[] @relation("ReportResolver")
 
   @@index([countryId])
   @@index([status])
@@ -551,6 +556,7 @@ model Listing {
   favorites        Favorite[]
   conversations    Conversation[]
   featuredPromotions FeaturedPromotion[]
+  reports          Report[]
 
   @@index([ownerId, status])
   @@index([status, countryId, publishedAt(sort: Desc)])
@@ -823,4 +829,71 @@ model PaymentProviderRoute {
   @@unique([countryId, providerCode])
   @@index([countryId, isActive, priority])
   @@map("payment_provider_routes")
+}
+
+// ---------------------------------------------------------------------------
+// Notifications & Moderation reports (TRW-011)
+// In-app rows are SoT; push is delivered via PushProviderPort (FCM stub).
+// Reports are never hard-deleted; resolutions are audited.
+// ---------------------------------------------------------------------------
+
+model Notification {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  channel      String    @default("in_app") @db.VarChar(40)
+  templateCode String    @map("template_code") @db.VarChar(80)
+  payload      Json      @db.JsonB
+  readAt       DateTime? @map("read_at") @db.Timestamptz(6)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, readAt])
+  @@index([templateCode, createdAt])
+  @@map("notifications")
+}
+
+model DeviceToken {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  platform   String   @db.VarChar(40)
+  token      String   @unique @db.VarChar(512)
+  lastSeenAt DateTime @default(now()) @map("last_seen_at") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, lastSeenAt(sort: Desc)])
+  @@index([platform])
+  @@map("device_tokens")
+}
+
+model Report {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reporterId       String    @map("reporter_id") @db.Uuid
+  listingId        String?   @map("listing_id") @db.Uuid
+  targetUserId     String?   @map("target_user_id") @db.Uuid
+  reasonCode       String    @map("reason_code") @db.VarChar(80)
+  notes            String?   @db.Text
+  status           String    @default("open") @db.VarChar(40)
+  classification   String?   @db.VarChar(80)
+  resolutionAction String?   @map("resolution_action") @db.VarChar(80)
+  resolutionReason String?   @map("resolution_reason") @db.VarChar(500)
+  resolvedById     String?   @map("resolved_by_id") @db.Uuid
+  resolvedAt       DateTime? @map("resolved_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  reporter   User     @relation("ReportReporter", fields: [reporterId], references: [id], onDelete: Restrict)
+  listing    Listing? @relation(fields: [listingId], references: [id], onDelete: Restrict)
+  targetUser User?    @relation("ReportTargetUser", fields: [targetUserId], references: [id], onDelete: Restrict)
+  resolvedBy User?    @relation("ReportResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([reporterId, createdAt(sort: Desc)])
+  @@index([listingId, status])
+  @@index([targetUserId, status])
+  @@map("reports")
 }

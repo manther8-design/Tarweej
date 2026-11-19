@@ -10,6 +10,7 @@ import {
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { AuditService } from '../../configuration/application/audit.service';
+import { NotificationsService } from '../../notifications/application/notifications.service';
 import { MockPaymentAdapter } from '../adapters/payments/mock-payment.adapter';
 import type { PaymentStatus } from '../domain/commercial.types';
 import { PaymentRoutingService } from './payment-routing.service';
@@ -23,6 +24,7 @@ export class PaymentsService {
     private readonly prisma: PrismaService,
     private readonly routing: PaymentRoutingService,
     private readonly audit: AuditService,
+    private readonly notifications: NotificationsService,
     private readonly mockAdapter: MockPaymentAdapter,
     @Inject(forwardRef(() => PromotionsService))
     private readonly promotions: PromotionsService,
@@ -307,6 +309,27 @@ export class PaymentsService {
         after: this.toPublic(applied.payment),
         metadata: { providerEventId: parsed.providerEventId },
       });
+
+      if (applied.payment.status === 'paid') {
+        await this.notifications.notify({
+          userId: applied.payment.userId,
+          templateCode: 'payment.success',
+          payload: {
+            paymentId: applied.payment.id,
+            amount: applied.payment.amount.toString(),
+            currencyCode: applied.payment.currencyCode,
+          },
+        });
+      } else if (applied.payment.status === 'failed') {
+        await this.notifications.notify({
+          userId: applied.payment.userId,
+          templateCode: 'payment.failed',
+          payload: {
+            paymentId: applied.payment.id,
+            failureReason: applied.payment.failureReason ?? 'payment_failed',
+          },
+        });
+      }
     }
 
     const refreshed = await this.prisma.payment.findUniqueOrThrow({
