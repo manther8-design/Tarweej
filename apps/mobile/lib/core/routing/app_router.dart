@@ -7,11 +7,14 @@ import 'package:tarweej_mobile/features/auth/presentation/otp_page.dart';
 import 'package:tarweej_mobile/features/auth/presentation/register_page.dart';
 import 'package:tarweej_mobile/features/home/presentation/home_page.dart';
 import 'package:tarweej_mobile/features/profile/presentation/profile_page.dart';
+import 'package:tarweej_mobile/features/reference/application/reference_controller.dart';
+import 'package:tarweej_mobile/features/reference/presentation/country_select_page.dart';
 import 'package:tarweej_mobile/features/splash/presentation/splash_page.dart';
 
 final _routerRefreshProvider = Provider<_RouterRefresh>((ref) {
   final refresh = _RouterRefresh();
   ref.listen<AuthState>(authControllerProvider, (_, __) => refresh.notify());
+  ref.listen<ReferenceState>(referenceControllerProvider, (_, __) => refresh.notify());
   return refresh;
 });
 
@@ -27,12 +30,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (BuildContext context, GoRouterState state) {
       final auth = ref.read(authControllerProvider);
+      final reference = ref.read(referenceControllerProvider);
       final loc = state.matchedLocation;
       final isAuthRoute =
           loc == '/login' || loc == '/register' || loc == '/otp' || loc == '/splash';
 
-      if (!auth.bootstrapped) {
+      if (!auth.bootstrapped || !reference.bootstrapped) {
         return loc == '/splash' ? null : '/splash';
+      }
+
+      // First-run gate: require a persisted country before auth/home surfaces.
+      if (!reference.hasCountry && loc != '/country' && loc != '/splash') {
+        return '/country';
       }
 
       if (!auth.isAuthenticated && (loc == '/profile' || loc == '/home')) {
@@ -50,6 +59,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/splash',
         name: 'splash',
         builder: (BuildContext context, GoRouterState state) => const SplashPage(),
+      ),
+      GoRoute(
+        path: '/country',
+        name: 'country',
+        builder: (BuildContext context, GoRouterState state) =>
+            const CountrySelectPage(),
       ),
       GoRoute(
         path: '/login',

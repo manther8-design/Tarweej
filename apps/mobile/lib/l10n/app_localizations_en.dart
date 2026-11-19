@@ -19,7 +19,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeBody =>
-      'Identity phase — sign in, manage your profile, and continue browsing.';
+      'Reference data phase — pick your country from the live API, then continue.';
+
+  @override
+  String get countrySelectTitle => 'Choose your country';
+
+  @override
+  String get countrySelectSubtitle =>
+      'Countries load from the Tarweej reference API (active markets only).';
+
+  @override
+  String get countrySelectRetry => 'Retry';
+
+  @override
+  String get selectedCountryLabel => 'Selected country';
+
+  @override
+  String get changeCountryAction => 'Change country';
 
   @override
   String get loginTitle => 'Sign in';

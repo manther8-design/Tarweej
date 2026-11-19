@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 — TRW-004 Reference Data
+
+- Complete Prisma reference models: locales, dialing_codes, country associations, hierarchical regions, city flags, translation strings
+- Partial unique indexes enforcing one primary language/locale/currency/TZ/dialing per country
+- NestJS public `/api/v1/reference/...` reads + admin `/api/v1/admin/reference/...` CRUD with RBAC
+- SA-focused seed: AR/EN locales, SAR, +966, regions/cities + translations
+- Flutter country selection wired to live reference API (AR/EN RTL)
+- Integration tests for public reads, admin RBAC, hierarchy, primary constraints
+
 ## 0.3.0 — TRW-003 Identity
 
 - NestJS Identity domain: email register/login, JWT access/refresh rotation, logout revoke

@@ -119,8 +119,38 @@ abstract class AppLocalizations {
   /// No description provided for @homeBody.
   ///
   /// In en, this message translates to:
-  /// **'Identity phase — sign in, manage your profile, and continue browsing.'**
+  /// **'Reference data phase — pick your country from the live API, then continue.'**
   String get homeBody;
+
+  /// No description provided for @countrySelectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your country'**
+  String get countrySelectTitle;
+
+  /// No description provided for @countrySelectSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Countries load from the Tarweej reference API (active markets only).'**
+  String get countrySelectSubtitle;
+
+  /// No description provided for @countrySelectRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get countrySelectRetry;
+
+  /// No description provided for @selectedCountryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected country'**
+  String get selectedCountryLabel;
+
+  /// No description provided for @changeCountryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Change country'**
+  String get changeCountryAction;
 
   /// No description provided for @loginTitle.
   ///

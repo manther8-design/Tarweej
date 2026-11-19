@@ -1,4 +1,4 @@
-# ترويج | Tarweej — Identity (TRW-003) on Foundation (TRW-002)
+# ترويج | Tarweej — Reference Data (TRW-004)
 
 Production-oriented **Nx + pnpm** monorepo for the Tarweej marketplace platform.
 
@@ -37,7 +37,7 @@ pnpm infra:up
 # Database
 pnpm db:generate
 pnpm db:deploy
-pnpm db:seed   # languages / countries / currencies / roles (dev only)
+pnpm db:seed   # SA-focused reference + roles (dev only)
 
 # API
 pnpm dev
@@ -51,11 +51,15 @@ pnpm dev
 | http://localhost:3000/api/v1/health/live | Liveness |
 | http://localhost:3000/api/v1/health/ready | Readiness (DB) |
 | http://localhost:3000/api/v1/docs | Swagger / OpenAPI UI |
+| http://localhost:3000/api/v1/reference/countries | Active countries (+ associations) |
+| http://localhost:3000/api/v1/reference/regions?countryId=… | Active regions |
+| http://localhost:3000/api/v1/reference/cities?countryId=… | Active cities |
+| http://localhost:3000/api/v1/reference/languages | Active languages |
+| http://localhost:3000/api/v1/reference/currencies | Active currencies |
+| http://localhost:3000/api/v1/admin/reference/… | Admin CRUD (Bearer + `super_admin`) |
 | http://localhost:3000/api/v1/identity/auth/register | Email registration |
 | http://localhost:3000/api/v1/identity/auth/login | Email login |
-| http://localhost:3000/api/v1/identity/auth/refresh | Refresh rotation |
 | http://localhost:3000/api/v1/identity/me | Current user (Bearer) |
-| http://localhost:3000/api/v1/identity/otp/request | Phone OTP request (mock SMS) |
 
 ### Admin
 
