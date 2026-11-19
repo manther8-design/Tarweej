@@ -5,11 +5,15 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT}"
 
-# Patterns that must never appear outside .env.example / docs that explicitly show placeholders.
-# We scan tracked text files and exclude example templates + delivery docs that document the seed.
-PATTERN='(AWS_SECRET_ACCESS_KEY\s*=\s*AKIA|BEGIN RSA PRIVATE KEY|sk_live_[0-9a-zA-Z]{16,}|ghp_[0-9a-zA-Z]{20,})'
+# Patterns are assembled so this script does not match itself under git grep.
+P1='AWS_SECRET_ACCESS_KEY[[:space:]]*=[[:space:]]*AKIA'
+P2='BEGIN RSA PRIVATE KEY'
+P3='sk_live_[0-9a-zA-Z]{16,}'
+P4='ghp_[0-9a-zA-Z]{20,}'
+PATTERN="${P1}|${P2}|${P3}|${P4}"
 
 HITS="$(git grep -nE "${PATTERN}" -- . \
+  ':(exclude)scripts/ci-secret-scan.sh' \
   ':(exclude).env.example' \
   ':(exclude)infrastructure/deployment/env.production.example' \
   ':(exclude)**/*.md' \
