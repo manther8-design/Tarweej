@@ -7,7 +7,12 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    SharedPreferences.setMockInitialValues(<String, Object>{});
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      // Skip country gate so splash can settle without a live API.
+      'reference.selected_country_id': '00000000-0000-0000-0000-000000000001',
+      'reference.selected_country_iso2': 'SA',
+      'reference.selected_country_name': 'Saudi Arabia',
+    });
   });
 
   testWidgets('renders splash brand', (WidgetTester tester) async {

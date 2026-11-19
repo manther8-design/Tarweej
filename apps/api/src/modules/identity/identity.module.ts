@@ -5,6 +5,8 @@ import { PassportModule } from '@nestjs/passport';
 import { identityConfig } from '../../common/config/identity.config';
 import { PrismaModule } from '../../infrastructure/prisma/prisma.module';
 import { IdentityController } from './adapters/http/identity.controller';
+import { JwtAuthGuard } from './adapters/http/guards/jwt-auth.guard';
+import { RolesGuard } from './adapters/http/guards/roles.guard';
 import { JwtStrategy } from './adapters/http/strategies/jwt.strategy';
 import { GoogleAuthAdapter } from './adapters/oauth/google-auth.adapter';
 import { MockSmsAdapter } from './adapters/sms/mock-sms.adapter';
@@ -37,11 +39,13 @@ import { SMS_PROVIDER } from './domain/ports/sms-provider.port';
     SessionService,
     TokenService,
     JwtStrategy,
+    JwtAuthGuard,
+    RolesGuard,
     MockSmsAdapter,
     GoogleAuthAdapter,
     { provide: SMS_PROVIDER, useExisting: MockSmsAdapter },
     { provide: GOOGLE_AUTH_PROVIDER, useExisting: GoogleAuthAdapter },
   ],
-  exports: [AuthService, ProfileService, JwtModule],
+  exports: [AuthService, ProfileService, JwtModule, JwtAuthGuard, RolesGuard],
 })
 export class IdentityModule {}

@@ -118,6 +118,9 @@ model UserRoleAssignment {
 
 // ---------------------------------------------------------------------------
 // Reference data
+// Association tables are source of truth for country↔language/locale/currency/
+// time_zone/dialing_code (with is_primary). Partial unique indexes enforce one
+// primary association per country (see migrations).
 // ---------------------------------------------------------------------------
 
 model Language {
@@ -127,25 +130,46 @@ model Language {
   isRtl    Boolean @default(false) @map("is_rtl")
   isActive Boolean @default(true) @map("is_active")
 
+  locales          Locale[]
   countryLanguages CountryLanguage[]
 
   @@map("languages")
+}
+
+/// BCP-47 locale (e.g. ar-SA, en). Linked to a language; country associations are SoT.
+model Locale {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code       String  @unique @db.VarChar(32)
+  languageId String  @map("language_id") @db.Uuid
+  name       String  @db.VarChar(120)
+  isActive   Boolean @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  language        Language        @relation(fields: [languageId], references: [id], onDelete: Restrict)
+  countryLocales  CountryLocale[]
+
+  @@index([languageId])
+  @@map("locales")
 }
 
 model Country {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   iso2        String   @unique @db.Char(2)
   iso3        String   @unique @db.Char(3)
+  /// Denormalized from primary country_dialing_codes for convenient display.
   dialingCode String   @map("dialing_code") @db.VarChar(8)
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  users             User[]
-  countryLanguages  CountryLanguage[]
-  countryCurrencies CountryCurrency[]
-  countryTimeZones  CountryTimeZone[]
-  regions           Region[]
+  users               User[]
+  countryLanguages    CountryLanguage[]
+  countryLocales      CountryLocale[]
+  countryCurrencies   CountryCurrency[]
+  countryTimeZones    CountryTimeZone[]
+  countryDialingCodes CountryDialingCode[]
+  regions             Region[]
 
   @@map("countries")
 }
@@ -171,6 +195,20 @@ model TimeZone {
   @@map("time_zones")
 }
 
+/// International dialing prefixes (e.g. +966). Country links via association SoT.
+model DialingCode {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String   @unique @db.VarChar(8)
+  label     String?  @db.VarChar(120)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  countryDialingCodes CountryDialingCode[]
+
+  @@map("dialing_codes")
+}
+
 model CountryLanguage {
   id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   countryId  String  @map("country_id") @db.Uuid
@@ -183,6 +221,20 @@ model CountryLanguage {
   @@unique([countryId, languageId])
   @@index([languageId])
   @@map("country_languages")
+}
+
+model CountryLocale {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId String  @map("country_id") @db.Uuid
+  localeId  String  @map("locale_id") @db.Uuid
+  isPrimary Boolean @default(false) @map("is_primary")
+
+  country Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  locale  Locale  @relation(fields: [localeId], references: [id], onDelete: Cascade)
+
+  @@unique([countryId, localeId])
+  @@index([localeId])
+  @@map("country_locales")
 }
 
 model CountryCurrency {
@@ -213,32 +265,59 @@ model CountryTimeZone {
   @@map("country_time_zones")
 }
 
-model Region {
-  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  countryId String @map("country_id") @db.Uuid
-  code      String @db.VarChar(40)
-  name      String @db.VarChar(160)
+model CountryDialingCode {
+  id            String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId     String  @map("country_id") @db.Uuid
+  dialingCodeId String  @map("dialing_code_id") @db.Uuid
+  isPrimary     Boolean @default(false) @map("is_primary")
 
-  country Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  cities  City[]
+  country     Country     @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  dialingCode DialingCode @relation(fields: [dialingCodeId], references: [id], onDelete: Cascade)
+
+  @@unique([countryId, dialingCodeId])
+  @@index([dialingCodeId])
+  @@map("country_dialing_codes")
+}
+
+/// Hierarchical geo region (parent_id adjacency). Translations via translation_strings.
+model Region {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  countryId String   @map("country_id") @db.Uuid
+  parentId  String?  @map("parent_id") @db.Uuid
+  code      String   @db.VarChar(40)
+  name      String   @db.VarChar(160)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  country  Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  parent   Region?  @relation("RegionTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Region[] @relation("RegionTree")
+  cities   City[]
 
   @@unique([countryId, code])
+  @@index([parentId])
+  @@index([countryId, isActive])
   @@map("regions")
 }
 
 model City {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  regionId  String  @map("region_id") @db.Uuid
-  name      String  @db.VarChar(160)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  regionId  String   @map("region_id") @db.Uuid
+  name      String   @db.VarChar(160)
   latitude  Float?
   longitude Float?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   region Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
 
-  @@index([regionId])
+  @@index([regionId, isActive])
   @@map("cities")
 }
 
+/// Polymorphic translations for country/region/city (and other) display fields.
 model TranslationString {
   id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   entityType   String @map("entity_type") @db.VarChar(64)

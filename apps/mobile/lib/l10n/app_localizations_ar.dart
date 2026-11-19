@@ -18,7 +18,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeHeadline => 'مرحبًا بك في ترويج';
 
   @override
-  String get homeBody => 'مرحلة الهوية — سجّل الدخول وأدر ملفك ثم تابع التصفح.';
+  String get homeBody =>
+      'مرحلة البيانات المرجعية — اختر بلدك من الواجهة البرمجية ثم تابع.';
+
+  @override
+  String get countrySelectTitle => 'اختر بلدك';
+
+  @override
+  String get countrySelectSubtitle =>
+      'تُحمَّل البلدان من واجهة البيانات المرجعية (الأسواق النشطة فقط).';
+
+  @override
+  String get countrySelectRetry => 'إعادة المحاولة';
+
+  @override
+  String get selectedCountryLabel => 'البلد المحدد';
+
+  @override
+  String get changeCountryAction => 'تغيير البلد';
 
   @override
   String get loginTitle => 'تسجيل الدخول';
