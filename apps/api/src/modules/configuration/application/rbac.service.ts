@@ -47,6 +47,71 @@ export class RbacService {
     });
   }
 
+  async listUsers(input?: { q?: string; page?: number; pageSize?: number; roleCode?: string }) {
+    const page = Math.max(input?.page ?? 1, 1);
+    const pageSize = Math.min(Math.max(input?.pageSize ?? 20, 1), 100);
+    const q = input?.q?.trim();
+
+    const where = {
+      deletedAt: null,
+      ...(input?.roleCode ? { roleAssignments: { some: { role: { code: input.roleCode } } } } : {}),
+      ...(q
+        ? {
+            OR: [
+              { email: { contains: q, mode: 'insensitive' as const } },
+              { displayName: { contains: q, mode: 'insensitive' as const } },
+              { phoneE164: { contains: q } },
+            ],
+          }
+        : {}),
+    };
+
+    const [total, rows] = await this.prisma.$transaction([
+      this.prisma.user.count({ where }),
+      this.prisma.user.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        select: {
+          id: true,
+          email: true,
+          phoneE164: true,
+          displayName: true,
+          accountType: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+          roleAssignments: {
+            include: { role: { select: { code: true, name: true } } },
+            orderBy: { createdAt: 'asc' },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      page,
+      pageSize,
+      total,
+      items: rows.map((user) => ({
+        id: user.id,
+        email: user.email,
+        phoneE164: user.phoneE164,
+        displayName: user.displayName,
+        accountType: user.accountType,
+        status: user.status,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        roles: user.roleAssignments.map((a) => ({
+          code: a.role.code,
+          name: a.role.name,
+          assignedAt: a.createdAt,
+        })),
+      })),
+    };
+  }
+
   async getUserRoles(userId: string) {
     const user = await this.prisma.user.findFirst({
       where: { id: userId, deletedAt: null },

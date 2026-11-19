@@ -86,6 +86,7 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
     }
 
     for (const perm of [
+      'payments.read',
       'payments.pricing.read',
       'payments.pricing.write',
       'payments.routes.read',
@@ -97,9 +98,11 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
         update: {},
         create: { code: perm, name: perm, description: perm },
       });
-      for (const roleCode of perm.startsWith('listings')
-        ? (['super_admin', 'moderator'] as const)
-        : (['super_admin'] as const)) {
+      const roleCodes =
+        perm.endsWith('.write') && !perm.startsWith('listings')
+          ? (['super_admin'] as const)
+          : (['super_admin', 'moderator'] as const);
+      for (const roleCode of roleCodes) {
         const role = await prisma.role.findUniqueOrThrow({ where: { code: roleCode } });
         await prisma.rolePermission.upsert({
           where: {
@@ -435,5 +438,30 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
         isActive: true,
       })
       .expect(400);
+  });
+
+  it('admin can list payments and promotions', async () => {
+    await request(app.getHttpServer())
+      .get('/api/v1/admin/commercial/payments')
+      .set('Authorization', `Bearer ${buyerToken}`)
+      .expect(403);
+
+    const payments = await request(app.getHttpServer())
+      .get('/api/v1/admin/commercial/payments')
+      .query({ page: 1, pageSize: 10 })
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(payments.body).toHaveProperty('total');
+    expect(Array.isArray(payments.body.items)).toBe(true);
+
+    const promotions = await request(app.getHttpServer())
+      .get('/api/v1/admin/commercial/promotions')
+      .query({ page: 1, pageSize: 10 })
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(promotions.body).toHaveProperty('total');
+    expect(Array.isArray(promotions.body.items)).toBe(true);
   });
 });

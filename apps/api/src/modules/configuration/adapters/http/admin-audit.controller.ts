@@ -14,16 +14,20 @@ export class AdminAuditController {
   constructor(private readonly audit: AuditService) {}
 
   @Get('entries')
-  @ApiOperation({ summary: 'List recent audit entries' })
+  @ApiOperation({ summary: 'Browse audit entries (paginated, filterable)' })
   list(
     @Query('entityType') entityType?: string,
     @Query('actorId') actorId?: string,
+    @Query('action') action?: string,
     @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
   ) {
     return this.audit.list({
       entityType,
       actorId,
+      action,
       limit: limit ? Number(limit) : undefined,
+      offset: offset ? Number(offset) : undefined,
     });
   }
 }

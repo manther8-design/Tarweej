@@ -68,6 +68,47 @@ export class PaymentsService {
     return this.prisma.payment.findUnique({ where: { idempotencyKey } });
   }
 
+  async listAdmin(input?: { page?: number; pageSize?: number; status?: string }) {
+    const page = Math.max(input?.page ?? 1, 1);
+    const pageSize = Math.min(Math.max(input?.pageSize ?? 20, 1), 100);
+    const where = {
+      ...(input?.status ? { status: input.status } : {}),
+    };
+    const [total, rows] = await this.prisma.$transaction([
+      this.prisma.payment.count({ where }),
+      this.prisma.payment.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          user: { select: { id: true, email: true, displayName: true } },
+          promotion: {
+            select: {
+              id: true,
+              listingId: true,
+              status: true,
+              placement: true,
+              startsAt: true,
+              endsAt: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      page,
+      pageSize,
+      total,
+      items: rows.map((row) => ({
+        ...this.toPublic(row),
+        user: row.user,
+        promotion: row.promotion,
+      })),
+    };
+  }
+
   async listForUser(userId: string, input?: { page?: number; pageSize?: number }) {
     const page = Math.max(input?.page ?? 1, 1);
     const pageSize = Math.min(Math.max(input?.pageSize ?? 20, 1), 100);

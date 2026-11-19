@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -15,7 +16,7 @@ import { JwtAuthGuard } from '../../../identity/adapters/http/guards/jwt-auth.gu
 import { PermissionsGuard } from '../../../identity/adapters/http/guards/permissions.guard';
 import type { AuthenticatedUser } from '../../../identity/domain/identity.types';
 import { RbacService } from '../../application/rbac.service';
-import { AssignRoleDto } from './dto/configuration.dto';
+import { AssignRoleDto, ListUsersQueryDto } from './dto/configuration.dto';
 
 @ApiTags('admin-rbac')
 @ApiBearerAuth()
@@ -36,6 +37,13 @@ export class AdminRbacController {
   @ApiOperation({ summary: 'List permission catalog' })
   listPermissions() {
     return this.rbac.listPermissions();
+  }
+
+  @Get('users')
+  @RequirePermissions('rbac.roles.read')
+  @ApiOperation({ summary: 'List users with roles (searchable, paginated)' })
+  listUsers(@Query() query: ListUsersQueryDto) {
+    return this.rbac.listUsers(query);
   }
 
   @Get('users/:userId/roles')

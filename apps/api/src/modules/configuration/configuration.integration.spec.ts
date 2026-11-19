@@ -59,6 +59,35 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
         throw new Error('Permissions missing — run pnpm db:seed before tests');
       }
 
+      for (const perm of [
+        {
+          code: 'dashboard.read',
+          name: 'Read admin dashboard',
+          description: 'View ops KPI overview aggregations',
+        },
+        {
+          code: 'payments.read',
+          name: 'Read payments (admin)',
+          description: 'List payment records for ops surfaces',
+        },
+      ] as const) {
+        const permission = await prisma.permission.upsert({
+          where: { code: perm.code },
+          update: { name: perm.name, description: perm.description },
+          create: perm,
+        });
+        for (const roleCode of ['super_admin', 'moderator'] as const) {
+          const role = await prisma.role.findUniqueOrThrow({ where: { code: roleCode } });
+          await prisma.rolePermission.upsert({
+            where: {
+              roleId_permissionId: { roleId: role.id, permissionId: permission.id },
+            },
+            update: {},
+            create: { roleId: role.id, permissionId: permission.id },
+          });
+        }
+      }
+
       const password = 'Password1!';
       const passwordHash = await bcrypt.hash(password, 10);
 
@@ -176,19 +205,61 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
-      expect(audit.body.length).toBeGreaterThan(0);
+      expect(audit.body.total).toBeGreaterThan(0);
+      expect(Array.isArray(audit.body.items)).toBe(true);
       expect(
-        audit.body.some(
+        audit.body.items.some(
           (e: { action: string; entityType: string }) =>
             e.action === 'setting.update' && e.entityType === 'business_setting',
         ),
       ).toBe(true);
       expect(
-        audit.body.some(
+        audit.body.items.some(
           (e: { action: string; entityType: string }) =>
             e.action === 'feature_flag.update' && e.entityType === 'feature_flag',
         ),
       ).toBe(true);
+    });
+
+    it('exposes dashboard overview KPIs with RBAC', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/admin/dashboard/overview')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(403);
+
+      const overview = await request(app.getHttpServer())
+        .get('/api/v1/admin/dashboard/overview')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+
+      expect(overview.body.users.total).toBeGreaterThan(0);
+      expect(overview.body.listings).toHaveProperty('byStatus');
+      expect(overview.body.payments).toHaveProperty('byStatus');
+      expect(overview.body.reports).toHaveProperty('queue');
+      expect(overview.body.featured).toHaveProperty('active');
+      expect(Array.isArray(overview.body.recentAudit)).toBe(true);
+
+      await request(app.getHttpServer())
+        .get('/api/v1/admin/dashboard/overview')
+        .set('Authorization', `Bearer ${moderatorToken}`)
+        .expect(200);
+    });
+
+    it('lists users for role management', async () => {
+      const listed = await request(app.getHttpServer())
+        .get('/api/v1/admin/rbac/users')
+        .query({ page: 1, pageSize: 10, q: `cfg.user.${suffix}` })
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+
+      expect(listed.body.total).toBeGreaterThan(0);
+      expect(listed.body.items.some((u: { id: string }) => u.id === targetUserId)).toBe(true);
+      expect(Array.isArray(listed.body.items[0].roles)).toBe(true);
+
+      await request(app.getHttpServer())
+        .get('/api/v1/admin/rbac/users')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(403);
     });
 
     it('lists roles/permissions and assigns roles with permission enforcement', async () => {
