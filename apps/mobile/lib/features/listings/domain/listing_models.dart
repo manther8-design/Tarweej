@@ -88,6 +88,23 @@ class ListingAttributeValue {
   }
 }
 
+class ListingOwner {
+  const ListingOwner({required this.id, this.displayName});
+
+  final String id;
+  final String? displayName;
+
+  factory ListingOwner.fromJson(Map<String, dynamic>? json, {String? fallbackId}) {
+    if (json == null) {
+      return ListingOwner(id: fallbackId ?? '', displayName: null);
+    }
+    return ListingOwner(
+      id: json['id'] as String? ?? fallbackId ?? '',
+      displayName: json['displayName'] as String?,
+    );
+  }
+}
+
 class ListingDetail {
   const ListingDetail({
     required this.id,
@@ -102,6 +119,8 @@ class ListingDetail {
     this.cityId,
     this.rejectionReason,
     this.isFeaturedCached = false,
+    this.ownerId,
+    this.owner,
     this.media = const <ListingMedia>[],
     this.attributes = const <ListingAttributeValue>[],
   });
@@ -118,10 +137,13 @@ class ListingDetail {
   final String? currencyCode;
   final String? rejectionReason;
   final bool isFeaturedCached;
+  final String? ownerId;
+  final ListingOwner? owner;
   final List<ListingMedia> media;
   final List<ListingAttributeValue> attributes;
 
   factory ListingDetail.fromJson(Map<String, dynamic> json) {
+    final ownerId = json['ownerId'] as String?;
     return ListingDetail(
       id: json['id'] as String,
       categoryId: json['categoryId'] as String,
@@ -135,6 +157,11 @@ class ListingDetail {
       currencyCode: json['currencyCode'] as String?,
       rejectionReason: json['rejectionReason'] as String?,
       isFeaturedCached: json['isFeaturedCached'] as bool? ?? false,
+      ownerId: ownerId,
+      owner: ListingOwner.fromJson(
+        json['owner'] as Map<String, dynamic>?,
+        fallbackId: ownerId,
+      ),
       media: (json['media'] as List<dynamic>? ?? const <dynamic>[])
           .whereType<Map<String, dynamic>>()
           .map(ListingMedia.fromJson)

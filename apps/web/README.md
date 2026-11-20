@@ -1,4 +1,10 @@
 # `@tarweej/web`
 
-Optional public web surface. Phase 1 keeps this as an empty/minimal package placeholder.
-Primary clients for v1 are Flutter (`apps/mobile`) and Admin (`apps/admin`).
+Public Tarweej marketplace storefront (Next.js App Router).
+
+```bash
+pnpm --filter @tarweej/web dev
+# http://localhost:3002
+```
+
+Uses `NEXT_PUBLIC_API_BASE_URL` (default `http://localhost:3000/api/v1`).

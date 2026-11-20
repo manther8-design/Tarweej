@@ -109,9 +109,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         changeCountryLabel: l10n.changeCountryAction,
                         onSearch: () => context.goNamed('search'),
                         onCountry: () => context.goNamed('country'),
-                        onProfile: () => context.goNamed(
-                          auth.isAuthenticated ? 'profile' : 'login',
-                        ),
+                        onProfile: () => context.goNamed('account'),
                         onNotifications: () => context.goNamed(
                           auth.isAuthenticated ? 'notifications' : 'login',
                         ),
@@ -222,25 +220,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       child: Center(child: CircularProgressIndicator()),
                     ),
                   ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
-                    child: _AccountShortcuts(
-                      onFavorites: () => context.goNamed(
-                        auth.isAuthenticated ? 'favorites' : 'login',
-                      ),
-                      onMyListings: () => context.goNamed(
-                        auth.isAuthenticated ? 'my-listings' : 'login',
-                      ),
-                      onChat: () => context.goNamed(
-                        auth.isAuthenticated ? 'chat' : 'login',
-                      ),
-                      favoritesLabel: l10n.openFavorites,
-                      myListingsLabel: l10n.openMyListings,
-                      chatLabel: l10n.openChat,
-                    ),
-                  ),
-                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 24)),
               ],
             ),
           ),
@@ -588,42 +568,3 @@ class _CategoryStrip extends StatelessWidget {
   }
 }
 
-class _AccountShortcuts extends StatelessWidget {
-  const _AccountShortcuts({
-    required this.onFavorites,
-    required this.onMyListings,
-    required this.onChat,
-    required this.favoritesLabel,
-    required this.myListingsLabel,
-    required this.chatLabel,
-  });
-
-  final VoidCallback onFavorites;
-  final VoidCallback onMyListings;
-  final VoidCallback onChat;
-  final String favoritesLabel;
-  final String myListingsLabel;
-  final String chatLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final items = <(IconData, String, VoidCallback)>[
-      (Icons.favorite_border_rounded, favoritesLabel, onFavorites),
-      (Icons.inventory_2_outlined, myListingsLabel, onMyListings),
-      (Icons.chat_bubble_outline_rounded, chatLabel, onChat),
-    ];
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: items
-          .map(
-            (item) => ActionChip(
-              avatar: Icon(item.$1, size: 16),
-              label: Text(item.$2),
-              onPressed: item.$3,
-            ),
-          )
-          .toList(growable: false),
-    );
-  }
-}

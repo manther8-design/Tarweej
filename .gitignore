@@ -17,5 +17,7 @@ apps/mobile/.flutter-plugins-dependencies
 apps/mobile/android/local.properties
 apps/admin/.next/
 apps/admin/out/
+apps/web/.next/
+apps/web/out/
 *.tsbuildinfo
 .prisma/

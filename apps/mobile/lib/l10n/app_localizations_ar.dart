@@ -573,4 +573,152 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reportSuccessMessage => 'تم إرسال البلاغ. شكراً لك.';
+
+  @override
+  String get navHome => 'الرئيسية';
+
+  @override
+  String get navSections => 'الأقسام';
+
+  @override
+  String get navAdd => 'بيع';
+
+  @override
+  String get navMessages => 'الرسائل';
+
+  @override
+  String get navAccount => 'حسابي';
+
+  @override
+  String get sectionsTitle => 'الأقسام';
+
+  @override
+  String get sectionsSubtitle =>
+      'تصفح أقسام السوق — سيارات، عقارات، وظائف والمزيد.';
+
+  @override
+  String get sectionsComingSoonHeading => 'قريباً';
+
+  @override
+  String get sectionGeneral => 'منتجات عامة';
+
+  @override
+  String get sectionServices => 'خدمات';
+
+  @override
+  String get sectionCars => 'سيارات';
+
+  @override
+  String get sectionRealEstate => 'عقارات';
+
+  @override
+  String get sectionJobs => 'وظائف';
+
+  @override
+  String get sectionShops => 'متاجر';
+
+  @override
+  String get sectionAuctions => 'مزادات';
+
+  @override
+  String get sectionElectronics => 'إلكترونيات';
+
+  @override
+  String get sectionAnimals => 'حيوانات';
+
+  @override
+  String get sectionGeneralHint => 'سلع يومية وإعلانات متنوعة';
+
+  @override
+  String get sectionServicesHint => 'خدمات محلية وعروض مهنية';
+
+  @override
+  String get sectionCarsHint => 'مركبات وإعلانات السيارات';
+
+  @override
+  String get sectionRealEstateHint => 'منازل وأراضٍ وإيجارات';
+
+  @override
+  String get sectionJobsHint => 'فرص توظيف ووظائف';
+
+  @override
+  String get sectionShopsHint => 'متاجر وعلامات تجارية';
+
+  @override
+  String get sectionAuctionsHint => 'مزادات وعروض بمزايدة';
+
+  @override
+  String get sectionComingSoonTitle => 'قريباً';
+
+  @override
+  String get sectionComingSoonHint => 'هذا القسم محجوز لإصدار لاحق.';
+
+  @override
+  String get sectionEmptyHint =>
+      'لا توجد إعلانات في هذا القسم بعد. جرّب البحث أو فئة أخرى.';
+
+  @override
+  String get accountHubShortcuts => 'سوقي';
+
+  @override
+  String get accountHubSettings => 'التفضيلات';
+
+  @override
+  String get languageLabel => 'اللغة';
+
+  @override
+  String get themeLabel => 'المظهر';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
+
+  @override
+  String get themeSystem => 'النظام';
+
+  @override
+  String get listingSellerHeading => 'المعلن';
+
+  @override
+  String get listingSellerAnonymous => 'بائع ترويج';
+
+  @override
+  String get listingShareAction => 'مشاركة';
+
+  @override
+  String get listingShareCopied => 'تم نسخ رابط الإعلان';
+
+  @override
+  String get listingSimilarHeading => 'إعلانات مشابهة';
+
+  @override
+  String get listingSimilarEmpty => 'لا توجد إعلانات مشابهة حالياً.';
+
+  @override
+  String get listingWizardPreviewHeading => 'معاينة الإعلان';
+
+  @override
+  String get listingWizardFeaturedUpsellTitle => 'تمييز إعلانك؟';
+
+  @override
+  String get listingWizardFeaturedUpsellBody =>
+      'زد الظهور بتمييز مدفوع بعد الموافقة.';
+
+  @override
+  String get listingWizardFeaturedUpsellAction => 'تمييز الإعلان';
+
+  @override
+  String get listingWizardFeaturedUpsellSkip => 'لاحقاً';
+
+  @override
+  String get listingWizardSuccessTitle => 'تم إرسال الإعلان';
+
+  @override
+  String get listingWizardSuccessBody =>
+      'إعلانك قيد المراجعة. يمكنك تمييزه بعد النشر.';
+
+  @override
+  String get successGenericTitle => 'تم بنجاح';
 }

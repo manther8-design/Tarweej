@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tarweej_mobile/core/routing/main_shell.dart';
 import 'package:tarweej_mobile/features/auth/application/auth_controller.dart';
 import 'package:tarweej_mobile/features/auth/presentation/login_page.dart';
 import 'package:tarweej_mobile/features/auth/presentation/otp_page.dart';
@@ -17,10 +18,13 @@ import 'package:tarweej_mobile/features/listings/presentation/my_listings_page.d
 import 'package:tarweej_mobile/features/notifications/presentation/notifications_inbox_page.dart';
 import 'package:tarweej_mobile/features/payments/presentation/payment_result_page.dart';
 import 'package:tarweej_mobile/features/payments/presentation/promote_listing_page.dart';
+import 'package:tarweej_mobile/features/profile/presentation/account_hub_page.dart';
 import 'package:tarweej_mobile/features/profile/presentation/profile_page.dart';
 import 'package:tarweej_mobile/features/reference/application/reference_controller.dart';
 import 'package:tarweej_mobile/features/reference/presentation/country_select_page.dart';
 import 'package:tarweej_mobile/features/search/presentation/search_page.dart';
+import 'package:tarweej_mobile/features/sections/presentation/section_detail_page.dart';
+import 'package:tarweej_mobile/features/sections/presentation/sections_hub_page.dart';
 import 'package:tarweej_mobile/features/splash/presentation/splash_page.dart';
 
 final _routerRefreshProvider = Provider<_RouterRefresh>((ref) {
@@ -32,6 +36,19 @@ final _routerRefreshProvider = Provider<_RouterRefresh>((ref) {
 
 class _RouterRefresh extends ChangeNotifier {
   void notify() => notifyListeners();
+}
+
+bool _needsAuth(String loc, GoRouterState state) {
+  return loc == '/profile' ||
+      loc == '/my-listings' ||
+      loc == '/favorites' ||
+      loc == '/notifications' ||
+      loc == '/chat' ||
+      loc.startsWith('/chat/') ||
+      loc == '/listings/create' ||
+      (loc.startsWith('/listings/') && loc.endsWith('/promote')) ||
+      loc.startsWith('/payments/') ||
+      (loc.startsWith('/listings/') && state.uri.queryParameters['mine'] == '1');
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -51,26 +68,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return loc == '/splash' ? null : '/splash';
       }
 
-      // First-run gate: require a persisted country before auth/home surfaces.
       if (!reference.hasCountry && loc != '/country' && loc != '/splash') {
         return '/country';
       }
 
-      if (!auth.isAuthenticated) {
-        // Marketplace browse (home/search/categories/listing detail) stays public.
-        final needsAuth = loc == '/profile' ||
-            loc == '/my-listings' ||
-            loc == '/favorites' ||
-            loc == '/notifications' ||
-            loc == '/chat' ||
-            loc.startsWith('/chat/') ||
-            loc == '/listings/create' ||
-            (loc.startsWith('/listings/') && loc.endsWith('/promote')) ||
-            loc.startsWith('/payments/') ||
-            (loc.startsWith('/listings/') && state.uri.queryParameters['mine'] == '1');
-        if (needsAuth) {
-          return '/login';
-        }
+      if (!auth.isAuthenticated && _needsAuth(loc, state)) {
+        return '/login';
       }
 
       if (auth.isAuthenticated && isAuthRoute && loc != '/splash') {
@@ -106,10 +109,67 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'otp',
         builder: (BuildContext context, GoRouterState state) => const OtpPage(),
       ),
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (BuildContext context, GoRouterState state) => const HomePage(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                name: 'home',
+                builder: (context, state) => const HomePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/sections',
+                name: 'sections',
+                builder: (context, state) => const SectionsHubPage(),
+                routes: [
+                  GoRoute(
+                    path: ':slug',
+                    name: 'section-detail',
+                    builder: (context, state) {
+                      final slug = state.pathParameters['slug'] ?? 'general';
+                      return SectionDetailPage(slug: slug);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/chat',
+                name: 'chat',
+                builder: (context, state) => const ChatListPage(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    name: 'chat-thread',
+                    builder: (context, state) {
+                      final id = state.pathParameters['id'] ?? '';
+                      return ChatThreadPage(conversationId: id);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/account',
+                name: 'account',
+                builder: (context, state) => const AccountHubPage(),
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: '/search',
@@ -147,20 +207,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/notifications',
         name: 'notifications',
-        builder: (BuildContext context, GoRouterState state) => const NotificationsInboxPage(),
-      ),
-      GoRoute(
-        path: '/chat',
-        name: 'chat',
-        builder: (BuildContext context, GoRouterState state) => const ChatListPage(),
-      ),
-      GoRoute(
-        path: '/chat/:id',
-        name: 'chat-thread',
-        builder: (BuildContext context, GoRouterState state) {
-          final id = state.pathParameters['id'] ?? '';
-          return ChatThreadPage(conversationId: id);
-        },
+        builder: (BuildContext context, GoRouterState state) =>
+            const NotificationsInboxPage(),
       ),
       GoRoute(
         path: '/listings/create',

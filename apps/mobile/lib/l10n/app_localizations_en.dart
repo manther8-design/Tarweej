@@ -577,4 +577,153 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportSuccessMessage => 'Report submitted. Thank you.';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navSections => 'Sections';
+
+  @override
+  String get navAdd => 'Sell';
+
+  @override
+  String get navMessages => 'Messages';
+
+  @override
+  String get navAccount => 'Account';
+
+  @override
+  String get sectionsTitle => 'Sections';
+
+  @override
+  String get sectionsSubtitle =>
+      'Browse marketplace verticals — cars, property, jobs, and more.';
+
+  @override
+  String get sectionsComingSoonHeading => 'Coming soon';
+
+  @override
+  String get sectionGeneral => 'General products';
+
+  @override
+  String get sectionServices => 'Services';
+
+  @override
+  String get sectionCars => 'Cars';
+
+  @override
+  String get sectionRealEstate => 'Real estate';
+
+  @override
+  String get sectionJobs => 'Jobs';
+
+  @override
+  String get sectionShops => 'Shops';
+
+  @override
+  String get sectionAuctions => 'Auctions';
+
+  @override
+  String get sectionElectronics => 'Electronics';
+
+  @override
+  String get sectionAnimals => 'Animals';
+
+  @override
+  String get sectionGeneralHint => 'Everyday goods and miscellaneous ads';
+
+  @override
+  String get sectionServicesHint => 'Local professionals and service offers';
+
+  @override
+  String get sectionCarsHint => 'Vehicles and automotive listings';
+
+  @override
+  String get sectionRealEstateHint => 'Homes, land, and rentals';
+
+  @override
+  String get sectionJobsHint => 'Hiring and career openings';
+
+  @override
+  String get sectionShopsHint => 'Storefronts and retail brands';
+
+  @override
+  String get sectionAuctionsHint => 'Timed bids and auction lots';
+
+  @override
+  String get sectionComingSoonTitle => 'Coming soon';
+
+  @override
+  String get sectionComingSoonHint =>
+      'This vertical is reserved for a future release.';
+
+  @override
+  String get sectionEmptyHint =>
+      'No listings matched this section yet. Try search or another category.';
+
+  @override
+  String get accountHubShortcuts => 'My marketplace';
+
+  @override
+  String get accountHubSettings => 'Preferences';
+
+  @override
+  String get languageLabel => 'Language';
+
+  @override
+  String get themeLabel => 'Appearance';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get listingSellerHeading => 'Seller';
+
+  @override
+  String get listingSellerAnonymous => 'Tarweej seller';
+
+  @override
+  String get listingShareAction => 'Share';
+
+  @override
+  String get listingShareCopied => 'Listing link copied';
+
+  @override
+  String get listingSimilarHeading => 'Similar listings';
+
+  @override
+  String get listingSimilarEmpty => 'No similar listings right now.';
+
+  @override
+  String get listingWizardPreviewHeading => 'Listing preview';
+
+  @override
+  String get listingWizardFeaturedUpsellTitle => 'Feature your listing?';
+
+  @override
+  String get listingWizardFeaturedUpsellBody =>
+      'Boost visibility with a paid featured placement after review.';
+
+  @override
+  String get listingWizardFeaturedUpsellAction => 'Promote listing';
+
+  @override
+  String get listingWizardFeaturedUpsellSkip => 'Maybe later';
+
+  @override
+  String get listingWizardSuccessTitle => 'Listing submitted';
+
+  @override
+  String get listingWizardSuccessBody =>
+      'Your ad is in review. You can promote it once it goes live.';
+
+  @override
+  String get successGenericTitle => 'Success';
 }

@@ -75,8 +75,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <p style={{ margin: 0, color: 'var(--muted)', letterSpacing: '0.08em', fontSize: 12 }}>
             ADMIN
           </p>
-          <h1 style={{ margin: '0.35rem 0 0', fontSize: '1.6rem' }}>ترويج</h1>
-          <p style={{ margin: '0.25rem 0 0', color: 'var(--muted)', fontSize: 13 }}>Tarweej</p>
+          <h1
+            style={{ margin: '0.35rem 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-display)' }}
+          >
+            ترويج
+          </h1>
+          <p style={{ margin: '0.25rem 0 0', color: 'var(--muted)', fontSize: 13 }}>
+            Tarweej Admin
+          </p>
         </div>
 
         <nav style={{ display: 'grid', gap: 6 }}>

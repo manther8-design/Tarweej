@@ -14,4 +14,11 @@ abstract final class TarweejColors {
   static const Color line = Color(0xFFD0DCE2);
   static const Color featured = Color(0xFFB8860B);
   static const Color featuredSoft = Color(0xFFFFF4D6);
+
+  /// Listing / ops status accents (shared with web tokens).
+  static const Color statusSuccess = Color(0xFF1F7A4D);
+  static const Color statusWarning = Color(0xFFB7791F);
+  static const Color statusError = Color(0xFFB42318);
+  static const Color statusInfo = Color(0xFF1D6B8A);
+  static const Color statusPending = Color(0xFF5B6B75);
 }

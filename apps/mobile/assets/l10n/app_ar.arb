@@ -173,8 +173,12 @@
   "promoteTotalLabel": "الإجمالي: {amount} {currency}",
   "@promoteTotalLabel": {
     "placeholders": {
-      "amount": { "type": "String" },
-      "currency": { "type": "String" }
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
     }
   },
   "promoteContinueAction": "متابعة الدفع",
@@ -203,5 +207,53 @@
   "reportReasonOther": "أخرى",
   "reportNotesHint": "تفاصيل اختيارية",
   "reportSubmitAction": "إرسال البلاغ",
-  "reportSuccessMessage": "تم إرسال البلاغ. شكراً لك."
+  "reportSuccessMessage": "تم إرسال البلاغ. شكراً لك.",
+  "navHome": "الرئيسية",
+  "navSections": "الأقسام",
+  "navAdd": "بيع",
+  "navMessages": "الرسائل",
+  "navAccount": "حسابي",
+  "sectionsTitle": "الأقسام",
+  "sectionsSubtitle": "تصفح أقسام السوق — سيارات، عقارات، وظائف والمزيد.",
+  "sectionsComingSoonHeading": "قريباً",
+  "sectionGeneral": "منتجات عامة",
+  "sectionServices": "خدمات",
+  "sectionCars": "سيارات",
+  "sectionRealEstate": "عقارات",
+  "sectionJobs": "وظائف",
+  "sectionShops": "متاجر",
+  "sectionAuctions": "مزادات",
+  "sectionElectronics": "إلكترونيات",
+  "sectionAnimals": "حيوانات",
+  "sectionGeneralHint": "سلع يومية وإعلانات متنوعة",
+  "sectionServicesHint": "خدمات محلية وعروض مهنية",
+  "sectionCarsHint": "مركبات وإعلانات السيارات",
+  "sectionRealEstateHint": "منازل وأراضٍ وإيجارات",
+  "sectionJobsHint": "فرص توظيف ووظائف",
+  "sectionShopsHint": "متاجر وعلامات تجارية",
+  "sectionAuctionsHint": "مزادات وعروض بمزايدة",
+  "sectionComingSoonTitle": "قريباً",
+  "sectionComingSoonHint": "هذا القسم محجوز لإصدار لاحق.",
+  "sectionEmptyHint": "لا توجد إعلانات في هذا القسم بعد. جرّب البحث أو فئة أخرى.",
+  "accountHubShortcuts": "سوقي",
+  "accountHubSettings": "التفضيلات",
+  "languageLabel": "اللغة",
+  "themeLabel": "المظهر",
+  "themeLight": "فاتح",
+  "themeDark": "داكن",
+  "themeSystem": "النظام",
+  "listingSellerHeading": "المعلن",
+  "listingSellerAnonymous": "بائع ترويج",
+  "listingShareAction": "مشاركة",
+  "listingShareCopied": "تم نسخ رابط الإعلان",
+  "listingSimilarHeading": "إعلانات مشابهة",
+  "listingSimilarEmpty": "لا توجد إعلانات مشابهة حالياً.",
+  "listingWizardPreviewHeading": "معاينة الإعلان",
+  "listingWizardFeaturedUpsellTitle": "تمييز إعلانك؟",
+  "listingWizardFeaturedUpsellBody": "زد الظهور بتمييز مدفوع بعد الموافقة.",
+  "listingWizardFeaturedUpsellAction": "تمييز الإعلان",
+  "listingWizardFeaturedUpsellSkip": "لاحقاً",
+  "listingWizardSuccessTitle": "تم إرسال الإعلان",
+  "listingWizardSuccessBody": "إعلانك قيد المراجعة. يمكنك تمييزه بعد النشر.",
+  "successGenericTitle": "تم بنجاح"
 }
