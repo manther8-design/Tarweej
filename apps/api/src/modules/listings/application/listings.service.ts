@@ -32,6 +32,7 @@ const listingInclude = {
     include: { attributeDefinition: true },
     orderBy: { createdAt: 'asc' as const },
   },
+  owner: { select: { id: true, displayName: true } },
 } satisfies Prisma.ListingInclude;
 
 @Injectable()
@@ -913,6 +914,10 @@ export class ListingsService {
     return {
       id: row.id,
       ownerId: row.ownerId,
+      owner: {
+        id: row.owner?.id ?? row.ownerId,
+        displayName: row.owner?.displayName ?? null,
+      },
       categoryId: row.categoryId,
       countryId: row.countryId,
       cityId: row.cityId,

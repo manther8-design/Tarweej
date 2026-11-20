@@ -1201,6 +1201,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report submitted. Thank you.'**
   String get reportSuccessMessage;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Sections'**
+  String get navSections;
+
+  /// No description provided for @navAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get navAdd;
+
+  /// No description provided for @navMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get navMessages;
+
+  /// No description provided for @navAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get navAccount;
+
+  /// No description provided for @sectionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sections'**
+  String get sectionsTitle;
+
+  /// No description provided for @sectionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse marketplace verticals — cars, property, jobs, and more.'**
+  String get sectionsSubtitle;
+
+  /// No description provided for @sectionsComingSoonHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get sectionsComingSoonHeading;
+
+  /// No description provided for @sectionGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General products'**
+  String get sectionGeneral;
+
+  /// No description provided for @sectionServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get sectionServices;
+
+  /// No description provided for @sectionCars.
+  ///
+  /// In en, this message translates to:
+  /// **'Cars'**
+  String get sectionCars;
+
+  /// No description provided for @sectionRealEstate.
+  ///
+  /// In en, this message translates to:
+  /// **'Real estate'**
+  String get sectionRealEstate;
+
+  /// No description provided for @sectionJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get sectionJobs;
+
+  /// No description provided for @sectionShops.
+  ///
+  /// In en, this message translates to:
+  /// **'Shops'**
+  String get sectionShops;
+
+  /// No description provided for @sectionAuctions.
+  ///
+  /// In en, this message translates to:
+  /// **'Auctions'**
+  String get sectionAuctions;
+
+  /// No description provided for @sectionElectronics.
+  ///
+  /// In en, this message translates to:
+  /// **'Electronics'**
+  String get sectionElectronics;
+
+  /// No description provided for @sectionAnimals.
+  ///
+  /// In en, this message translates to:
+  /// **'Animals'**
+  String get sectionAnimals;
+
+  /// No description provided for @sectionGeneralHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyday goods and miscellaneous ads'**
+  String get sectionGeneralHint;
+
+  /// No description provided for @sectionServicesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Local professionals and service offers'**
+  String get sectionServicesHint;
+
+  /// No description provided for @sectionCarsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicles and automotive listings'**
+  String get sectionCarsHint;
+
+  /// No description provided for @sectionRealEstateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Homes, land, and rentals'**
+  String get sectionRealEstateHint;
+
+  /// No description provided for @sectionJobsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hiring and career openings'**
+  String get sectionJobsHint;
+
+  /// No description provided for @sectionShopsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Storefronts and retail brands'**
+  String get sectionShopsHint;
+
+  /// No description provided for @sectionAuctionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Timed bids and auction lots'**
+  String get sectionAuctionsHint;
+
+  /// No description provided for @sectionComingSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get sectionComingSoonTitle;
+
+  /// No description provided for @sectionComingSoonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This vertical is reserved for a future release.'**
+  String get sectionComingSoonHint;
+
+  /// No description provided for @sectionEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No listings matched this section yet. Try search or another category.'**
+  String get sectionEmptyHint;
+
+  /// No description provided for @accountHubShortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'My marketplace'**
+  String get accountHubShortcuts;
+
+  /// No description provided for @accountHubSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get accountHubSettings;
+
+  /// No description provided for @languageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageLabel;
+
+  /// No description provided for @themeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get themeLabel;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystem;
+
+  /// No description provided for @listingSellerHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller'**
+  String get listingSellerHeading;
+
+  /// No description provided for @listingSellerAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Tarweej seller'**
+  String get listingSellerAnonymous;
+
+  /// No description provided for @listingShareAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get listingShareAction;
+
+  /// No description provided for @listingShareCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing link copied'**
+  String get listingShareCopied;
+
+  /// No description provided for @listingSimilarHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar listings'**
+  String get listingSimilarHeading;
+
+  /// No description provided for @listingSimilarEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No similar listings right now.'**
+  String get listingSimilarEmpty;
+
+  /// No description provided for @listingWizardPreviewHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing preview'**
+  String get listingWizardPreviewHeading;
+
+  /// No description provided for @listingWizardFeaturedUpsellTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature your listing?'**
+  String get listingWizardFeaturedUpsellTitle;
+
+  /// No description provided for @listingWizardFeaturedUpsellBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Boost visibility with a paid featured placement after review.'**
+  String get listingWizardFeaturedUpsellBody;
+
+  /// No description provided for @listingWizardFeaturedUpsellAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote listing'**
+  String get listingWizardFeaturedUpsellAction;
+
+  /// No description provided for @listingWizardFeaturedUpsellSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get listingWizardFeaturedUpsellSkip;
+
+  /// No description provided for @listingWizardSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing submitted'**
+  String get listingWizardSuccessTitle;
+
+  /// No description provided for @listingWizardSuccessBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ad is in review. You can promote it once it goes live.'**
+  String get listingWizardSuccessBody;
+
+  /// No description provided for @successGenericTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get successGenericTitle;
 }
 
 class _AppLocalizationsDelegate

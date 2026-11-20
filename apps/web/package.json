@@ -2,8 +2,22 @@
   "name": "@tarweej/web",
   "version": "0.1.0",
   "private": true,
-  "description": "Optional public web placeholder — not in Phase 1 delivery scope.",
+  "description": "Tarweej public marketplace storefront",
   "scripts": {
-    "build": "node -e \"console.log('@tarweej/web placeholder — no build artifacts yet')\""
+    "dev": "next dev -p 3002",
+    "build": "next build",
+    "start": "next start -p 3002",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "15.5.4",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.1.0",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
+    "typescript": "5.8.3"
   }
 }

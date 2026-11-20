@@ -113,8 +113,8 @@ class _GridBody extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: TarweejColors.ink,
-                      fontWeight: FontWeight.w700,
+                      color: TarweejColors.orange600,
+                      fontWeight: FontWeight.w800,
                     ),
               ),
               const SizedBox(height: 4),
@@ -188,7 +188,7 @@ class _DenseBody extends StatelessWidget {
                   price,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: TarweejColors.ink,
+                        color: TarweejColors.orange600,
                       ),
                 ),
                 const SizedBox(height: 4),

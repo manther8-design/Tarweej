@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tarweej_mobile/core/config/app_config.dart';
 import 'package:tarweej_mobile/core/network/api_client.dart';
 import 'package:tarweej_mobile/core/theme/tarweej_colors.dart';
 import 'package:tarweej_mobile/features/auth/application/auth_controller.dart';
@@ -10,9 +12,12 @@ import 'package:tarweej_mobile/features/favorites/data/favorites_api.dart';
 import 'package:tarweej_mobile/features/listings/application/listings_controller.dart';
 import 'package:tarweej_mobile/features/listings/domain/listing_models.dart';
 import 'package:tarweej_mobile/features/reports/data/reports_api.dart';
+import 'package:tarweej_mobile/features/search/application/search_controller.dart';
+import 'package:tarweej_mobile/features/search/domain/search_models.dart';
 import 'package:tarweej_mobile/l10n/app_localizations.dart';
 import 'package:tarweej_mobile/shared/widgets/async_state_views.dart';
 import 'package:tarweej_mobile/shared/widgets/featured_badge.dart';
+import 'package:tarweej_mobile/shared/widgets/listing_card.dart';
 import 'package:tarweej_mobile/shared/widgets/listing_network_image.dart';
 import 'package:tarweej_mobile/shared/widgets/marketplace_background.dart';
 
@@ -37,6 +42,7 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
   bool _reportBusy = false;
   String? _actionError;
   int _galleryIndex = 0;
+  List<SearchListingHit> _similar = const [];
 
   @override
   void initState() {
@@ -49,7 +55,49 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
         await notifier.loadPublicDetail(widget.listingId);
       }
       await _refreshFavoriteStatus();
+      await _loadSimilar();
     });
+  }
+
+  Future<void> _loadSimilar() async {
+    final detail = ref.read(listingsControllerProvider).detail;
+    if (detail == null) {
+      return;
+    }
+    try {
+      final result = await ref.read(searchApiProvider).searchListings(
+            SearchQuery(
+              categoryId: detail.categoryId,
+              countryId: detail.countryId,
+              page: 1,
+              pageSize: 8,
+              sort: 'newest',
+            ),
+          );
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _similar = result.items
+            .where((hit) => hit.id != widget.listingId)
+            .take(6)
+            .toList(growable: false);
+      });
+    } catch (_) {
+      // Similar rail is best-effort.
+    }
+  }
+
+  Future<void> _shareListing(ListingDetail detail) async {
+    final l10n = AppLocalizations.of(context);
+    final base = AppConfig.development.apiBaseUrl.replaceAll('/api/v1', '');
+    final link = '$base/listings/${detail.id}';
+    await Clipboard.setData(ClipboardData(text: '${detail.title}\n$link'));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.listingShareCopied)),
+      );
+    }
   }
 
   Future<void> _refreshFavoriteStatus() async {
@@ -251,6 +299,12 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
         appBar: AppBar(
           title: Text(detail?.title ?? l10n.listingDetailTitle),
           actions: [
+            if (detail != null)
+              IconButton(
+                tooltip: l10n.listingShareAction,
+                onPressed: () => _shareListing(detail),
+                icon: const Icon(Icons.ios_share_rounded),
+              ),
             if (showEngagement)
               IconButton(
                 tooltip: _favorited ? l10n.listingUnfavoriteCta : l10n.listingFavoriteCta,
@@ -291,12 +345,18 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
                         chatBusy: _chatBusy,
                         reportBusy: _reportBusy,
                         actionError: _actionError,
+                        similar: _similar,
                         onFavorite: _toggleFavorite,
                         onChat: _contactSeller,
                         onReport: _reportListing,
+                        onShare: () => _shareListing(detail),
                         onPromote: () => context.goNamed(
                           'listing-promote',
                           pathParameters: <String, String>{'id': detail.id},
+                        ),
+                        onOpenListing: (id) => context.goNamed(
+                          'listing-detail',
+                          pathParameters: <String, String>{'id': id},
                         ),
                       ),
         bottomNavigationBar: showEngagement && detail != null
@@ -348,10 +408,13 @@ class _DetailBody extends StatelessWidget {
     required this.chatBusy,
     required this.reportBusy,
     required this.actionError,
+    required this.similar,
     required this.onFavorite,
     required this.onChat,
     required this.onReport,
+    required this.onShare,
     required this.onPromote,
+    required this.onOpenListing,
   });
 
   final ListingDetail detail;
@@ -365,10 +428,13 @@ class _DetailBody extends StatelessWidget {
   final bool chatBusy;
   final bool reportBusy;
   final String? actionError;
+  final List<SearchListingHit> similar;
   final VoidCallback onFavorite;
   final VoidCallback onChat;
   final VoidCallback onReport;
+  final VoidCallback onShare;
   final VoidCallback onPromote;
+  final ValueChanged<String> onOpenListing;
 
   @override
   Widget build(BuildContext context) {
@@ -451,7 +517,7 @@ class _DetailBody extends StatelessWidget {
               Text(
                 price,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: TarweejColors.tealDeep,
+                      color: TarweejColors.orange600,
                       fontWeight: FontWeight.w800,
                     ),
               ),
@@ -499,6 +565,52 @@ class _DetailBody extends StatelessWidget {
               ],
               const SizedBox(height: 20),
               Text(
+                l10n.listingSellerHeading,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 10),
+              Builder(
+                builder: (context) {
+                  final sellerName =
+                      (detail.owner?.displayName?.trim().isNotEmpty ?? false)
+                          ? detail.owner!.displayName!.trim()
+                          : l10n.listingSellerAnonymous;
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: TarweejColors.line),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor:
+                              TarweejColors.teal.withValues(alpha: 0.16),
+                          foregroundColor: TarweejColors.tealDeep,
+                          child: Text(sellerName[0].toUpperCase()),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            sellerName,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        if (showEngagement)
+                          IconButton(
+                            tooltip: l10n.listingContactSellerCta,
+                            onPressed: chatBusy ? null : onChat,
+                            icon: const Icon(Icons.chat_bubble_outline_rounded),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              Text(
                 detail.description,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
@@ -538,15 +650,55 @@ class _DetailBody extends StatelessWidget {
                 ),
               if (showEngagement) ...[
                 const SizedBox(height: 24),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: TextButton.icon(
-                    onPressed: reportBusy ? null : onReport,
-                    icon: const Icon(Icons.flag_outlined),
-                    label: Text(l10n.reportListingAction),
-                  ),
+                Row(
+                  children: [
+                    TextButton.icon(
+                      onPressed: onShare,
+                      icon: const Icon(Icons.ios_share_rounded),
+                      label: Text(l10n.listingShareAction),
+                    ),
+                    TextButton.icon(
+                      onPressed: reportBusy ? null : onReport,
+                      icon: const Icon(Icons.flag_outlined),
+                      label: Text(l10n.reportListingAction),
+                    ),
+                  ],
                 ),
               ],
+              const SizedBox(height: 24),
+              Text(
+                l10n.listingSimilarHeading,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 10),
+              if (similar.isEmpty)
+                Text(l10n.listingSimilarEmpty)
+              else
+                SizedBox(
+                  height: 248,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: similar.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 12),
+                    itemBuilder: (context, index) {
+                      final hit = similar[index];
+                      return SizedBox(
+                        width: 176,
+                        child: ListingCard(
+                          data: ListingCardData(
+                            id: hit.id,
+                            title: hit.title,
+                            priceAmount: hit.priceAmount,
+                            currencyCode: hit.currencyCode,
+                            coverImageUrl: hit.coverImageUrl,
+                            isFeatured: hit.isFeaturedCached,
+                          ),
+                          onTap: () => onOpenListing(hit.id),
+                        ),
+                      );
+                    },
+                  ),
+                ),
             ],
           ),
         ),

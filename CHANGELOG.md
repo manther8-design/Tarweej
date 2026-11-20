@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.15.0 — TRW-015 Full UI System
+
+- Aligned Flutter/web/admin to Mansour HTML prototype: royal blue `#0f4c81`/`#1d4ed8` + orange `#f97316`, dual-tone logo, Cairo/Tajawal
+- Web sticky header (city/search/favorites/messages/Post Ad) + category chips + featured orange cards
+- Flutter: bottom nav shell (home / sections / sell / messages / account); section vertical hubs + placeholders
+- Flutter: account hub with AR/EN + light/dark preferences; listing seller/share/similar; create preview + featured upsell
+- Public web storefront (`apps/web`): home, sections, listing detail, dashboard/login shells on Nest search APIs
+- Admin visual tokens aligned to Tarweej ink/teal + Cairo/Outfit
+- Listing detail API includes public `owner { id, displayName }` for seller UI
+
 ## 0.14.0 — TRW-014 Flutter Marketplace UX
 
 - AdForest-class home: brand hero «ترويج», search, category strip, featured rail, photo listing grid from search API

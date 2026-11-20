@@ -176,8 +176,12 @@
   "promoteTotalLabel": "Total: {amount} {currency}",
   "@promoteTotalLabel": {
     "placeholders": {
-      "amount": { "type": "String" },
-      "currency": { "type": "String" }
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
     }
   },
   "promoteContinueAction": "Continue to payment",
@@ -206,5 +210,53 @@
   "reportReasonOther": "Other",
   "reportNotesHint": "Optional details",
   "reportSubmitAction": "Submit report",
-  "reportSuccessMessage": "Report submitted. Thank you."
+  "reportSuccessMessage": "Report submitted. Thank you.",
+  "navHome": "Home",
+  "navSections": "Sections",
+  "navAdd": "Sell",
+  "navMessages": "Messages",
+  "navAccount": "Account",
+  "sectionsTitle": "Sections",
+  "sectionsSubtitle": "Browse marketplace verticals — cars, property, jobs, and more.",
+  "sectionsComingSoonHeading": "Coming soon",
+  "sectionGeneral": "General products",
+  "sectionServices": "Services",
+  "sectionCars": "Cars",
+  "sectionRealEstate": "Real estate",
+  "sectionJobs": "Jobs",
+  "sectionShops": "Shops",
+  "sectionAuctions": "Auctions",
+  "sectionElectronics": "Electronics",
+  "sectionAnimals": "Animals",
+  "sectionGeneralHint": "Everyday goods and miscellaneous ads",
+  "sectionServicesHint": "Local professionals and service offers",
+  "sectionCarsHint": "Vehicles and automotive listings",
+  "sectionRealEstateHint": "Homes, land, and rentals",
+  "sectionJobsHint": "Hiring and career openings",
+  "sectionShopsHint": "Storefronts and retail brands",
+  "sectionAuctionsHint": "Timed bids and auction lots",
+  "sectionComingSoonTitle": "Coming soon",
+  "sectionComingSoonHint": "This vertical is reserved for a future release.",
+  "sectionEmptyHint": "No listings matched this section yet. Try search or another category.",
+  "accountHubShortcuts": "My marketplace",
+  "accountHubSettings": "Preferences",
+  "languageLabel": "Language",
+  "themeLabel": "Appearance",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystem": "System",
+  "listingSellerHeading": "Seller",
+  "listingSellerAnonymous": "Tarweej seller",
+  "listingShareAction": "Share",
+  "listingShareCopied": "Listing link copied",
+  "listingSimilarHeading": "Similar listings",
+  "listingSimilarEmpty": "No similar listings right now.",
+  "listingWizardPreviewHeading": "Listing preview",
+  "listingWizardFeaturedUpsellTitle": "Feature your listing?",
+  "listingWizardFeaturedUpsellBody": "Boost visibility with a paid featured placement after review.",
+  "listingWizardFeaturedUpsellAction": "Promote listing",
+  "listingWizardFeaturedUpsellSkip": "Maybe later",
+  "listingWizardSuccessTitle": "Listing submitted",
+  "listingWizardSuccessBody": "Your ad is in review. You can promote it once it goes live.",
+  "successGenericTitle": "Success"
 }

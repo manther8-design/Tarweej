@@ -11,6 +11,13 @@
         "command": "pnpm --filter @tarweej/web build",
         "cwd": "{workspaceRoot}"
       }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --filter @tarweej/web dev",
+        "cwd": "{workspaceRoot}"
+      }
     }
   }
 }
