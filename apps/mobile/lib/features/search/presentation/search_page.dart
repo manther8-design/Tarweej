@@ -5,6 +5,9 @@ import 'package:tarweej_mobile/features/catalog/application/catalog_controller.d
 import 'package:tarweej_mobile/features/catalog/domain/catalog_models.dart';
 import 'package:tarweej_mobile/features/search/application/search_controller.dart';
 import 'package:tarweej_mobile/l10n/app_localizations.dart';
+import 'package:tarweej_mobile/shared/widgets/async_state_views.dart';
+import 'package:tarweej_mobile/shared/widgets/listing_card.dart';
+import 'package:tarweej_mobile/shared/widgets/marketplace_background.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
@@ -85,237 +88,257 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     final categories = _flatten(catalog.roots);
     final controller = ref.read(searchControllerProvider.notifier);
     final result = state.result;
+    final citiesById = {
+      for (final city in state.cities) city.id: city.name,
+    };
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.searchTitle)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          TextField(
-            controller: _queryController,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              labelText: l10n.searchQueryLabel,
-              hintText: l10n.searchQueryHint,
-              suffixIcon: IconButton(
-                tooltip: l10n.searchAction,
-                onPressed: () async {
-                  await controller.setQueryText(_queryController.text);
-                  await controller.search(page: 1);
-                },
-                icon: const Icon(Icons.search),
-              ),
-            ),
-            onSubmitted: (value) async {
-              await controller.setQueryText(value);
-              await controller.search(page: 1);
-            },
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: state.query.sort,
-                  decoration: InputDecoration(labelText: l10n.searchSortLabel),
-                  items: _sortKeys
-                      .map(
-                        (key) => DropdownMenuItem<String>(
-                          value: key,
-                          child: Text(_sortLabel(l10n, key)),
-                        ),
-                      )
-                      .toList(growable: false),
-                  onChanged: (value) {
-                    if (value != null) {
-                      controller.setSort(value);
-                    }
+    return MarketplaceBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(title: Text(l10n.searchTitle)),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+          children: [
+            TextField(
+              controller: _queryController,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                labelText: l10n.searchQueryLabel,
+                hintText: l10n.searchQueryHint,
+                prefixIcon: const Icon(Icons.search_rounded),
+                suffixIcon: IconButton(
+                  tooltip: l10n.searchAction,
+                  onPressed: () async {
+                    await controller.setQueryText(_queryController.text);
+                    await controller.search(page: 1);
                   },
+                  icon: const Icon(Icons.arrow_forward_rounded),
                 ),
               ),
-              const SizedBox(width: 12),
-              TextButton.icon(
-                onPressed: () => setState(() => _filtersExpanded = !_filtersExpanded),
-                icon: Icon(_filtersExpanded ? Icons.expand_less : Icons.tune),
-                label: Text(l10n.searchFiltersAction),
-              ),
-            ],
-          ),
-          if (_filtersExpanded) ...[
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String?>(
-              value: state.query.categoryId,
-              decoration: InputDecoration(labelText: l10n.searchCategoryLabel),
-              items: <DropdownMenuItem<String?>>[
-                DropdownMenuItem<String?>(
-                  value: null,
-                  child: Text(l10n.searchAnyOption),
-                ),
-                ...categories.map(
-                  (c) => DropdownMenuItem<String?>(
-                    value: c.id,
-                    child: Text(c.name),
-                  ),
-                ),
-              ],
-              onChanged: (value) => controller.setCategory(value),
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String?>(
-              value: state.query.cityId,
-              decoration: InputDecoration(labelText: l10n.searchCityLabel),
-              items: <DropdownMenuItem<String?>>[
-                DropdownMenuItem<String?>(
-                  value: null,
-                  child: Text(l10n.searchAnyOption),
-                ),
-                ...state.cities.map(
-                  (c) => DropdownMenuItem<String?>(
-                    value: c.id,
-                    child: Text(c.name),
-                  ),
-                ),
-              ],
-              onChanged: (value) => controller.setCity(value),
+              onSubmitted: (value) async {
+                await controller.setQueryText(value);
+                await controller.search(page: 1);
+              },
             ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _minPriceController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: l10n.searchMinPriceLabel),
-                    onChanged: (_) {
-                      final min = double.tryParse(_minPriceController.text);
-                      final max = double.tryParse(_maxPriceController.text);
-                      controller.setPriceRange(min: min, max: max);
+                  child: DropdownButtonFormField<String>(
+                    value: state.query.sort,
+                    decoration: InputDecoration(labelText: l10n.searchSortLabel),
+                    items: _sortKeys
+                        .map(
+                          (key) => DropdownMenuItem<String>(
+                            value: key,
+                            child: Text(_sortLabel(l10n, key)),
+                          ),
+                        )
+                        .toList(growable: false),
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.setSort(value);
+                      }
                     },
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _maxPriceController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: l10n.searchMaxPriceLabel),
-                    onChanged: (_) {
-                      final min = double.tryParse(_minPriceController.text);
-                      final max = double.tryParse(_maxPriceController.text);
-                      controller.setPriceRange(min: min, max: max);
-                    },
-                  ),
+                TextButton.icon(
+                  onPressed: () => setState(() => _filtersExpanded = !_filtersExpanded),
+                  icon: Icon(_filtersExpanded ? Icons.expand_less : Icons.tune),
+                  label: Text(l10n.searchFiltersAction),
                 ),
               ],
             ),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(l10n.searchFeaturedOnly),
-              value: state.query.featured == true,
-              onChanged: (value) => controller.setFeatured(value ? true : null),
-            ),
-            if (state.categoryAttributes.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                l10n.searchAttributesHeading,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              ...state.categoryAttributes.map((attr) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: _AttributeFilterField(
-                    attribute: attr,
-                    textValue: state.attrText[attr.attributeDefinitionId],
-                    minValue: state.attrMin[attr.attributeDefinitionId],
-                    maxValue: state.attrMax[attr.attributeDefinitionId],
-                    boolValue: state.attrBool[attr.attributeDefinitionId],
-                    onText: (v) => controller.setAttrText(attr.attributeDefinitionId, v),
-                    onMin: (v) => controller.setAttrMin(attr.attributeDefinitionId, v),
-                    onMax: (v) => controller.setAttrMax(attr.attributeDefinitionId, v),
-                    onBool: (v) => controller.setAttrBool(attr.attributeDefinitionId, v),
+            if (_filtersExpanded) ...[
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String?>(
+                value: state.query.categoryId,
+                decoration: InputDecoration(labelText: l10n.searchCategoryLabel),
+                items: <DropdownMenuItem<String?>>[
+                  DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text(l10n.searchAnyOption),
                   ),
-                );
-              }),
-            ],
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: FilledButton(
-                onPressed: state.loading
-                    ? null
-                    : () async {
-                        await controller.setQueryText(_queryController.text);
+                  ...categories.map(
+                    (c) => DropdownMenuItem<String?>(
+                      value: c.id,
+                      child: Text(c.name),
+                    ),
+                  ),
+                ],
+                onChanged: (value) => controller.setCategory(value),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String?>(
+                value: state.query.cityId,
+                decoration: InputDecoration(labelText: l10n.searchCityLabel),
+                items: <DropdownMenuItem<String?>>[
+                  DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text(l10n.searchAnyOption),
+                  ),
+                  ...state.cities.map(
+                    (c) => DropdownMenuItem<String?>(
+                      value: c.id,
+                      child: Text(c.name),
+                    ),
+                  ),
+                ],
+                onChanged: (value) => controller.setCity(value),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _minPriceController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(labelText: l10n.searchMinPriceLabel),
+                      onChanged: (_) {
                         final min = double.tryParse(_minPriceController.text);
                         final max = double.tryParse(_maxPriceController.text);
-                        await controller.setPriceRange(min: min, max: max);
-                        await controller.search(page: 1);
+                        controller.setPriceRange(min: min, max: max);
                       },
-                child: Text(l10n.searchApplyFilters),
-              ),
-            ),
-          ],
-          const SizedBox(height: 16),
-          if (state.loading) const LinearProgressIndicator(),
-          if (state.error != null) ...[
-            Text(state.error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            const SizedBox(height: 8),
-          ],
-          if (result != null) ...[
-            Text(
-              l10n.searchResultsCount(result.total),
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            if (result.cached)
-              Text(
-                l10n.searchCachedHint,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            const SizedBox(height: 8),
-            if (result.items.isEmpty)
-              Text(l10n.searchEmpty)
-            else
-              ...result.items.map((hit) {
-                final price = hit.priceAmount == null
-                    ? l10n.searchPriceUnavailable
-                    : '${hit.priceAmount} ${hit.currencyCode ?? ''}'.trim();
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(hit.title),
-                  subtitle: Text(
-                    [
-                      price,
-                      if (hit.isFeaturedCached) l10n.searchFeaturedBadge,
-                      '${l10n.listingViewsLabel}: ${hit.viewCount}',
-                    ].join(' · '),
+                    ),
                   ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.goNamed(
-                    'listing-detail',
-                    pathParameters: <String, String>{'id': hit.id},
-                  ),
-                );
-              }),
-            if (result.total > result.pageSize)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: result.page <= 1 || state.loading
-                        ? null
-                        : () => controller.search(page: result.page - 1),
-                    child: Text(l10n.searchPrevPage),
-                  ),
-                  Text('${result.page}'),
-                  TextButton(
-                    onPressed: (result.page * result.pageSize >= result.total) || state.loading
-                        ? null
-                        : () => controller.search(page: result.page + 1),
-                    child: Text(l10n.searchNextPage),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      controller: _maxPriceController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(labelText: l10n.searchMaxPriceLabel),
+                      onChanged: (_) {
+                        final min = double.tryParse(_minPriceController.text);
+                        final max = double.tryParse(_maxPriceController.text);
+                        controller.setPriceRange(min: min, max: max);
+                      },
+                    ),
                   ),
                 ],
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.searchFeaturedOnly),
+                value: state.query.featured == true,
+                onChanged: (value) => controller.setFeatured(value ? true : null),
+              ),
+              if (state.categoryAttributes.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  l10n.searchAttributesHeading,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                ...state.categoryAttributes.map((attr) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _AttributeFilterField(
+                      attribute: attr,
+                      textValue: state.attrText[attr.attributeDefinitionId],
+                      minValue: state.attrMin[attr.attributeDefinitionId],
+                      maxValue: state.attrMax[attr.attributeDefinitionId],
+                      boolValue: state.attrBool[attr.attributeDefinitionId],
+                      onText: (v) => controller.setAttrText(attr.attributeDefinitionId, v),
+                      onMin: (v) => controller.setAttrMin(attr.attributeDefinitionId, v),
+                      onMax: (v) => controller.setAttrMax(attr.attributeDefinitionId, v),
+                      onBool: (v) => controller.setAttrBool(attr.attributeDefinitionId, v),
+                    ),
+                  );
+                }),
+              ],
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: FilledButton(
+                  onPressed: state.loading
+                      ? null
+                      : () async {
+                          await controller.setQueryText(_queryController.text);
+                          final min = double.tryParse(_minPriceController.text);
+                          final max = double.tryParse(_maxPriceController.text);
+                          await controller.setPriceRange(min: min, max: max);
+                          await controller.search(page: 1);
+                        },
+                  child: Text(l10n.searchApplyFilters),
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
+            if (state.loading && (result == null || result.items.isEmpty))
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 48),
+                child: MarketplaceLoadingView(),
+              )
+            else if (state.error != null && (result == null || result.items.isEmpty))
+              MarketplaceErrorView(
+                message: state.error!,
+                retryLabel: l10n.homeFeedRetry,
+                onRetry: () => controller.search(page: 1),
+              )
+            else if (result != null) ...[
+              Text(
+                l10n.searchResultsCount(result.total),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              if (result.cached)
+                Text(
+                  l10n.searchCachedHint,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              const SizedBox(height: 12),
+              if (result.items.isEmpty)
+                MarketplaceEmptyView(
+                  title: l10n.searchEmpty,
+                  icon: Icons.search_off_rounded,
+                )
+              else
+                ...result.items.map((hit) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ListingCard(
+                      dense: true,
+                      data: ListingCardData(
+                        id: hit.id,
+                        title: hit.title,
+                        priceAmount: hit.priceAmount,
+                        currencyCode: hit.currencyCode,
+                        coverImageUrl: hit.coverImageUrl,
+                        isFeatured: hit.isFeaturedCached,
+                        locationLabel: hit.cityId == null
+                            ? null
+                            : citiesById[hit.cityId!],
+                        subtitle: '${l10n.listingViewsLabel}: ${hit.viewCount}',
+                      ),
+                      onTap: () => context.goNamed(
+                        'listing-detail',
+                        pathParameters: <String, String>{'id': hit.id},
+                      ),
+                    ),
+                  );
+                }),
+              if (result.total > result.pageSize)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: result.page <= 1 || state.loading
+                          ? null
+                          : () => controller.search(page: result.page - 1),
+                      child: Text(l10n.searchPrevPage),
+                    ),
+                    Text('${result.page}'),
+                    TextButton(
+                      onPressed:
+                          (result.page * result.pageSize >= result.total) || state.loading
+                              ? null
+                              : () => controller.search(page: result.page + 1),
+                      child: Text(l10n.searchNextPage),
+                    ),
+                  ],
+                ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

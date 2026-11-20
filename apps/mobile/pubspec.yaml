@@ -16,6 +16,7 @@ dependencies:
   dio: ^5.8.0
   intl: ^0.20.2
   shared_preferences: ^2.5.3
+  google_fonts: ^8.1.0
 
 dev_dependencies:
   flutter_test:

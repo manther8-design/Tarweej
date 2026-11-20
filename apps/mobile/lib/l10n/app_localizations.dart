@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @splashTagline.
   ///
   /// In en, this message translates to:
-  /// **'Marketplace foundation'**
+  /// **'Buy & sell nearby'**
   String get splashTagline;
 
   /// No description provided for @homeHeadline.
@@ -122,6 +122,60 @@ abstract class AppLocalizations {
   /// **'Browse live categories from the API, pick your country, then continue.'**
   String get homeBody;
 
+  /// No description provided for @homeTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover deals near you — search, browse, and sell in minutes.'**
+  String get homeTagline;
+
+  /// No description provided for @homeSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search phones, cars, homes…'**
+  String get homeSearchHint;
+
+  /// No description provided for @homeFeedHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest listings'**
+  String get homeFeedHeading;
+
+  /// No description provided for @homeFeaturedHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured ads'**
+  String get homeFeaturedHeading;
+
+  /// No description provided for @homeAllListings.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get homeAllListings;
+
+  /// No description provided for @homeFeedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No listings yet'**
+  String get homeFeedEmpty;
+
+  /// No description provided for @homeFeedEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another category or open search.'**
+  String get homeFeedEmptyHint;
+
+  /// No description provided for @homeFeedRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get homeFeedRetry;
+
+  /// No description provided for @homeSellAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get homeSellAction;
+
   /// No description provided for @homeCategoriesHeading.
   ///
   /// In en, this message translates to:
@@ -133,6 +187,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Browse categories'**
   String get browseCategoriesAction;
+
+  /// No description provided for @listingLocationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Location TBD'**
+  String get listingLocationUnavailable;
+
+  /// No description provided for @listingContactSellerCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with seller'**
+  String get listingContactSellerCta;
+
+  /// No description provided for @listingFavoriteCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get listingFavoriteCta;
+
+  /// No description provided for @listingUnfavoriteCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get listingUnfavoriteCta;
+
+  /// No description provided for @listingGalleryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe for more photos'**
+  String get listingGalleryHint;
+
+  /// No description provided for @myListingsRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get myListingsRetry;
+
+  /// No description provided for @favoritesEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Save listings you like and find them here.'**
+  String get favoritesEmptyHint;
+
+  /// No description provided for @categoriesBrowseListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse listings'**
+  String get categoriesBrowseListings;
 
   /// No description provided for @categoriesTitle.
   ///

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.14.0 — TRW-014 Flutter Marketplace UX
+
+- AdForest-class home: brand hero «ترويج», search, category strip, featured rail, photo listing grid from search API
+- Shared listing cards / detail gallery + favorites / search / my-listings / categories polish (RTL Arabic)
+- Seed sample media via picsum CDN + local object-storage PNG; media proxy placeholder fallback
+- Guest browse for home / search / categories / listing detail
+
 ## 0.13.0 — TRW-013 Production Readiness
 
 - Health readiness now requires PostgreSQL **and** Redis (HTTP 503 when either is down)

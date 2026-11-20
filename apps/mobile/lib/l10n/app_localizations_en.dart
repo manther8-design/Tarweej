@@ -12,7 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Tarweej';
 
   @override
-  String get splashTagline => 'Marketplace foundation';
+  String get splashTagline => 'Buy & sell nearby';
 
   @override
   String get homeHeadline => 'Welcome to Tarweej';
@@ -22,10 +22,62 @@ class AppLocalizationsEn extends AppLocalizations {
       'Browse live categories from the API, pick your country, then continue.';
 
   @override
+  String get homeTagline =>
+      'Discover deals near you — search, browse, and sell in minutes.';
+
+  @override
+  String get homeSearchHint => 'Search phones, cars, homes…';
+
+  @override
+  String get homeFeedHeading => 'Latest listings';
+
+  @override
+  String get homeFeaturedHeading => 'Featured ads';
+
+  @override
+  String get homeAllListings => 'All';
+
+  @override
+  String get homeFeedEmpty => 'No listings yet';
+
+  @override
+  String get homeFeedEmptyHint => 'Try another category or open search.';
+
+  @override
+  String get homeFeedRetry => 'Retry';
+
+  @override
+  String get homeSellAction => 'Sell';
+
+  @override
   String get homeCategoriesHeading => 'Categories';
 
   @override
   String get browseCategoriesAction => 'Browse categories';
+
+  @override
+  String get listingLocationUnavailable => 'Location TBD';
+
+  @override
+  String get listingContactSellerCta => 'Chat with seller';
+
+  @override
+  String get listingFavoriteCta => 'Save';
+
+  @override
+  String get listingUnfavoriteCta => 'Saved';
+
+  @override
+  String get listingGalleryHint => 'Swipe for more photos';
+
+  @override
+  String get myListingsRetry => 'Retry';
+
+  @override
+  String get favoritesEmptyHint => 'Save listings you like and find them here.';
+
+  @override
+  String get categoriesBrowseListings => 'Browse listings';
 
   @override
   String get categoriesTitle => 'Categories';

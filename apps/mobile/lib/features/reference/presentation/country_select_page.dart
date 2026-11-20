@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tarweej_mobile/features/auth/application/auth_controller.dart';
 import 'package:tarweej_mobile/features/reference/application/reference_controller.dart';
 import 'package:tarweej_mobile/l10n/app_localizations.dart';
 
@@ -32,8 +31,7 @@ class _CountrySelectPageState extends ConsumerState<CountrySelectPage> {
     if (!mounted) {
       return;
     }
-    final auth = ref.read(authControllerProvider);
-    context.goNamed(auth.isAuthenticated ? 'home' : 'login');
+    context.goNamed('home');
   }
 
   @override
