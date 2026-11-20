@@ -11,7 +11,7 @@ Repository: https://github.com/manther8-design/Tarweej
 | `apps/api` | NestJS modular monolith (`/api/v1`, Identity → Admin ops, Swagger in non-prod) |
 | `apps/mobile` | Flutter shell (Riverpod, GoRouter, AR/EN + RTL) |
 | `apps/admin` | Next.js admin ops surfaces |
-| `apps/web` | Optional public web placeholder package |
+| `apps/web` | Public marketplace storefront (login + user dashboard) |
 | `libs/*` | Thin shared stubs (`contracts`, `config`, `logging`, `database`) |
 | `prisma/` | Schema, migrations, **dev-only** seed |
 | `docker-compose.yml` | Local PostgreSQL **5432**, Redis **6379**, MinIO **9000/9001** |
