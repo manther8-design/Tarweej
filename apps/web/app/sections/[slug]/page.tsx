@@ -41,7 +41,14 @@ export default async function SectionPage({ params }: { params: Promise<{ slug: 
   if (section.comingSoon) {
     return (
       <div className="container">
-        <section className="hero">
+        <section
+          className="panel"
+          style={{
+            background: 'linear-gradient(135deg,#0c3a64,#1d4ed8)',
+            color: 'white',
+            marginBottom: '1.25rem',
+          }}
+        >
           <h1>{section.titleAr}</h1>
           <p>{section.hintAr}</p>
         </section>
@@ -68,7 +75,14 @@ export default async function SectionPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="container">
-      <section className="hero">
+      <section
+        className="panel"
+        style={{
+          background: 'linear-gradient(135deg,#0c3a64,#1d4ed8)',
+          color: 'white',
+          marginBottom: '1.25rem',
+        }}
+      >
         <h1>{section.titleAr}</h1>
         <p>{section.hintAr}</p>
       </section>

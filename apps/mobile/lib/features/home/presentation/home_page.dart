@@ -229,7 +229,7 @@ class _HomePageState extends ConsumerState<HomePage>
           onPressed: () => context.goNamed(
             auth.isAuthenticated ? 'listing-create' : 'login',
           ),
-          backgroundColor: TarweejColors.ink,
+          backgroundColor: TarweejColors.orange500,
           foregroundColor: Colors.white,
           icon: const Icon(Icons.add_rounded),
           label: Text(l10n.homeSellAction),
@@ -336,14 +336,14 @@ class _HeroBlock extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: <Color>[
-              Color(0xFF0B2A3A),
-              Color(0xFF0F4C4A),
-              Color(0xFF14665F),
+              TarweejColors.blue900,
+              TarweejColors.blue800,
+              TarweejColors.blue600,
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: TarweejColors.ink.withValues(alpha: 0.18),
+              color: TarweejColors.blue800.withValues(alpha: 0.22),
               blurRadius: 24,
               offset: const Offset(0, 12),
             ),
@@ -376,7 +376,7 @@ class _HeroBlock extends StatelessWidget {
                     height: 180,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: TarweejColors.teal.withValues(alpha: 0.22),
+                      color: TarweejColors.orange500.withValues(alpha: 0.18),
                     ),
                   ),
                 ),
@@ -389,13 +389,26 @@ class _HeroBlock extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            brand,
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: Colors.white,
-                                  height: 1.05,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                brand,
+                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                      color: Colors.white,
+                                      height: 1.05,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                              ),
+                              Text(
+                                'TARWEEJ',
+                                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      color: TarweejColors.orange500,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 2,
+                                    ),
+                              ),
+                            ],
                           ),
                         ),
                         IconButton(
@@ -433,7 +446,7 @@ class _HeroBlock extends StatelessWidget {
                           child: Row(
                             children: [
                               const SizedBox(width: 14),
-                              const Icon(Icons.search_rounded, color: TarweejColors.tealDeep),
+                              const Icon(Icons.search_rounded, color: TarweejColors.blue800),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(

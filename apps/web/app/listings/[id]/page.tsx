@@ -43,7 +43,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
           ) : null}
         </div>
         <div className="panel">
-          <p style={{ margin: 0, color: 'var(--teal-deep)', fontWeight: 800, fontSize: '1.4rem' }}>
+          <p style={{ margin: 0, color: 'var(--orange-600)', fontWeight: 800, fontSize: '1.4rem' }}>
             {formatPrice(listing.priceAmount, listing.currencyCode)}
           </p>
           <h1 style={{ margin: '0.4rem 0 0.8rem' }}>{listing.title}</h1>

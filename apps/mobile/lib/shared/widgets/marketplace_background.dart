@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tarweej_mobile/core/theme/tarweej_colors.dart';
 
-/// Atmospheric wash behind marketplace surfaces (not a flat single color).
+/// Atmospheric wash behind marketplace surfaces (slate + royal blue).
 class MarketplaceBackground extends StatelessWidget {
   const MarketplaceBackground({required this.child, super.key});
 
@@ -17,18 +17,18 @@ class MarketplaceBackground extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: dark
               ? const <Color>[
-                  Color(0xFF07131F),
-                  TarweejColors.ink,
-                  Color(0xFF0E2A2A),
+                  TarweejColors.slate950,
+                  TarweejColors.slate900,
+                  Color(0xFF0C3A64),
                 ]
               : const <Color>[
-                  Color(0xFFDCECEE),
-                  TarweejColors.sandMist,
-                  Color(0xFFF3F8F6),
-                  Color(0xFFE4EEF0),
+                  TarweejColors.slate50,
+                  TarweejColors.blue50,
+                  Color(0xFFF8FAFC),
+                  TarweejColors.slate100,
                 ],
           stops: dark
-              ? const <double>[0, 0.45, 1]
+              ? const <double>[0, 0.55, 1]
               : const <double>[0, 0.35, 0.7, 1],
         ),
       ),
@@ -43,8 +43,7 @@ class MarketplaceBackground extends StatelessWidget {
                 height: 220,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: (dark ? TarweejColors.teal : TarweejColors.teal)
-                      .withValues(alpha: dark ? 0.12 : 0.14),
+                  color: TarweejColors.blue600.withValues(alpha: dark ? 0.16 : 0.10),
                 ),
               ),
             ),
@@ -58,7 +57,7 @@ class MarketplaceBackground extends StatelessWidget {
                 height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: TarweejColors.inkSoft.withValues(alpha: dark ? 0.35 : 0.06),
+                  color: TarweejColors.orange500.withValues(alpha: dark ? 0.10 : 0.06),
                 ),
               ),
             ),

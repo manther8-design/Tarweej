@@ -95,7 +95,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 href={item.href}
                 style={{
                   ...navLinkStyle,
-                  background: active ? 'rgba(47, 111, 237, 0.18)' : 'transparent',
+                  background: active ? 'rgba(15, 76, 129, 0.45)' : 'transparent',
                   color: active ? '#fff' : 'var(--muted)',
                 }}
               >

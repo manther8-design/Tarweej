@@ -517,7 +517,7 @@ class _DetailBody extends StatelessWidget {
               Text(
                 price,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: TarweejColors.tealDeep,
+                      color: TarweejColors.orange600,
                       fontWeight: FontWeight.w800,
                     ),
               ),

@@ -14,7 +14,6 @@ class MainShell extends StatelessWidget {
       context.goNamed('listing-create');
       return;
     }
-    // Map NavigationBar index → shell branch (skip create slot).
     final branchIndex = index > 2 ? index - 1 : index;
     navigationShell.goBranch(
       branchIndex,
@@ -24,7 +23,6 @@ class MainShell extends StatelessWidget {
 
   int get _selectedIndex {
     final branch = navigationShell.currentIndex;
-    // branches: 0 home, 1 sections, 2 chat, 3 account → nav slots 0,1,3,4
     return branch >= 2 ? branch + 1 : branch;
   }
 
@@ -38,32 +36,34 @@ class MainShell extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) => _onTap(context, index),
-        backgroundColor: scheme.surface.withValues(alpha: 0.94),
-        indicatorColor: TarweejColors.teal.withValues(alpha: 0.18),
+        backgroundColor: scheme.surface.withValues(alpha: 0.96),
+        indicatorColor: TarweejColors.orange500.withValues(alpha: 0.14),
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home_rounded),
+            selectedIcon: const Icon(Icons.home_rounded, color: TarweejColors.orange500),
             label: l10n.navHome,
           ),
           NavigationDestination(
             icon: const Icon(Icons.grid_view_outlined),
-            selectedIcon: const Icon(Icons.grid_view_rounded),
+            selectedIcon: const Icon(Icons.grid_view_rounded, color: TarweejColors.orange500),
             label: l10n.navSections,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.add_circle_outline_rounded),
-            selectedIcon: const Icon(Icons.add_circle_rounded),
+            icon: const Icon(Icons.add_circle_rounded, color: TarweejColors.orange500, size: 30),
+            selectedIcon:
+                const Icon(Icons.add_circle_rounded, color: TarweejColors.orange500, size: 30),
             label: l10n.navAdd,
           ),
           NavigationDestination(
             icon: const Icon(Icons.chat_bubble_outline_rounded),
-            selectedIcon: const Icon(Icons.chat_bubble_rounded),
+            selectedIcon:
+                const Icon(Icons.chat_bubble_rounded, color: TarweejColors.orange500),
             label: l10n.navMessages,
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline_rounded),
-            selectedIcon: const Icon(Icons.person_rounded),
+            selectedIcon: const Icon(Icons.person_rounded, color: TarweejColors.orange500),
             label: l10n.navAccount,
           ),
         ],

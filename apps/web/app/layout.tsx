@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { CSSProperties, ReactNode } from 'react';
-import { Cairo, Outfit } from 'next/font/google';
+import { Cairo, Inter, Tajawal } from 'next/font/google';
 import { SiteFooter } from '../components/SiteFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import './globals.css';
@@ -11,9 +11,16 @@ const cairo = Cairo({
   display: 'swap',
 });
 
-const outfit = Outfit({
+const tajawal = Tajawal({
+  subsets: ['arabic'],
+  weight: ['400', '500', '700', '800'],
+  variable: '--font-tajawal',
+  display: 'swap',
+});
+
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-outfit',
+  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -24,12 +31,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" className={`${cairo.variable} ${outfit.variable}`}>
+    <html lang="ar" dir="rtl" className={`${cairo.variable} ${tajawal.variable} ${inter.variable}`}>
       <body
         style={
           {
-            ['--font-display' as string]: 'var(--font-cairo), Cairo, sans-serif',
-            ['--font-body' as string]: 'var(--font-outfit), Outfit, sans-serif',
+            ['--font-display' as string]:
+              'var(--font-cairo), var(--font-tajawal), Cairo, Tajawal, sans-serif',
+            ['--font-body' as string]:
+              'var(--font-cairo), var(--font-tajawal), Cairo, Tajawal, sans-serif',
+            ['--font-en' as string]: 'var(--font-inter), Inter, sans-serif',
           } as CSSProperties
         }
       >

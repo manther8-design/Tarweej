@@ -16,24 +16,30 @@ class FeaturedBadge extends StatelessWidget {
         vertical: compact ? 3 : 5,
       ),
       decoration: BoxDecoration(
-        color: TarweejColors.featuredSoft,
+        color: TarweejColors.orange500,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: TarweejColors.featured.withValues(alpha: 0.35)),
+        boxShadow: [
+          BoxShadow(
+            color: TarweejColors.orange500.withValues(alpha: 0.35),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.bolt_rounded,
+            Icons.star_rounded,
             size: compact ? 12 : 14,
-            color: TarweejColors.featured,
+            color: Colors.white,
           ),
           const SizedBox(width: 4),
           Text(
             l10n.searchFeaturedBadge,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: TarweejColors.featured,
-                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
                 ),
           ),
         ],

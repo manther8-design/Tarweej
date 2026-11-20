@@ -6,6 +6,7 @@ import 'package:tarweej_mobile/features/auth/application/auth_controller.dart';
 import 'package:tarweej_mobile/features/reference/application/reference_controller.dart';
 import 'package:tarweej_mobile/l10n/app_localizations.dart';
 import 'package:tarweej_mobile/shared/widgets/marketplace_background.dart';
+import 'package:tarweej_mobile/shared/widgets/tarweej_logo.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -73,20 +74,14 @@ class _SplashPageState extends ConsumerState<SplashPage>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    l10n.appTitle,
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: TarweejColors.ink,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
+                  const TarweejLogo(height: 56),
+                  const SizedBox(height: 16),
                   Text(
                     l10n.splashTagline,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 28),
-                  const CircularProgressIndicator(),
+                  const CircularProgressIndicator(color: TarweejColors.orange500),
                 ],
               ),
             ),

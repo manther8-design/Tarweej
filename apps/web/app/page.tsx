@@ -44,44 +44,44 @@ export default async function HomePage({
   }
 
   return (
-    <div className="container">
-      <section className="hero">
-        <h1>ترويج</h1>
-        <p>اكتشف أفضل العروض بالقرب منك — ابحث وتصفّح وبِع خلال دقائق.</p>
-      </section>
-
+    <div className="container page-pad">
       <div className="section-title">
-        <h2>الأقسام</h2>
+        <h2>
+          <span className="bar" />
+          إعلانات مميزة
+          <span className="promo-pill">PROMOTED</span>
+        </h2>
         <Link href="/sections/general">عرض الكل</Link>
-      </div>
-      <div className="chip-row">
-        {SECTIONS.filter((s) => !s.comingSoon).map((section) => (
-          <Link key={section.slug} className="chip" href={`/sections/${section.slug}`}>
-            {section.titleAr}
-          </Link>
-        ))}
-        {categories.slice(0, 4).map((category) => (
-          <Link
-            key={category.id}
-            className="chip"
-            href={`/?q=${encodeURIComponent(category.name)}`}
-          >
-            {category.name}
-          </Link>
-        ))}
-      </div>
-
-      <div className="section-title">
-        <h2>إعلانات مميزة</h2>
       </div>
       {feedError ? (
         <div className="state-box">{feedError}</div>
       ) : (
-        <ListingGrid items={featured} empty="لا توجد إعلانات مميزة بعد." />
+        <ListingGrid items={featured} empty="لا توجد إعلانات مميزة بعد." featured />
       )}
 
       <div className="section-title">
-        <h2>{params.q ? `نتائج: ${params.q}` : 'أحدث الإعلانات'}</h2>
+        <h2>
+          <span className="bar" />
+          {params.q ? `نتائج: ${params.q}` : 'أحدث الإعلانات'}
+        </h2>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {SECTIONS.filter((s) => !s.comingSoon)
+            .slice(0, 4)
+            .map((section) => (
+              <Link key={section.slug} className="chip" href={`/sections/${section.slug}`}>
+                {section.titleAr}
+              </Link>
+            ))}
+          {categories.slice(0, 2).map((category) => (
+            <Link
+              key={category.id}
+              className="chip"
+              href={`/?q=${encodeURIComponent(category.name)}`}
+            >
+              {category.name}
+            </Link>
+          ))}
+        </div>
       </div>
       {feedError ? (
         <div className="state-box">{feedError}</div>

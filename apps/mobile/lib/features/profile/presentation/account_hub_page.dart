@@ -144,7 +144,7 @@ class _IdentityCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF0B2A3A), Color(0xFF14665F)],
+          colors: [TarweejColors.blue900, TarweejColors.blue600],
         ),
       ),
       child: Column(
