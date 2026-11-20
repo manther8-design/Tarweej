@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { HeaderAuth } from './HeaderAuth';
 import { TarweejLogo } from './TarweejLogo';
 
 export function SiteHeader() {
@@ -20,18 +21,18 @@ export function SiteHeader() {
           <input name="q" placeholder="ابحث عن جوالات، سيارات، عقارات…" aria-label="Search" />
         </form>
 
-        <Link className="icon-btn" href="/dashboard" title="المفضلة" aria-label="Favorites">
+        <Link
+          className="icon-btn"
+          href="/dashboard/favorites"
+          title="المفضلة"
+          aria-label="Favorites"
+        >
           ♥<span className="dot" />
         </Link>
-        <Link className="icon-btn" href="/dashboard" title="الرسائل" aria-label="Messages">
+        <Link className="icon-btn" href="/dashboard/messages" title="الرسائل" aria-label="Messages">
           ✉
         </Link>
-        <Link className="btn btn-primary" href="/login">
-          + أضف إعلان
-        </Link>
-        <Link className="btn btn-ghost" href="/dashboard">
-          حسابي
-        </Link>
+        <HeaderAuth />
       </div>
 
       <div className="category-bar">

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.17.0 — TRW-017 Web Login + User Dashboard
+
+- Public web login wired to Nest `POST /identity/auth/login` (email/password)
+- Session in `localStorage` (`tarweej.web.session`) with `Authorization: Bearer` on API calls — same pattern as admin
+- Real `/dashboard` overview + `/dashboard/listings` (and favorites/messages/payments/settings) so post-login no longer 404s
+- Env: `NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1` (falls back to `NEXT_PUBLIC_API_BASE_URL`)
+- CORS example includes web origin `:3002`
+
 ## 0.16.0 — TRW-016 Flutter Web CORS
 
 - Nest API CORS: non-production allows `localhost` / `127.0.0.1` on any port (Flutter Chrome random ports)
