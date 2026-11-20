@@ -11,7 +11,8 @@
 ## Transport & headers
 
 - Terminate TLS at the edge (Cloud LB / nginx / Caddy).
-- API enables `helmet()`, CORS allow-list via `CORS_ORIGINS`.
+- API enables `helmet()`, CORS allow-list via `CORS_ORIGINS` (production: exact list only).
+  Non-production also reflects `localhost` / `127.0.0.1` on any port for Flutter Chrome web.
 - Correlation IDs: accept/propagate `x-correlation-id` / `x-request-id`.
 
 ## Rate limits
