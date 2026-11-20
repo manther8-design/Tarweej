@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.16.0 — TRW-016 Flutter Web CORS
+
+- Nest API CORS: non-production allows `localhost` / `127.0.0.1` on any port (Flutter Chrome random ports)
+- Production still uses exact `CORS_ORIGINS` allow-list only (no wildcard)
+- Preflight `OPTIONS` + `Content-Type: application/json` headers documented in enableCors
+- Flutter default `API_BASE_URL` remains `http://localhost:3000/api/v1`; documented `--dart-define` in README
+
 ## 0.15.0 — TRW-015 Full UI System
 
 - Aligned Flutter/web/admin to Mansour HTML prototype: royal blue `#0f4c81`/`#1d4ed8` + orange `#f97316`, dual-tone logo, Cairo/Tajawal

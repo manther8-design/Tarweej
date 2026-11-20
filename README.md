@@ -53,6 +53,20 @@ pnpm dev
 
 Object storage defaults to `OBJECT_STORAGE_DRIVER=local`. Set `s3` for MinIO/AWS.
 
+### Flutter (Chrome / web)
+
+Default API base is `http://localhost:3000/api/v1` (override with `--dart-define`).
+
+```bash
+cd apps/mobile
+flutter pub get
+flutter run -d chrome
+# Optional override:
+# flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:3000/api/v1
+```
+
+Non-production API CORS allows Flutter’s random `localhost:<port>` origin automatically.
+
 ### Admin
 
 ```bash

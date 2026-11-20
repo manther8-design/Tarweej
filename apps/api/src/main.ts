@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app/app.module';
+import { createCorsOriginDelegate } from './common/http/cors-origin';
 import { AppLogger } from './common/logging/app-logger.service';
 
 async function bootstrap(): Promise<void> {
@@ -33,7 +34,14 @@ async function bootstrap(): Promise<void> {
   });
 
   const origins = config.getOrThrow<string[]>('app.corsOrigins');
-  app.enableCors({ origin: origins, credentials: true });
+  const nodeEnv = config.getOrThrow<string>('app.nodeEnv');
+  // Non-prod: localhost / 127.0.0.1 any port (Flutter Chrome). Prod: CORS_ORIGINS only.
+  app.enableCors({
+    origin: createCorsOriginDelegate({ nodeEnv, configuredOrigins: origins }),
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'x-correlation-id', 'x-request-id'],
+  });
 
   const enableSwagger = config.get<boolean>('app.enableSwagger') ?? true;
   if (enableSwagger) {
