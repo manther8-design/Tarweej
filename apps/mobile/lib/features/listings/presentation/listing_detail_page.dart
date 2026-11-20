@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tarweej_mobile/core/network/api_client.dart';
+import 'package:tarweej_mobile/core/theme/tarweej_colors.dart';
 import 'package:tarweej_mobile/features/auth/application/auth_controller.dart';
 import 'package:tarweej_mobile/features/chat/application/chat_controller.dart';
-import 'package:tarweej_mobile/core/network/api_client.dart';
 import 'package:tarweej_mobile/features/favorites/application/favorites_controller.dart';
 import 'package:tarweej_mobile/features/favorites/data/favorites_api.dart';
 import 'package:tarweej_mobile/features/listings/application/listings_controller.dart';
+import 'package:tarweej_mobile/features/listings/domain/listing_models.dart';
 import 'package:tarweej_mobile/features/reports/data/reports_api.dart';
 import 'package:tarweej_mobile/l10n/app_localizations.dart';
+import 'package:tarweej_mobile/shared/widgets/async_state_views.dart';
+import 'package:tarweej_mobile/shared/widgets/featured_badge.dart';
+import 'package:tarweej_mobile/shared/widgets/listing_network_image.dart';
+import 'package:tarweej_mobile/shared/widgets/marketplace_background.dart';
 
 class ListingDetailPage extends ConsumerStatefulWidget {
   const ListingDetailPage({
@@ -30,6 +36,7 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
   bool _chatBusy = false;
   bool _reportBusy = false;
   String? _actionError;
+  int _galleryIndex = 0;
 
   @override
   void initState() {
@@ -238,117 +245,338 @@ class _ListingDetailPageState extends ConsumerState<ListingDetailPage> {
     final detail = state.detail;
     final showEngagement = !widget.mine;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.listingDetailTitle)),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: state.loading && detail == null
-            ? const Center(child: CircularProgressIndicator())
+    return MarketplaceBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text(detail?.title ?? l10n.listingDetailTitle),
+          actions: [
+            if (showEngagement)
+              IconButton(
+                tooltip: _favorited ? l10n.listingUnfavoriteCta : l10n.listingFavoriteCta,
+                onPressed: _favoriteBusy ? null : _toggleFavorite,
+                icon: Icon(
+                  _favorited ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  color: _favorited ? TarweejColors.coral : null,
+                ),
+              ),
+          ],
+        ),
+        body: state.loading && detail == null
+            ? const MarketplaceLoadingView()
             : state.error != null && detail == null
-                ? Text(state.error!)
+                ? MarketplaceErrorView(
+                    message: state.error!,
+                    retryLabel: l10n.homeFeedRetry,
+                    onRetry: () {
+                      final notifier = ref.read(listingsControllerProvider.notifier);
+                      if (widget.mine) {
+                        notifier.loadMineDetail(widget.listingId);
+                      } else {
+                        notifier.loadPublicDetail(widget.listingId);
+                      }
+                    },
+                  )
                 : detail == null
-                    ? Text(l10n.listingNotFound)
-                    : ListView(
-                        children: [
-                          Text(
-                            detail.title,
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            detail.priceAmount == null
-                                ? '—'
-                                : '${detail.priceAmount!.toStringAsFixed(0)} ${detail.currencyCode ?? ''}',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Text('${l10n.listingStatusLabel}: ${detail.status}'),
-                          Text('${l10n.listingViewsLabel}: ${detail.viewCount}'),
-                          if (detail.rejectionReason != null) ...[
-                            const SizedBox(height: 8),
-                            Text('${l10n.listingRejectionLabel}: ${detail.rejectionReason}'),
-                          ],
-                          if (widget.mine && detail.status == 'active') ...[
-                            const SizedBox(height: 16),
-                            FilledButton.icon(
-                              onPressed: () => context.goNamed(
-                                'listing-promote',
-                                pathParameters: <String, String>{'id': detail.id},
-                              ),
-                              icon: const Icon(Icons.campaign_outlined),
-                              label: Text(l10n.promoteListingAction),
-                            ),
-                          ],
-                          if (showEngagement) ...[
-                            const SizedBox(height: 16),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                FilledButton.tonalIcon(
-                                  onPressed: _favoriteBusy ? null : _toggleFavorite,
-                                  icon: Icon(_favorited ? Icons.favorite : Icons.favorite_border),
-                                  label: Text(
-                                    _favorited
-                                        ? l10n.favoritesRemoveAction
-                                        : l10n.favoritesAddAction,
-                                  ),
-                                ),
-                                FilledButton.icon(
-                                  onPressed: _chatBusy ? null : _contactSeller,
-                                  icon: const Icon(Icons.chat_bubble_outline),
-                                  label: Text(l10n.chatContactSeller),
-                                ),
-                                OutlinedButton.icon(
-                                  onPressed: _reportBusy ? null : _reportListing,
-                                  icon: const Icon(Icons.flag_outlined),
-                                  label: Text(l10n.reportListingAction),
-                                ),
-                              ],
-                            ),
-                            if (_actionError != null) ...[
-                              const SizedBox(height: 8),
-                              Text(
-                                _actionError!,
-                                style: TextStyle(color: Theme.of(context).colorScheme.error),
-                              ),
-                            ],
-                          ],
-                          const SizedBox(height: 16),
-                          Text(detail.description),
-                          const SizedBox(height: 24),
-                          Text(
-                            l10n.listingMediaHeading,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          if (detail.media.isEmpty)
-                            Text(l10n.listingMediaEmpty)
-                          else
-                            ...detail.media.map(
-                              (m) => Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Text(m.cdnUrl, style: Theme.of(context).textTheme.bodySmall),
-                              ),
-                            ),
-                          const SizedBox(height: 16),
-                          Text(
-                            l10n.listingAttributesHeading,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          if (detail.attributes.isEmpty)
-                            Text(l10n.listingAttributesEmpty)
-                          else
-                            ...detail.attributes.map((a) {
-                              final value = a.valueText ??
-                                  a.valueNumber?.toString() ??
-                                  a.valueBool?.toString() ??
-                                  '—';
-                              return Text('${a.code}: $value');
-                            }),
-                        ],
+                    ? MarketplaceEmptyView(title: l10n.listingNotFound)
+                    : _DetailBody(
+                        detail: detail,
+                        l10n: l10n,
+                        galleryIndex: _galleryIndex,
+                        onGalleryChanged: (i) => setState(() => _galleryIndex = i),
+                        showEngagement: showEngagement,
+                        mine: widget.mine,
+                        favorited: _favorited,
+                        favoriteBusy: _favoriteBusy,
+                        chatBusy: _chatBusy,
+                        reportBusy: _reportBusy,
+                        actionError: _actionError,
+                        onFavorite: _toggleFavorite,
+                        onChat: _contactSeller,
+                        onReport: _reportListing,
+                        onPromote: () => context.goNamed(
+                          'listing-promote',
+                          pathParameters: <String, String>{'id': detail.id},
+                        ),
                       ),
+        bottomNavigationBar: showEngagement && detail != null
+            ? SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton.tonalIcon(
+                          onPressed: _favoriteBusy ? null : _toggleFavorite,
+                          icon: Icon(
+                            _favorited ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                          ),
+                          label: Text(
+                            _favorited ? l10n.listingUnfavoriteCta : l10n.listingFavoriteCta,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        flex: 2,
+                        child: FilledButton.icon(
+                          onPressed: _chatBusy ? null : _contactSeller,
+                          icon: const Icon(Icons.chat_bubble_outline_rounded),
+                          label: Text(l10n.listingContactSellerCta),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : null,
+      ),
+    );
+  }
+}
+
+class _DetailBody extends StatelessWidget {
+  const _DetailBody({
+    required this.detail,
+    required this.l10n,
+    required this.galleryIndex,
+    required this.onGalleryChanged,
+    required this.showEngagement,
+    required this.mine,
+    required this.favorited,
+    required this.favoriteBusy,
+    required this.chatBusy,
+    required this.reportBusy,
+    required this.actionError,
+    required this.onFavorite,
+    required this.onChat,
+    required this.onReport,
+    required this.onPromote,
+  });
+
+  final ListingDetail detail;
+  final AppLocalizations l10n;
+  final int galleryIndex;
+  final ValueChanged<int> onGalleryChanged;
+  final bool showEngagement;
+  final bool mine;
+  final bool favorited;
+  final bool favoriteBusy;
+  final bool chatBusy;
+  final bool reportBusy;
+  final String? actionError;
+  final VoidCallback onFavorite;
+  final VoidCallback onChat;
+  final VoidCallback onReport;
+  final VoidCallback onPromote;
+
+  @override
+  Widget build(BuildContext context) {
+    final price = detail.priceAmount == null
+        ? l10n.searchPriceUnavailable
+        : '${detail.priceAmount!.toStringAsFixed(0)} ${detail.currencyCode ?? ''}'.trim();
+    final media = detail.media;
+
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 24),
+      children: [
+        AspectRatio(
+          aspectRatio: 1.15,
+          child: media.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: ListingNetworkImage(url: null, height: double.infinity),
+                )
+              : Stack(
+                  children: [
+                    PageView.builder(
+                      itemCount: media.length,
+                      onPageChanged: onGalleryChanged,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: ListingNetworkImage(
+                            url: media[index].cdnUrl,
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                        );
+                      },
+                    ),
+                    if (detail.isFeaturedCached)
+                      const PositionedDirectional(
+                        top: 16,
+                        start: 28,
+                        child: FeaturedBadge(),
+                      ),
+                    if (media.length > 1)
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 14,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List<Widget>.generate(media.length, (i) {
+                            final active = i == galleryIndex;
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 220),
+                              margin: const EdgeInsets.symmetric(horizontal: 3),
+                              width: active ? 18 : 7,
+                              height: 7,
+                              decoration: BoxDecoration(
+                                color: active
+                                    ? Colors.white
+                                    : Colors.white.withValues(alpha: 0.45),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                  ],
+                ),
+        ),
+        if (media.length > 1)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+            child: Text(
+              l10n.listingGalleryHint,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                price,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: TarweejColors.tealDeep,
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                detail.title,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 10,
+                runSpacing: 8,
+                children: [
+                  _MetaChip(
+                    icon: Icons.visibility_outlined,
+                    label: '${l10n.listingViewsLabel}: ${detail.viewCount}',
+                  ),
+                  _MetaChip(
+                    icon: Icons.info_outline_rounded,
+                    label: '${l10n.listingStatusLabel}: ${detail.status}',
+                  ),
+                ],
+              ),
+              if (detail.rejectionReason != null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  '${l10n.listingRejectionLabel}: ${detail.rejectionReason}',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+              if (mine && detail.status == 'active') ...[
+                const SizedBox(height: 16),
+                FilledButton.icon(
+                  onPressed: onPromote,
+                  icon: const Icon(Icons.campaign_outlined),
+                  label: Text(l10n.promoteListingAction),
+                ),
+              ],
+              if (showEngagement && actionError != null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  actionError!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+              const SizedBox(height: 20),
+              Text(
+                detail.description,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                l10n.listingAttributesHeading,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 10),
+              if (detail.attributes.isEmpty)
+                Text(l10n.listingAttributesEmpty)
+              else
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: detail.attributes.map((a) {
+                    final value = a.valueText ??
+                        a.valueNumber?.toString() ??
+                        a.valueBool?.toString() ??
+                        '—';
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: TarweejColors.line),
+                      ),
+                      child: Text(
+                        '${a.code}: $value',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: TarweejColors.charcoal,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    );
+                  }).toList(growable: false),
+                ),
+              if (showEngagement) ...[
+                const SizedBox(height: 24),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton.icon(
+                    onPressed: reportBusy ? null : onReport,
+                    icon: const Icon(Icons.flag_outlined),
+                    label: Text(l10n.reportListingAction),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MetaChip extends StatelessWidget {
+  const _MetaChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: TarweejColors.line),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: TarweejColors.muted),
+          const SizedBox(width: 6),
+          Text(label, style: Theme.of(context).textTheme.bodySmall),
+        ],
       ),
     );
   }

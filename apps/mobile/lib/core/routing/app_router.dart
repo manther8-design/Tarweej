@@ -57,8 +57,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       }
 
       if (!auth.isAuthenticated) {
+        // Marketplace browse (home/search/categories/listing detail) stays public.
         final needsAuth = loc == '/profile' ||
-            loc == '/home' ||
             loc == '/my-listings' ||
             loc == '/favorites' ||
             loc == '/notifications' ||

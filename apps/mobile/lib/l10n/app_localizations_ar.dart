@@ -12,7 +12,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appTitle => 'ترويج';
 
   @override
-  String get splashTagline => 'أساس منصة السوق';
+  String get splashTagline => 'اشترِ وبِع بالقرب منك';
 
   @override
   String get homeHeadline => 'مرحبًا بك في ترويج';
@@ -22,10 +22,62 @@ class AppLocalizationsAr extends AppLocalizations {
       'تصفح الفئات الحية من الواجهة البرمجية، اختر بلدك، ثم تابع.';
 
   @override
+  String get homeTagline =>
+      'اكتشف أفضل العروض بالقرب منك — ابحث وتصفّح وبِع خلال دقائق.';
+
+  @override
+  String get homeSearchHint => 'ابحث عن جوالات، سيارات، عقارات…';
+
+  @override
+  String get homeFeedHeading => 'أحدث الإعلانات';
+
+  @override
+  String get homeFeaturedHeading => 'إعلانات مميزة';
+
+  @override
+  String get homeAllListings => 'الكل';
+
+  @override
+  String get homeFeedEmpty => 'لا توجد إعلانات بعد';
+
+  @override
+  String get homeFeedEmptyHint => 'جرّب فئة أخرى أو افتح البحث.';
+
+  @override
+  String get homeFeedRetry => 'إعادة المحاولة';
+
+  @override
+  String get homeSellAction => 'بيع';
+
+  @override
   String get homeCategoriesHeading => 'الفئات';
 
   @override
   String get browseCategoriesAction => 'تصفح الفئات';
+
+  @override
+  String get listingLocationUnavailable => 'الموقع غير محدد';
+
+  @override
+  String get listingContactSellerCta => 'مراسلة البائع';
+
+  @override
+  String get listingFavoriteCta => 'حفظ';
+
+  @override
+  String get listingUnfavoriteCta => 'محفوظ';
+
+  @override
+  String get listingGalleryHint => 'اسحب لمزيد من الصور';
+
+  @override
+  String get myListingsRetry => 'إعادة المحاولة';
+
+  @override
+  String get favoritesEmptyHint => 'احفظ الإعلانات التي تعجبك لتجدها هنا.';
+
+  @override
+  String get categoriesBrowseListings => 'تصفح الإعلانات';
 
   @override
   String get categoriesTitle => 'الفئات';
@@ -484,10 +536,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationsRetry => 'إعادة المحاولة';
 
   @override
-  String get notificationsMarkRead => 'تم التعيين كمقروء';
+  String get notificationsMarkRead => 'تعليم التعيين كمقروء';
 
   @override
-  String get notificationsMarkAllRead => 'تم الكل كمقروء';
+  String get notificationsMarkAllRead => 'تعليم الكل كمقروء';
 
   @override
   String get reportListingAction => 'الإبلاغ عن الإعلان';

@@ -3,6 +3,65 @@
  * Refuses NODE_ENV=production unless ALLOW_PROD_SEED=true (break-glass).
  */
 import { PrismaClient } from '@prisma/client';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+
+/** Tiny teal PNG used when local object storage has no binary yet. */
+const SEED_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAADAAAAAkCAIAAABAJy5dAAAAM0lEQVR42u3OAQkAAAgDsBewtwEMbA2FwQIsNX1KhISEhISEhISEhISEhISEhISEhD6FFpFM1Sq93xRAAAAAAElFTkSuQmCC',
+  'base64',
+);
+
+const OBJECT_STORAGE_ROOT = process.env.OBJECT_STORAGE_LOCAL_ROOT ?? '.data/object-storage';
+
+async function ensureListingCover(
+  listingId: string,
+  seedKey: string,
+): Promise<{
+  storageKey: string;
+  cdnUrl: string;
+  byteSize: number;
+}> {
+  const filename = 'seed-cover.png';
+  const storageKey = `listings/${listingId}/${filename}`;
+  const abs = join(OBJECT_STORAGE_ROOT, storageKey);
+  await mkdir(dirname(abs), { recursive: true });
+  await writeFile(abs, SEED_PNG);
+  // Prefer a public demo photo that always loads in Flutter; keep storage key local.
+  const cdnUrl = `https://picsum.photos/seed/tarweej-${seedKey}/800/600`;
+  return { storageKey, cdnUrl, byteSize: SEED_PNG.byteLength };
+}
+
+async function upsertListingMedia(listingId: string, seedKey: string): Promise<void> {
+  const cover = await ensureListingCover(listingId, seedKey);
+  const existing = await prisma.listingMedia.findFirst({
+    where: { listingId, sortOrder: 0, status: 'ready' },
+  });
+  if (existing) {
+    await prisma.listingMedia.update({
+      where: { id: existing.id },
+      data: {
+        storageKey: cover.storageKey,
+        cdnUrl: cover.cdnUrl,
+        mimeType: 'image/jpeg',
+        byteSize: cover.byteSize,
+        status: 'ready',
+      },
+    });
+    return;
+  }
+  await prisma.listingMedia.create({
+    data: {
+      listingId,
+      storageKey: cover.storageKey,
+      cdnUrl: cover.cdnUrl,
+      mimeType: 'image/jpeg',
+      byteSize: cover.byteSize,
+      sortOrder: 0,
+      status: 'ready',
+    },
+  });
+}
 
 if (
   process.env.NODE_ENV === 'production' &&
@@ -1054,6 +1113,7 @@ async function main(): Promise<void> {
         currencyCode: 'SAR',
         status: 'active',
         publishedAt: new Date(),
+        isFeaturedCached: true,
         latitude: 24.7136,
         longitude: 46.6753,
       },
@@ -1110,18 +1170,13 @@ async function main(): Promise<void> {
         },
       ],
     });
-    // Metadata-only media stub (no binary in Postgres).
-    await prisma.listingMedia.create({
-      data: {
-        listingId: active.id,
-        storageKey: `listings/${active.id}/seed-cover.webp`,
-        cdnUrl: `http://localhost:3000/api/v1/media/listings/${active.id}/seed-cover.webp`,
-        mimeType: 'image/webp',
-        byteSize: 0,
-        sortOrder: 0,
-        status: 'ready',
-      },
+    await upsertListingMedia(active.id, 'iphone15');
+  } else if (activeListingId) {
+    await prisma.listing.update({
+      where: { id: activeListingId },
+      data: { isFeaturedCached: true },
     });
+    await upsertListingMedia(activeListingId, 'iphone15');
   }
 
   const existingPending = await prisma.listing.findFirst({
@@ -1170,17 +1225,91 @@ async function main(): Promise<void> {
         },
       ],
     });
-    await prisma.listingMedia.create({
+    await upsertListingMedia(pending.id, 's24-pending');
+  } else {
+    await upsertListingMedia(existingPending.id, 's24-pending');
+  }
+
+  // Extra active marketplace samples so the Flutter home feed looks populated.
+  const extraListings: Array<{
+    title: string;
+    description: string;
+    price: number;
+    seedKey: string;
+    featured?: boolean;
+  }> = [
+    {
+      title: 'Toyota Camry 2022 SE',
+      description: 'Low mileage Camry, full service history. Seeded for marketplace UI demos.',
+      price: 89000,
+      seedKey: 'camry22',
+      featured: true,
+    },
+    {
+      title: 'MacBook Air M2 13"',
+      description: 'Lightly used MacBook Air with charger and box. Seeded sample listing.',
+      price: 3600,
+      seedKey: 'mba-m2',
+    },
+    {
+      title: 'IKEA Kivik Sofa 3-seat',
+      description: 'Comfortable living-room sofa, smoke-free home. Seeded sample listing.',
+      price: 950,
+      seedKey: 'kivik',
+    },
+    {
+      title: 'PlayStation 5 Disc Edition',
+      description: 'PS5 with two controllers. Seeded sample listing for Tarweej feed.',
+      price: 1850,
+      seedKey: 'ps5',
+    },
+  ];
+
+  for (const sample of extraListings) {
+    const existing = await prisma.listing.findFirst({
+      where: { ownerId: seller.id, title: sample.title },
+    });
+    if (existing) {
+      await prisma.listing.update({
+        where: { id: existing.id },
+        data: {
+          status: 'active',
+          publishedAt: existing.publishedAt ?? new Date(),
+          isFeaturedCached: sample.featured ?? false,
+          cityId: riyadhCity?.id ?? existing.cityId,
+        },
+      });
+      await upsertListingMedia(existing.id, sample.seedKey);
+      continue;
+    }
+    const created = await prisma.listing.create({
       data: {
-        listingId: pending.id,
-        storageKey: `listings/${pending.id}/seed-cover.webp`,
-        cdnUrl: `http://localhost:3000/api/v1/media/listings/${pending.id}/seed-cover.webp`,
-        mimeType: 'image/webp',
-        byteSize: 0,
-        sortOrder: 0,
-        status: 'ready',
+        ownerId: seller.id,
+        categoryId: phones.id,
+        countryId: sa.id,
+        cityId: riyadhCity?.id ?? null,
+        listingType: 'marketplace',
+        title: sample.title,
+        description: sample.description,
+        priceAmount: sample.price,
+        currencyCode: 'SAR',
+        status: 'active',
+        publishedAt: new Date(),
+        isFeaturedCached: sample.featured ?? false,
+        latitude: 24.7136,
+        longitude: 46.6753,
       },
     });
+    await prisma.listingStatusHistory.create({
+      data: {
+        listingId: created.id,
+        fromStatus: 'pending_review',
+        toStatus: 'active',
+        actorId: seller.id,
+        reason: 'seed approve',
+      },
+    });
+    await upsertListingMedia(created.id, sample.seedKey);
   }
 
   // eslint-disable-next-line no-console

@@ -8,6 +8,8 @@ class ListingSummary {
     this.currencyCode,
     this.coverImageUrl,
     this.rejectionReason,
+    this.isFeaturedCached = false,
+    this.cityId,
   });
 
   final String id;
@@ -18,6 +20,8 @@ class ListingSummary {
   final String? currencyCode;
   final String? coverImageUrl;
   final String? rejectionReason;
+  final bool isFeaturedCached;
+  final String? cityId;
 
   factory ListingSummary.fromJson(Map<String, dynamic> json) {
     return ListingSummary(
@@ -29,6 +33,8 @@ class ListingSummary {
       currencyCode: json['currencyCode'] as String?,
       coverImageUrl: json['coverImageUrl'] as String?,
       rejectionReason: json['rejectionReason'] as String?,
+      isFeaturedCached: json['isFeaturedCached'] as bool? ?? false,
+      cityId: json['cityId'] as String?,
     );
   }
 }
@@ -95,6 +101,7 @@ class ListingDetail {
     this.currencyCode,
     this.cityId,
     this.rejectionReason,
+    this.isFeaturedCached = false,
     this.media = const <ListingMedia>[],
     this.attributes = const <ListingAttributeValue>[],
   });
@@ -110,6 +117,7 @@ class ListingDetail {
   final double? priceAmount;
   final String? currencyCode;
   final String? rejectionReason;
+  final bool isFeaturedCached;
   final List<ListingMedia> media;
   final List<ListingAttributeValue> attributes;
 
@@ -126,6 +134,7 @@ class ListingDetail {
       priceAmount: (json['priceAmount'] as num?)?.toDouble(),
       currencyCode: json['currencyCode'] as String?,
       rejectionReason: json['rejectionReason'] as String?,
+      isFeaturedCached: json['isFeaturedCached'] as bool? ?? false,
       media: (json['media'] as List<dynamic>? ?? const <dynamic>[])
           .whereType<Map<String, dynamic>>()
           .map(ListingMedia.fromJson)
